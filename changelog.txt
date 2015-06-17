@@ -1,0 +1,24 @@
+This is an updated version of the Sickbeard plugin created by Zach Moore, as it was not compatible with SickRage.
+
+2015-06-08  by Hiltronix v.1.0.0
+- Expanded original work done by Zach Moore (v.1.0.10), and adapted for SickRage.
+- Updated icon images for SickRage.
+- Allow for manual entry for SickRage API Key value.
+  Original work did not run on SickRage due to the hackish scraping of the webpage to get the API Key.
+  On SickRage the API Key is on the second tab of the webpage, and not in the same screen location as SickBeard.
+  Added the API Key to the settings page solved this problem.  UI's are always subject to change, and scraping the webpage is a point of failure.
+- Allow for SSL login (https) sites when retreiving images.
+- Fix URL for retreiving images from SickRage.
+- Fixed "Manage Shows > Force Search" not working to become Force Show Update. 
+- Added the same context menu to the "Coming Episodes" show list as the "Manage Shows" list.
+- Added "Paused" status text after show names for show "Pause/Resume" status.
+- Added show posters to all lists.
+- Added show and episode information lookups from theTVdb.com.
+- Allow for escaping/exiting prompts without continuing.
+- Updated 'Add New Show' to include "Any" selection and updated code.
+- Added option to remove all files when deleting shows.
+- Added text colour highlighting for quicker reading.
+- Added "Continuing/Ended" status to show list.
+- Added "Aired Date" to episode list.
+- Changed "Manual Episode Search" to "Download Episode".
+- Bug fixes.
