@@ -5,7 +5,7 @@
 	provider-name="Hiltronix (Orig. Work by Zach Moore)">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.metahandler" version="2.7.0" />
+		<import addon="script.module.metahandler" version="2.5.1" />
 		<import addon="script.module.addon.common" version="2.0.0" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
