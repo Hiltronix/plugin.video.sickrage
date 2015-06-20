@@ -8,17 +8,17 @@ import resources.lib.settings
 
 # Add the main directory folders
 def mainMenu():
-        addDirectory('Upcoming Episodes', 2, 'special://home/addons/plugin.video.sickrage/upcoming.png')
-        addDirectory('History', 3, 'special://home/addons/plugin.video.sickrage/history.png')
-        addDirectory('Add New Show', 7, 'special://home/addons/plugin.video.sickrage/add.png')
-        addDirectory('Manage Shows', 1, 'special://home/addons/plugin.video.sickrage/manage.png')
+        addDirectory('Upcoming Episodes', 2, True, 'special://home/addons/plugin.video.sickrage/upcoming.png')
+        addDirectory('History', 3, True, 'special://home/addons/plugin.video.sickrage/history.png')
+        addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
+        addDirectory('Manage Shows', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
 
 
 # Add directory item
-def addDirectory(menu_item_name, menu_number, icon):
+def addDirectory(menu_item_name, menu_number, folder, icon):
         return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
         list_item = xbmcgui.ListItem(menu_item_name, iconImage=icon)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=True, totalItems=3)
+        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=3)
 
 
 # Get the parameters from the URL supplied as an arg to this script
