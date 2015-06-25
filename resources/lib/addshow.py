@@ -28,8 +28,12 @@ def AddShow(showtitle):
   if (text == ''):
     return
     
-  # Search for the show using SB search API  
-  search_results = Sickbeard.SearchShowName(text)
+  # Search for the show using SB search API.
+  xbmc.executebuiltin("ActivateWindow(busydialog)")
+  try:
+    search_results = Sickbeard.SearchShowName(text)
+  finally:
+    xbmc.executebuiltin("Dialog.Close(busydialog)")
   if search_results == []:
     return
     

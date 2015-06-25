@@ -1,4 +1,4 @@
-import urllib
+import urllib, urllib2
 import socket
 import json
 import settings

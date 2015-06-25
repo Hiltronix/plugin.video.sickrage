@@ -1,5 +1,8 @@
 This is an updated version of the Sickbeard plugin created by Zach Moore, as it was not compatible with SickRage.
 
+2015-06-24 v.1.0.5
+- Added "Working..." busy dialog to "Add New Show" lookup.
+
 2015-06-24 v.1.0.4
 - Option to skip keyboard if title is forced.
 
