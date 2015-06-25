@@ -45,7 +45,8 @@ def getParameters():
 # Initialize URL parameters
 url = None
 name = None
-menu_number = None          
+menu_number = None
+showtitle = None
 params = getParameters()
 
 # Parse internal URL
@@ -70,6 +71,13 @@ except:
 try:
     menu_number = int(params["mode"])
     print menu_number
+except:
+    pass
+    
+try:
+    showtitle = urllib.unquote_plus(params["title"])
+    menu_number = 7
+    print showtitle
 except:
     pass
 
@@ -103,6 +111,6 @@ elif menu_number == 6:
 
 elif menu_number == 7:
         import resources.lib.addshow as addshow
-        addshow.AddShow()
+        addshow.AddShow(showtitle)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        

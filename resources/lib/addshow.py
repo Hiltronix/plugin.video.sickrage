@@ -8,8 +8,11 @@ import sickbeard
 Sickbeard = sickbeard.SB()
 
 
-def showSearchDialog():
-  # Get search text from user
+def showSearchDialog(showtitle):
+  # Get search text from user.
+  if showtitle:
+    text = showtitle
+    return text
   keyboard = xbmc.Keyboard('', 'Find a show on the TVDB', False)
   keyboard.doModal()
   if (keyboard.isConfirmed()):
@@ -20,8 +23,8 @@ def showSearchDialog():
 
   
 # Add show main function. Shows the initial search window. 
-def AddShow():
-  text = showSearchDialog()
+def AddShow(showtitle):
+  text = showSearchDialog(showtitle)
   if (text == ''):
     return
     
