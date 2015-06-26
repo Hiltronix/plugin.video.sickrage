@@ -1,5 +1,5 @@
 # plugin.video.sickrage
-SickRage Interface Add-on for Kodi/XBMC
+#### SickRage Interface Add-on for Kodi/XBMC
 
 This is an add-on/plugin for the Kodi/XBMC Home Theatre software.  
 It allows the user to view and control SickRage from within Kodi/XBMC, add new shows and view TV show/episode details.
