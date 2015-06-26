@@ -1,10 +1,18 @@
 This is an updated version of the Sickbeard plugin created by Zach Moore, as it was not compatible with SickRage.
 
+2015-06-24 v.1.0.6
+- Added plugin URL option to add show by show_name and tvdb_id.  Expanding on the concept included in v.1.0.4.
+  Examples:
+    RunPlugin(plugin://plugin.video.sickrage?action=addshow&tvdb_id=TVDB_ID)
+    RunPlugin(plugin://plugin.video.sickrage?action=addshow&show_name=SHOW_NAME)
+
 2015-06-24 v.1.0.5
 - Added "Working..." busy dialog to "Add New Show" lookup.
 
 2015-06-24 v.1.0.4
 - Option to skip keyboard if title is forced.
+  Example:
+    RunPlugin(plugin://plugin.video.sickrage?title=$INFO[Container(311).ListItem.Label])
 
 2015-06-23 v.1.0.3
 - Updated icons.
