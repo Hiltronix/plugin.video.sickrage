@@ -6,7 +6,7 @@ It allows the user to view and control SickRage from within Kodi/XBMC, add new s
 
 -----
 
-# Repo  
+## Repo  
 The repository for this add-on can be found here:  
 
 https://github.com/Hiltronix/repo/
@@ -17,26 +17,26 @@ https://hiltronix.com/xbmc/
 
 -----
 
-# Related Links
+## Related Links
 
-SickRage Website:  
+### SickRage Website:  
 https://www.sickrage.tv
 
-SickRage Project on GitHub:  
+### SickRage Project on GitHub:  
 https://github.com/SiCKRAGETV/SickRage
 
 -----
 
-# Known Issues  
+## Known Issues  
 
-TV Show Cast Members...  
+### TV Show Cast Members...  
 - TV show information shows cast member names from theTVdb.com but no cast member images.  
 - TV episode information shows neither cast member names or images.
 - This is a current limitation of the metahandler library I'm using from TV show/episode lookups.  The author Eldorado may add these features in an upcoming release.
 
 -----
 
-# Note
+## Note
 
 This add-on/plugin for Kodi/XBMC is an updated version of the Sickbeard plugin created by Zach Moore.  It expands on his original work starting at his version 1.0.10.  
 http://forum.kodi.tv/showthread.php?tid=124808  
