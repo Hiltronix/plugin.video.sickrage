@@ -19,17 +19,17 @@ https://hiltronix.com/xbmc/
 
 ## Related Links
 
-### SickRage Website:  
+#### SickRage Website:  
 https://www.sickrage.tv
 
-### SickRage Project on GitHub:  
+#### SickRage Project on GitHub:  
 https://github.com/SiCKRAGETV/SickRage
 
 -----
 
 ## Known Issues  
 
-### TV Show Cast Members...  
+#### TV Show Cast Members...  
 - TV show information shows cast member names from theTVdb.com but no cast member images.  
 - TV episode information shows neither cast member names or images.
 - This is a current limitation of the metahandler library I'm using from TV show/episode lookups.  The author Eldorado may add these features in an upcoming release.
