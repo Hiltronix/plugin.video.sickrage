@@ -25,7 +25,8 @@ def GetSeasons(tvdbid):
 def menu(tvdbid, show_name):
       season_list = GetSeasons(tvdbid)
       season_total = len(season_list)
-      context_items = [('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)')]
+      context_items = [('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
+                       ('Go Back', 'XBMC.Action(back)')]
       for season_number, season_text in season_list:
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         addSeasonDirectory(show_name, season_number, season_text, tvdbid, 5, thumbnail_path, season_total, context_items)

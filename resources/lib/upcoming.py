@@ -81,7 +81,8 @@ def menu():
                               ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
                               ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
                               (paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'),\
-                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)')]
+                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
+                              ('Go Back', 'XBMC.Action(back)')]
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         addShowDirectory(show_name, ep_name, tvdbid, season, episode, 4, thumbnail_path, upcoming_total, context_menu_items)
 

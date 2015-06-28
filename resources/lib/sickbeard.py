@@ -118,7 +118,7 @@ class SB:
   
   # Set the status of an episode
   def SetShowStatus(self, tvdbid, season, ep, status):
-    result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status))
+    result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status+'&force=True'))
     return result
   
   # Add a new show to SickRage

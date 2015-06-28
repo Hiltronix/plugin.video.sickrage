@@ -35,7 +35,8 @@ def menu(tvdbid, show_name, season_number):
                               ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
                               ('Set Season Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+season_status_args+')'),\
                               ('Download Episode', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/manualsearch.py'+episode_status_args+')'),\
-                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)')]
+                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
+                              ('Go Back', 'XBMC.Action(back)')]
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         addEpisodeDirectory(show_name, season_number, ep_number, ep_name, ep_status, ep_airdate, ep_tvdbid, ep_season, thumbnail_path, episode_total, context_menu_items)
 

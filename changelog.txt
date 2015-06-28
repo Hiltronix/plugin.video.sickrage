@@ -1,3 +1,7 @@
+2015-06-24 v.1.0.8
+- Added "Force=True" to episode status changes to force status update on episodes already downloaded.  You can now change a "Downloaded" episode to "Wanted".
+- Added "Go Back" feature to the context menus.
+
 2015-06-24 v.1.0.7
 - Added show backlog listing, with episode info and status change.
 - Increased history list to 30 entries.
