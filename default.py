@@ -15,8 +15,9 @@ Sickbeard = sickbeard.SB()
 def mainMenu():
         addDirectory('Upcoming Episodes', 2, True, 'special://home/addons/plugin.video.sickrage/upcoming.png')
         addDirectory('History', 3, True, 'special://home/addons/plugin.video.sickrage/history.png')
-        addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
+        addDirectory('Backlog', 9, True, 'special://home/addons/plugin.video.sickrage/backlog.png')
         addDirectory('Manage Shows', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
+        addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
 
 
 # Add directory item.
@@ -156,4 +157,8 @@ elif menu_number == 8:
             show_name = show_info['show_name']
             addshow.AddShow(show_name)
 
+elif menu_number == 9:
+    import resources.lib.backlog as backlog
+    backlog.menu()
+        
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        

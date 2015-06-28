@@ -1,4 +1,7 @@
-This is an updated version of the Sickbeard plugin created by Zach Moore, as it was not compatible with SickRage.
+2015-06-24 v.1.0.7
+- Added show backlog listing, with episode info and status change.
+- Increased history list to 30 entries.
+- Re-ordered main menu.
 
 2015-06-24 v.1.0.6
 - Added plugin URL option to add show by show_name and tvdb_id.  Expanding on the concept included in v.1.0.4.
@@ -45,3 +48,7 @@ This is an updated version of the Sickbeard plugin created by Zach Moore, as it 
 - Added "Aired Date" to episode list.
 - Changed "Manual Episode Search" to "Download Episode".
 - Bug fixes.
+
+NOTE: 
+- This is an extension and continued effort of original work done by Zach Moore.
+- It has been updated to be compatible with the current version of SickRage, and most changes and additions are listed above.

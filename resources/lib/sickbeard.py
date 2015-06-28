@@ -1,4 +1,4 @@
-import urllib, urllib2
+import urllib
 import socket
 import json
 import settings
@@ -8,6 +8,7 @@ socket.setdefaulttimeout(timeout)
 
 # SickRage class which mas all API calls to SickRage
 class SB:
+
   # Get the show ID numbers
   def GetShowIds(self):
       show_ids=[]
@@ -79,9 +80,9 @@ class SB:
       future_list = result['data']
       return future_list
 
-  # Return a list of the last 20 snatched/downloaded episodes    
+  # Return a list of the last 30 snatched/downloaded episodes    
   def GetHistory(self):
-      result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit=20'))
+      result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit=30'))
       history = result['data']
       return history
   
@@ -144,4 +145,18 @@ class SB:
   def DeleteShow(self, tvdbid, removefiles):
       result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.delete&tvdbid='+str(tvdbid)+'&removefiles='+str(removefiles)))
       message = result['message']
-      return message   
+      return message
+      
+  # Get the backlog list.
+  def GetBacklog(self):
+        results = [] 
+        result = json.load(urllib.urlopen(settings.__url__+"?cmd=backlog"))
+        for show in result['data']:
+            show_name = show['show_name']
+            status = show['status']
+            for episode in show['episodes']:
+                episode['show_name'] = show_name
+                episode['status'] = status
+                results.append(episode)
+        return results
+
