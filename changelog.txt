@@ -1,8 +1,16 @@
-2015-06-24 v.1.0.8
+2015-06-29 v.1.0.9
+- Reinstated the hackish API key scraping from the webserver page, using updated scraping code.
+  Manually typing and pasting the API key is still preferred as less fallable, as it's not dependant on changes made to webserver pages.
+  But typing 32 random characters or copy/pasting may be difficult on set top boxes.
+- Added helpful notes to Settings > Login screen.
+- Fixed "Add New Show" bug introduced by "Option to skip keyboard".
+- Added error messages for possible JSON retrieval errors.
+
+2015-06-28 v.1.0.8
 - Added "Force=True" to episode status changes to force status update on episodes already downloaded.  You can now change a "Downloaded" episode to "Wanted".
 - Added "Go Back" feature to the context menus.
 
-2015-06-24 v.1.0.7
+2015-06-28 v.1.0.7
 - Added show backlog listing, with episode info and status change.
 - Increased history list to 30 entries.
 - Re-ordered main menu.

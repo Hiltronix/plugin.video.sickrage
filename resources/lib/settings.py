@@ -1,9 +1,11 @@
 import xbmcaddon
+import xbmcgui
 import os
+import sys
 import urllib
 import urllib2
-import sys
-import xbmcgui
+import cookielib
+
 
 def createURL(ip, port, use_ssl, custom_url):
     if custom_url != "":
@@ -16,30 +18,34 @@ def createURL(ip, port, use_ssl, custom_url):
         else:
             return "http://"+str(ip)+":"+str(port)
 
-# Hackish... not sure if there is a better way to get the API key
-# Parses the HTML of the General page and pulls the API key
+
+# Hackish attempt to scrape the API key from the webserver.
+# Parses the HTML of the General Config > Interface page and pulls the API key if found.
 def GetAPIKey(ip, port, use_ssl, username, password, custom_url):
     # Get API key from Sickbeark
     base_url = createURL(ip, port, use_ssl, custom_url)
     if username and password:
         try:
-            password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm()
-            url = base_url + '/config/general/'
-            password_manager.add_password(None, url, username, password)
-            authhandler = urllib2.HTTPBasicAuthHandler(password_manager)
-            opener = urllib2.build_opener(authhandler)
+            auth_url = base_url + "/login/"
+            url = base_url + '/config/general/#core-component-group2'
+            login_data = urllib.urlencode({'username' : username, 'password' : password})
+            cj = cookielib.CookieJar()
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
             urllib2.install_opener(opener)
-            req = urllib2.Request(url)
-            result = urllib2.urlopen(req)
-            result = result.readlines()
+            opener.open(auth_url, login_data)
+            resp = opener.open(url)
+            result = resp.readlines()
+            resp.close()
         except urllib2.HTTPError:
             displayError("2")
         except urllib2.URLError:
             displayError("3")
-    else:    
+        except Exception, e:
+            displayError("5", e)
+    else:
         try:
-            html=urllib.urlopen(base_url+'/config/general/')
-            result=html.readlines()
+            html = urllib.urlopen(base_url + '/config/general/#core-component-group2')
+            result = html.readlines()
             html.close()
         except:
             displayError("3")
@@ -51,11 +57,15 @@ def GetAPIKey(ip, port, use_ssl, username, password, custom_url):
             displayError("4")
       if "id=\"api_key\"" in str(line):
         api_line = line
-    api_index = api_line.index("value=\"")+7
-    APIKey = api_line[api_index:api_index+32]
+    try:
+        api_index = api_line.index("value=\"")+7
+        APIKey = api_line[api_index:api_index+32]
+    except:
+        APIKey = ""
     if APIKey == "":
         displayError("4")
     return APIKey
+
 
 # Set constants
 __addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
@@ -71,10 +81,12 @@ if __url_bool__ == "true":
 else:
     __custom_url__= ""
 
+
 # Show error pop up then exit plugin
 def messageWindow(header, message):
     dialog = xbmcgui.Dialog()
     dialog.ok(header, message)
+
 
 # Show error pop up then exit plugin
 def errorWindow(header, message):
@@ -82,19 +94,27 @@ def errorWindow(header, message):
     dialog.ok(header, message)
     sys.exit()
 
-# Display the correct error message based on error code
-def displayError(error_code):
-    if error_code == "1":
-        errorWindow("SickRage Error", "Must configure IP and port settings before use")
-    elif error_code == "2":
-        errorWindow("SickRage Error", "Invalid username or password.")
-    elif error_code == "3":
-        errorWindow("SickRage Error", "Unable to connect to SickRage.\nCheck SickRage IP and port.")
-    elif error_code == "4":
-        errorWindow("SickRage Error", "Unable to retrieve API key.\nCheck API is enabled under general settings.")
 
-__APIKey__ = __api_key__
+# Display the correct error message based on error code
+def displayError(error_code, err=""):
+    if error_code == "1":
+        errorWindow("Error", "Must configure IP and port settings before use.")
+    elif error_code == "2":
+        errorWindow("Error", "Invalid username or password.")
+    elif error_code == "3":
+        errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
+    elif error_code == "4":
+        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password.")
+    elif error_code == "5":
+        errorWindow("Exception Error", str(err))
+
+
+# If settings API field is blank, then try to scrape webserver settings page and retrieve it.
+if (__api_key__ == ""):
+    __api_key__ = GetAPIKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+    
+# Create the URL used to access webserver.
 if __ssl_bool__ == "true":
-    __url__='https://'+__ip__+':'+__port__+'/api/'+__APIKey__+'/'
+    __url__='https://'+__ip__+':'+__port__+'/api/'+__api_key__+'/'
 else:
-    __url__='http://'+__ip__+':'+__port__+'/api/'+__APIKey__+'/'
+    __url__='http://'+__ip__+':'+__port__+'/api/'+__api_key__+'/'

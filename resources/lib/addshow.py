@@ -176,6 +176,6 @@ def SetQualityMessage(quality):
 
 if (sys.argv[1] == 'new'):
     # Execute the add show process
-    AddShow()
+    AddShow("")
     # Refresh the directory listing after adding a show
     xbmc.executebuiltin("Container.Refresh")
