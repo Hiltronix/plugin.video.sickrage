@@ -1,3 +1,9 @@
+2015-06-30 v.1.0.10
+- Added "Set Episode Status" to History context menu.
+- Added air date to Backlog listing.
+- Updated icon images (Kodi/XBMC only refreshes the icon cache every 24 hours or so, for you to see new images when updating versions.)
+- Fix for API Key not being retrieved using username/password on some devices.
+
 2015-06-29 v.1.0.9
 - Reinstated the hackish API key scraping from the webserver page, using updated scraping code.
   Manually typing and pasting the API key is still preferred as less fallable, as it's not dependant on changes made to webserver pages.

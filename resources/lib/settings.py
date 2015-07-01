@@ -27,7 +27,7 @@ def GetAPIKey(ip, port, use_ssl, username, password, custom_url):
     if username and password:
         try:
             auth_url = base_url + "/login/"
-            url = base_url + '/config/general/#core-component-group2'
+            url = base_url + '/config/general/'
             login_data = urllib.urlencode({'username' : username, 'password' : password})
             cj = cookielib.CookieJar()
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
@@ -44,7 +44,7 @@ def GetAPIKey(ip, port, use_ssl, username, password, custom_url):
             displayError("5", e)
     else:
         try:
-            html = urllib.urlopen(base_url + '/config/general/#core-component-group2')
+            html = urllib.urlopen(base_url + '/config/general/')
             result = html.readlines()
             html.close()
         except:
@@ -104,7 +104,7 @@ def displayError(error_code, err=""):
     elif error_code == "3":
         errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
     elif error_code == "4":
-        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password.")
+        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password,\nand make sure API key has been generated on webserver.")
     elif error_code == "5":
         errorWindow("Exception Error", str(err))
 

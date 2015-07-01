@@ -37,7 +37,9 @@ def menu():
     history_list = GetHistoryItems()
     history_total = len(history_list)
     for show_name, history_name, tvdbid, season, episode in history_list:
+        episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
         context_items = [('Show Info', 'XBMC.Action(Info)'),\
+                         ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
                          ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
                          ('Go Back', 'XBMC.Action(back)')]
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)

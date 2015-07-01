@@ -1,6 +1,7 @@
 import xbmcplugin
 import xbmcgui
 import sys
+import datetime
 import sickbeard
 import urllib
 from metahandler import metahandlers
@@ -27,7 +28,7 @@ def GetBacklogItems():
         status = '[COLOR red]' + episode['status'] + '[/COLOR]'
     else:
         status = '[COLOR cyan]' + episode['status'] + '[/COLOR]'
-    backlog_list.append([episode['show_name'], '[COLOR gold]'+episode['show_name']+'[/COLOR] '+str(episode['season'])+'x'+str(episode['episode'])+' '+episode['name']+'    '+status, str(tvdbid), episode['season'], episode['episode']])
+    backlog_list.append([episode['show_name'], '[COLOR gold]'+episode['show_name']+'[/COLOR] '+str(episode['season'])+'x'+str(episode['episode'])+' '+episode['name']+'  '+str(datetime.date.fromordinal(episode['airdate']))+'    '+status, str(tvdbid), episode['season'], episode['episode']])
 
   return backlog_list
 
