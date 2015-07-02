@@ -2,6 +2,7 @@ import xbmcaddon
 import xbmcgui
 import os
 import sys
+import json
 import urllib
 import urllib2
 import cookielib
@@ -19,9 +20,26 @@ def createURL(ip, port, use_ssl, custom_url):
             return "http://"+str(ip)+":"+str(port)
 
 
+def GetApiKey(ip, port, use_ssl, username, password, custom_url):
+    # Get API key from webserver using official API request.
+    base_url = createURL(ip, port, use_ssl, custom_url)
+    api_key = ''
+    try:
+        url = base_url + '/getkey/?u=' + username + '&p=' + password
+        result = json.load(urllib.urlopen(url))
+        api_key = result['api_key']
+        if api_key is None:
+            api_key = ''
+    except ValueError, e:
+        errorWindow(sys._getframe().f_code.co_name, str(e))
+    if api_key == '':
+        displayError('4')
+    return api_key
+    
+
 # Hackish attempt to scrape the API key from the webserver.
 # Parses the HTML of the General Config > Interface page and pulls the API key if found.
-def GetAPIKey(ip, port, use_ssl, username, password, custom_url):
+def GetApiKeyScraper(ip, port, use_ssl, username, password, custom_url):
     # Get API key from Sickbeark
     base_url = createURL(ip, port, use_ssl, custom_url)
     if username and password:
@@ -104,14 +122,14 @@ def displayError(error_code, err=""):
     elif error_code == "3":
         errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
     elif error_code == "4":
-        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password,\nand make sure API key has been generated on webserver.")
+        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that API key was generated on webserver, and webserver is running.")
     elif error_code == "5":
         errorWindow("Exception Error", str(err))
 
 
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.
 if (__api_key__ == ""):
-    __api_key__ = GetAPIKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+    __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
     
 # Create the URL used to access webserver.
 if __ssl_bool__ == "true":

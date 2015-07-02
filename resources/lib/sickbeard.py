@@ -21,7 +21,7 @@ class SB:
             for each in result['data']:
                 show_ids.append(each)
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return show_ids
     
 
@@ -36,7 +36,7 @@ class SB:
                 status = result['data']['status']
                 show_info[name] = [id, paused, status]
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return show_info
 
     
@@ -51,7 +51,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.stats&tvdbid='+show_id))
             total=result['data']['total']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))                   
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))                   
         return details, total
     
 
@@ -63,7 +63,7 @@ class SB:
             season_number_list = result['data']
             season_number_list.sort()
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return season_number_list
     
 
@@ -82,7 +82,7 @@ class SB:
                         season_episodes[newkey] = season_episodes[key]
                         del season_episodes[key]
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))        
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))        
         return season_episodes
     
 
@@ -109,7 +109,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=future&sort=date&type=today|soon'))
             future_list = result['data']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return future_list
     
 
@@ -120,7 +120,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit=30'))
             history = result['data']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return history
     
 
@@ -134,7 +134,7 @@ class SB:
                 if (each.get('tvdbid') != None):
                     search_results.append(each)
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return search_results
     
 
@@ -147,7 +147,7 @@ class SB:
             defaults_data = defaults_result['data']
             defaults = [defaults_data['status'], defaults_data['flatten_folders'], str(defaults_data['initial'])]
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return defaults
     
 
@@ -158,7 +158,7 @@ class SB:
             directory_result = json.load(urllib.urlopen(settings.__url__+'?cmd=sb.getrootdirs'))
             directory_result = directory_result['data']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return directory_result
     
 
@@ -169,7 +169,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=sb'))
             version = result['data']['sb_version']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return version
     
 
@@ -179,7 +179,7 @@ class SB:
         try:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status+'&force=True'))
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return result
     
 
@@ -189,7 +189,7 @@ class SB:
         try:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location'+location+'&status='+status+'&season_folder='+str(use_folders)+'&initial='+quality))
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return result['result']
     
 
@@ -198,9 +198,9 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.update&tvdbid='+show_id))
             message = result['message']
             success = result['result']
-            settings.messageWindow("Force Update", message + " ["+success+"]")
+            settings.errorWindow("Force Update", message + " ["+success+"]")
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
 
     
     def SetPausedState(self, paused, show_id):
@@ -209,7 +209,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&pause='+paused))
             message = result['message']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return message
     
 
@@ -219,7 +219,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)))
             message = result['message']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return message
     
 
@@ -229,7 +229,7 @@ class SB:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.delete&tvdbid='+str(tvdbid)+'&removefiles='+str(removefiles)))
             message = result['message']
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return message
       
 
@@ -246,6 +246,6 @@ class SB:
                     episode['status'] = status
                     results.append(episode)
         except ValueError, e:
-            settings.messageWindow(sys._getframe().f_code.co_name, str(e))
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return results
 

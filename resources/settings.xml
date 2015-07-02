@@ -9,15 +9,13 @@
 		<setting id="SickRage URL" type="text" label="SickRage URL" default="http://" enable="eq(-1,true)"/>
 	</category>
 	<category label="Login">
-		<setting label="Username / Password can be used to attempt auto retrieval of API key:" type="lsep"/>
+		<setting label="Username / Password can be used to auto retrieve API key:" type="lsep"/>
 		<setting id="SickRage Username" type="text" label="SickRage Username" default="" />
 		<setting id="SickRage Password" type="text" label="SickRage Password" default="" />
 		<setting label="OR manually type or Copy/Paste API key:" type="lsep"/>
 		<setting id="SickRage API Key" type="text" label="SickRage API Key" default="" />
-		<setting label="Both are not required." type="lsep"/>
+		<setting label="One or the other is required, unless no username/password is set on webserver." type="lsep"/>
 		<setting type="sep" />
-		<setting label="Note: SickRage API key must be set on webserver." type="lsep"/>
-		<setting label="One or the other is required to access SickRage data." type="lsep"/>
-		<setting label="Entering API key is less fallable, but may be more difficult to enter." type="lsep"/>
+		<setting label="Note: SickRage API key must be generated on webserver." type="lsep"/>
 	</category>
 </settings>
