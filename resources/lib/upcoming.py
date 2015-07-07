@@ -1,9 +1,11 @@
-import xbmcplugin
 import xbmcgui
+import xbmcplugin
+import xbmcaddon
 import sys
 import sickbeard
 import urllib
 from metahandler import metahandlers
+import seasons
 
 
 # Initialize Sickbeard Class
@@ -77,6 +79,7 @@ def menu():
       upcoming_total = len(upcoming_episodes_list)
       for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:
         context_menu_items = [('Show Info', 'XBMC.Action(Info)'),\
+                              ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?url='+urllib.quote_plus(str(tvdbid))+'&mode=4&name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
                               ('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'),\
                               ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
                               ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
@@ -84,16 +87,16 @@ def menu():
                               ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
                               ('Go Back', 'XBMC.Action(back)')]
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
-        addShowDirectory(show_name, ep_name, tvdbid, season, episode, 4, thumbnail_path, upcoming_total, context_menu_items)
+        addShowDirectory(show_name, ep_name, tvdbid, season, episode, 6, thumbnail_path, upcoming_total, context_menu_items)
 
 
 def addShowDirectory(show_name, ep_name, tvdbid, season, episode, menu_number, thumbnail_path, show_total, context_menu_items):
-    url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode=6&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(ep_name, thumbnailImage=thumbnail_path)
     meta = {}
     metaget = metahandlers.MetaData()
     try:
-        meta = metaget.get_episode_meta(show_name, tvdbid, season, episode, '', '', '')
+        meta = metaget.get_episode_meta(show_name, tvdbid, int(season), int(episode), '', '', '')
     except:
         pass
     list_item.setInfo(type="Video", infoLabels=meta)

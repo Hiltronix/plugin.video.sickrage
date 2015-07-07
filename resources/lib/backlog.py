@@ -40,6 +40,7 @@ def menu():
     for show_name, backlog_name, tvdbid, season, episode in backlog_list:
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
         context_items = [('Show Info', 'XBMC.Action(Info)'),\
+                         ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?url='+urllib.quote_plus(str(tvdbid))+'&mode=4&name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
                          ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
                          ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
                          ('Go Back', 'XBMC.Action(back)')]
@@ -54,7 +55,7 @@ def addBacklogDirectory(show_name, backlog_name, tvdbid, season, episode, thumbn
     meta = {}
     metaget = metahandlers.MetaData()
     try:
-        meta = metaget.get_episode_meta(show_name, tvdbid, season, episode, '', '', '')
+        meta = metaget.get_episode_meta(show_name, tvdbid, int(season), int(episode), '', '', '')
     except:
         pass
     list_item.setInfo(type="Video", infoLabels=meta)

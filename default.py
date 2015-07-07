@@ -16,7 +16,7 @@ def mainMenu():
         addDirectory('Upcoming Episodes', 2, True, 'special://home/addons/plugin.video.sickrage/upcoming.png')
         addDirectory('History', 3, True, 'special://home/addons/plugin.video.sickrage/history.png')
         addDirectory('Backlog', 9, True, 'special://home/addons/plugin.video.sickrage/backlog.png')
-        addDirectory('Manage Shows', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
+        addDirectory('Show List', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
         addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
 
 

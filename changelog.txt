@@ -1,4 +1,10 @@
-2015-07-02 v.1.1.11
+2015-07-07 v.1.0.12
+- Changed menu item "Manage Shows" to "Show List".
+- Added episode list to context menus; Upcoming, History, Backlog.
+- Added season number to episode listing.
+- Fixed episode details when selected from episode listing, when episode is a single digit number.
+
+2015-07-02 v.1.0.11
 - Improved API Key retrieval.  No longer scraping webpage.
 
 2015-06-30 v.1.0.10

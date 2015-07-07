@@ -7,11 +7,11 @@ import xbmc
 from metahandler import metahandlers
 
 
-# Initialize Sickbeard Class
+# Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
 
 
-# Get the tvdbid and show names 
+# Get the tvdbid and show names.
 def GetShowInfo():
     show_ids = Sickbeard.GetShowIds()
     show_info = Sickbeard.GetShowInfo(show_ids)
@@ -34,7 +34,7 @@ def GetShowInfo():
     return show_names
 
 
-# Parse through shows and add dirs for each
+# Parse through shows and add dirs for each.
 def menu():
       show_info = GetShowInfo()
       show_total = len(show_info)
@@ -49,7 +49,7 @@ def menu():
         addShowDirectory(show_name, name, tvdbid, 4, thumbnail_path, show_total, context_menu_items)
 
 
-# Add directory item
+# Add directory item.
 def addShowDirectory(show_name, name, tvdbid, menu_number, thumbnail_path, show_total, context_menu_items):
     return_url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
