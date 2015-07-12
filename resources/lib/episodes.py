@@ -43,7 +43,7 @@ def menu(tvdbid, show_name, season_number):
 
 # Add episode directory items.
 def addEpisodeDirectory(show_name, season_number, ep_number, ep_name, ep_status, ep_airdate, ep_tvdbid, ep_season, thumbnail_path, episode_total, context_menu_items):
-    url = sys.argv[0]+"?url="+urllib.quote_plus(str(ep_tvdbid))+"&mode=6&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(ep_tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     if (ep_airdate != ''):
         ep_airdate = '(Aired ' + ep_airdate + ')   '
     list_item = xbmcgui.ListItem("[COLOR gold]"+str(ep_season)+"x"+str(ep_number)+". "+ep_name+"[/COLOR]   "+ep_airdate+ep_status, thumbnailImage=thumbnail_path)

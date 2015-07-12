@@ -14,8 +14,12 @@
 		<setting id="SickRage Password" type="text" label="SickRage Password" default="" />
 		<setting label="OR manually type or Copy/Paste API key:" type="lsep"/>
 		<setting id="SickRage API Key" type="text" label="SickRage API Key" default="" />
-		<setting label="One or the other is required, unless no username/password is set on webserver." type="lsep"/>
+		<setting label="If username/password is set on webserver, one or the other above is required." type="lsep"/>
 		<setting type="sep" />
-		<setting label="Note: SickRage API key must be generated on webserver." type="lsep"/>
+		<setting label="Note: SickRage API key MUST be generated on webserver." type="lsep"/>
+	</category>
+	<category label="App Settings">
+		<setting id="ExtUpcoming" type="bool" label="Show Extended Upcoming Episodes (>1 week)" default="false" />
+		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
 	</category>
 </settings>

@@ -106,18 +106,18 @@ class SB:
     def GetFutureShows(self):
         future_list = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=future&sort=date&type=today|soon'))
+            result=json.load(urllib.urlopen(settings.__url__+'?cmd=future&sort=date&type=today|soon|later'))
             future_list = result['data']
         except ValueError, e:
             settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return future_list
     
 
-    # Return a list of the last 30 snatched/downloaded episodes    
-    def GetHistory(self):
+    # Return a list of the last 'num_entries' snatched/downloaded episodes.
+    def GetHistory(self, num_entries):
         history = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit=30'))
+            result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit='+str(num_entries)))
             history = result['data']
         except ValueError, e:
             settings.errorWindow(sys._getframe().f_code.co_name, str(e))

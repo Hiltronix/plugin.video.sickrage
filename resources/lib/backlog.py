@@ -40,7 +40,8 @@ def menu():
     for show_name, backlog_name, tvdbid, season, episode in backlog_list:
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
         context_items = [('Show Info', 'XBMC.Action(Info)'),\
-                         ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?url='+urllib.quote_plus(str(tvdbid))+'&mode=4&name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
+                         ('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
+                         ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
                          ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
                          ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
                          ('Go Back', 'XBMC.Action(back)')]
@@ -50,7 +51,7 @@ def menu():
 
 # Add backlog items to directory.
 def addBacklogDirectory(show_name, backlog_name, tvdbid, season, episode, thumbnail_path, backlog_total, context_items):
-    url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode=6&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(backlog_name, thumbnailImage=thumbnail_path)
     meta = {}
     metaget = metahandlers.MetaData()

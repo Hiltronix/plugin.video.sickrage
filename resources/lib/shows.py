@@ -40,6 +40,7 @@ def menu():
       show_total = len(show_info)
       for show_name, name, tvdbid, thumbnail_path, paused in show_info:
         context_menu_items = [('Show Info', 'XBMC.Action(Info)'),\
+                              ('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
                               ('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'),\
                               ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
                               ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
@@ -51,7 +52,7 @@ def menu():
 
 # Add directory item.
 def addShowDirectory(show_name, name, tvdbid, menu_number, thumbnail_path, show_total, context_menu_items):
-    return_url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
     meta = {}
     metaget = metahandlers.MetaData()

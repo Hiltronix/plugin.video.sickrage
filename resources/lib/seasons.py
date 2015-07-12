@@ -34,7 +34,7 @@ def menu(tvdbid, show_name):
       
 # Add season directory items.
 def addSeasonDirectory(show_name, season_number, season_text, tvdbid, menu_number, thumbnail_path, season_total, context_items):
-    return_url = sys.argv[0]+"?url="+urllib.quote_plus(tvdbid)+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(show_name.encode( "utf-8" ))+"&number="+urllib.quote_plus(str(season_number))
+    return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(tvdbid)+"&mode="+str(menu_number)+"&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))+"&number="+urllib.quote_plus(str(season_number))
     list_item = xbmcgui.ListItem(season_text, thumbnailImage=thumbnail_path)
     list_item.addContextMenuItems(context_items, replaceItems = True)
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=True, totalItems=season_total)

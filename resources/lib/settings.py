@@ -85,7 +85,7 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, custom_url):
     return APIKey
 
 
-# Set constants
+# Set constants.
 __addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
 __ip__ = __addon__.getSetting('SickRage IP')
 __port__= __addon__.getSetting('SickRage Port')
@@ -98,22 +98,27 @@ if __url_bool__ == "true":
     __custom_url__= __addon__.getSetting('SickRage URL')
 else:
     __custom_url__= ""
+__history_max__=__addon__.getSetting('HistoryMax')
+if (int(__history_max__) > 99):
+    __addon__.setSetting('HistoryMax', '99')
+    __history_max__ = 99
+__ext_upcoming__= __addon__.getSetting('ExtUpcoming')
 
 
-# Show error pop up then exit plugin
+# Show error pop up then exit plugin.
 def messageWindow(header, message):
     dialog = xbmcgui.Dialog()
     dialog.ok(header, message)
 
 
-# Show error pop up then exit plugin
+# Show error pop up then exit plugin.
 def errorWindow(header, message):
     dialog = xbmcgui.Dialog()
     dialog.ok(header, message)
     sys.exit()
 
 
-# Display the correct error message based on error code
+# Display the correct error message based on error code.
 def displayError(error_code, err=""):
     if error_code == "1":
         errorWindow("Error", "Must configure IP and port settings before use.")

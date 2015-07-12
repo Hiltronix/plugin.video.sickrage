@@ -1,5 +1,6 @@
 import urllib
 import sys
+import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -52,7 +53,6 @@ def getParameters():
 url = None
 name = None
 menu_number = None
-showtitle = None
 action = None
 show_name = None
 tvdb_id = None
@@ -84,9 +84,9 @@ except:
     pass
     
 try:
-    showtitle = urllib.unquote_plus(params["title"])
+    show_name = urllib.unquote_plus(params["title"])
     menu_number = 7
-    print showtitle
+    print show_name
 except:
     pass
 
@@ -127,19 +127,18 @@ elif menu_number == 3:
 
 elif menu_number == 4:
     import resources.lib.seasons as seasons
-    seasons.menu(url, name)
+    seasons.menu(tvdb_id, show_name)
 
 elif menu_number == 5:
     import resources.lib.episodes as episodes
-    episodes.menu(url, name, number)
+    episodes.menu(tvdb_id, show_name, number)
 
 elif menu_number == 6:
-    import resources.lib.showinfo as showinfo
-    showinfo.displayShowInfo(name, url)
+    xbmc.executebuiltin('XBMC.Action(Info)')
 
 elif menu_number == 7:
     import resources.lib.addshow as addshow
-    addshow.AddShow(showtitle)
+    addshow.AddShow(show_name)
 
 elif menu_number == 8:
     import resources.lib.addshow as addshow
@@ -161,4 +160,12 @@ elif menu_number == 9:
     import resources.lib.backlog as backlog
     backlog.menu()
         
+# ExtendedInfo Script optional TV Show lookup feature.
+elif menu_number == 10:
+    if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
+        xbmc.executebuiltin('XBMC.RunScript(script.extendedinfo,info=extendedtvinfo,tvdb_id=%s)' %(tvdb_id))
+    else:
+        import resources.lib.settings as settings
+        settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Get Add-ons > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
+                
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        
