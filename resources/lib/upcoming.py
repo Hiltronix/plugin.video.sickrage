@@ -1,11 +1,12 @@
+import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import sys
 import sickbeard
 import urllib
+import settings
 from metahandler import metahandlers
-import seasons
 
 
 # Initialize Sickbeard Class
@@ -33,12 +34,12 @@ def GetWeekDay(weekday):
     return day
 
 
-# Get upcoming episodes
+# Get upcoming episodes.
 def GetUpcomingEpisodes():
     coming_soon = Sickbeard.GetFutureShows()
     upcoming_episodes_list = []
     
-    # Get todays coming eps
+    # Get todays upcoming eps.
     if len(coming_soon["today"]) != 0:
       day = "[COLOR lightgreen]Today[/COLOR]"
       for show in coming_soon['today']:
@@ -50,7 +51,7 @@ def GetUpcomingEpisodes():
               ispaused = "    [COLOR cyan]Paused[/COLOR]"
           upcoming_episodes_list.append([str(show['tvdbid']), day+": [COLOR gold]"+show['show_name']+"[/COLOR] - "+str(show['season'])+"x"+str(show['episode'])+" "+show['ep_name']+ispaused, show['show_name'], paused, show['season'], show['episode']])
           
-    # Get coming soon eps      
+    # Get coming soon eps.
     if len(coming_soon["soon"]) != 0:    
       show_list={}
       for show in coming_soon['soon']:
@@ -71,6 +72,27 @@ def GetUpcomingEpisodes():
                   ispaused = "    [COLOR cyan]Paused[/COLOR]"
               upcoming_episodes_list.append([str(show['tvdbid']), day+": [COLOR gold]"+show['show_name']+"[/COLOR] - "+str(show['season'])+"x"+str(show['episode'])+" "+show['ep_name']+ispaused, show['show_name'], paused, show['season'], show['episode']])
 
+    # Get upcoming later eps.
+    if (settings.__ext_upcoming__ == "true"):
+        if len(coming_soon["later"]) != 0:    
+          show_list={}
+          for show in coming_soon['later']:
+              if show['airdate'] not in show_list:
+                  show_list[show['airdate']] = []
+                  show_list[show['airdate']].append(show)
+              else:
+                  show_list[show['airdate']].append(show)
+    
+          for k in sorted(show_list.iterkeys()):
+              for show in show_list[k]: 
+                  if show['paused'] == 0:
+                      paused = "Pause"
+                      ispaused = ""
+                  else:
+                      paused = "Resume"
+                      ispaused = "    [COLOR cyan]Paused[/COLOR]"
+                  upcoming_episodes_list.append([str(show['tvdbid']), show['airdate']+": [COLOR gold]"+show['show_name']+"[/COLOR] - "+str(show['season'])+"x"+str(show['episode'])+" "+show['ep_name']+ispaused, show['show_name'], paused, show['season'], show['episode']])
+
     return upcoming_episodes_list
 
 
@@ -78,8 +100,11 @@ def menu():
       upcoming_episodes_list = GetUpcomingEpisodes()
       upcoming_total = len(upcoming_episodes_list)
       for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:
+        episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
         context_menu_items = [('Show Info', 'XBMC.Action(Info)'),\
-                              ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?url='+urllib.quote_plus(str(tvdbid))+'&mode=4&name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
+                              ('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
+                              ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
+                              ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
                               ('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'),\
                               ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
                               ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
@@ -91,7 +116,7 @@ def menu():
 
 
 def addShowDirectory(show_name, ep_name, tvdbid, season, episode, menu_number, thumbnail_path, show_total, context_menu_items):
-    url = sys.argv[0]+"?url="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(ep_name, thumbnailImage=thumbnail_path)
     meta = {}
     metaget = metahandlers.MetaData()
