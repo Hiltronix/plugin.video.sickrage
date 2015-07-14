@@ -6,6 +6,7 @@ import xbmcplugin
 import xbmcaddon
 import resources.lib.settings
 import resources.lib.sickbeard as sickbeard
+import resources.lib.settings as settings
 
 
 # Initialize Sickbeard Class
@@ -19,6 +20,8 @@ def mainMenu():
         addDirectory('Backlog', 9, True, 'special://home/addons/plugin.video.sickrage/backlog.png')
         addDirectory('Show List', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
         addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
+        if (settings.__show_log__ == "true"):
+            addDirectory('View Log File', 11, False, 'special://home/addons/plugin.video.sickrage/icon.png')
 
 
 # Add directory item.
@@ -48,7 +51,8 @@ def getParameters():
           return param
         except:
           return param
- 
+          
+          
 # Initialize URL parameters.
 url = None
 name = None
@@ -165,7 +169,11 @@ elif menu_number == 10:
     if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
         xbmc.executebuiltin('XBMC.RunScript(script.extendedinfo,info=extendedtvinfo,tvdb_id=%s)' %(tvdb_id))
     else:
-        import resources.lib.settings as settings
         settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Get Add-ons > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
                 
+# View log file.
+elif menu_number == 11:
+    import resources.lib.log as log
+    log.main()
+
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        

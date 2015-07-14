@@ -29,5 +29,6 @@ def setStatus(status):
     Sickbeard.SetShowStatus(__tvdbid__, __season__, __episode__, status_list[status])
 
 status = statusSelection()
-setStatus(status)
-xbmc.executebuiltin("Container.Refresh")
+if (status != -1):
+    setStatus(status)
+    xbmc.executebuiltin("Container.Refresh")

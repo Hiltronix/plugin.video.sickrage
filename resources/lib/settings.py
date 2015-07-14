@@ -103,6 +103,7 @@ if (int(__history_max__) > 99):
     __addon__.setSetting('HistoryMax', '99')
     __history_max__ = 99
 __ext_upcoming__= __addon__.getSetting('ExtUpcoming')
+__show_log__= __addon__.getSetting('ShowLog')
 
 
 # Show error pop up then exit plugin.

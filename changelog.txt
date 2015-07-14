@@ -1,3 +1,7 @@
+2015-07-14 v.1.1.1
+- Added log file viewer to main menu.  Opt-out option in settings.
+- Made context menus more consistent throughout with similar selections in the same order.
+
 2015-07-11 v.1.1.0
 - Added optional extra show information (ExtendedInfo) feature to context menus, when "ExtendedInfo Script" add-on is installed and enabled.
 - Added setting for extended upcoming episodes, to show more than 1 week of upcoming shows.

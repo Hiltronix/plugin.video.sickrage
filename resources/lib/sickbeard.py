@@ -249,3 +249,14 @@ class SB:
             settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return results
 
+
+    # Get the log file.  min_level: ["error", "warning", "info", "debug"]
+    def GetLog(self, min_level):
+        log_list = []
+        try:
+            result = json.load(urllib.urlopen(settings.__url__ + '?cmd=logs&min_level=' + str(min_level)))
+            log_list = result['data']
+        except ValueError, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        return log_list
+      
