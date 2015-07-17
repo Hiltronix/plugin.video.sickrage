@@ -21,7 +21,7 @@ def mainMenu():
         addDirectory('Show List', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
         addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
         if (settings.__show_log__ == "true"):
-            addDirectory('View Log File', 11, False, 'special://home/addons/plugin.video.sickrage/icon.png')
+            addDirectory('View Log File', 11, False, 'special://home/addons/plugin.video.sickrage/log.png')
 
 
 # Add directory item.

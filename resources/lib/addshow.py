@@ -2,6 +2,7 @@ import sys
 import xbmc
 import xbmcgui
 import sickbeard
+import resources.lib.common as common
 
 
 # Initialize Sickbeard Class
@@ -35,6 +36,7 @@ def AddShow(show_name):
   finally:
     xbmc.executebuiltin("Dialog.Close(busydialog)")
   if search_results == []:
+    common.CreateNotification(header="Show Search", message="No results for that query.", icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=True)
     return
     
   # Select one of the possible shows from the list.

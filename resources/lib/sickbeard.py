@@ -129,6 +129,8 @@ class SB:
         search_results = []
         try:
             result=json.load(urllib.urlopen(settings.__url__+'?cmd=sb.searchtvdb&name='+name+'&lang=en'))
+            if result['result'] != 'success':
+                return search_results
             for each in result['data']['results']:
                 # Limit results to segments that contain an attribute 'tvdbid'.  SickRage webapi.py has a bug where it returns both tvdb and tvrage results together, even though they have separate search functions.
                 if (each.get('tvdbid') != None):
