@@ -53,14 +53,19 @@ def AddShow(show_name):
   # 2. sb.getdefaults for status of show eps.  Need to make each option selectable so you can change initial status, folders, quality.
   default_status, default_folders, default_quality = Sickbeard.GetDefaults()
   
-  # "Set initial status of episodes" prompt.
-  initial_status = SetInitialStatusMessage(default_status)
-  if (initial_status == -1):
+  # Set status for previously aired episodes.
+  prev_aired_status = SetStatus("Status for previously aired episodes", default_status)
+  if (prev_aired_status == -1):
+    return
+
+  # Set status for future episodes.
+  future_status = SetStatus("Status for all future episodes", "wanted")
+  if (future_status == -1):
     return
 
   # "Use season folders?" prompt.
-  use_season_folders = SetSeasonFolderMessage(default_folders)
-  if (use_season_folders == -1):
+  flatten_folders = SetFlattenFolders(default_folders)
+  if (flatten_folders == -1):
     return
 
   # "Set initial status of episodes" prompt.
@@ -69,7 +74,7 @@ def AddShow(show_name):
     return
   
   tvdbid = search_results[selected_show]['tvdbid']
-  ret = Sickbeard.AddNewShow(tvdbid, root_dir, initial_status, use_season_folders, quality)
+  ret = Sickbeard.AddNewShow(tvdbid, root_dir, prev_aired_status, future_status, flatten_folders, quality)
   if ret == "success":
     ShowMessage("Add Show", "Successfully added "+search_results[selected_show]['name'])
   else:
@@ -114,30 +119,30 @@ def SelectRootDirMessage():
     return directories[ret]
 
 
-# Set initial status of show eps window
-def SetInitialStatusMessage(status):
-  status_list = ["wanted", "skipped", "archived", "ignored"]
-  status_list_return = ["wanted", "skipped", "archived", "ignored"]
-  for each in status_list:
-    if each == status:
-      index = status_list.index(status)
-      status_list[index] = status+" (Default)"
-  dialog = xbmcgui.Dialog()
-  ret = dialog.select("Set the initial status of already aired episodes", status_list)
-  if (ret == -1):
-    return ret
-  else:
-    return status_list_return[ret]
+# Set Status for previously aired episodes.
+def SetStatus(title, status):
+    org_list = ["wanted", "skipped", "archived", "ignored"]
+    status_list = list(org_list)  # Make a copy of the list to alter for the menu.
+    for each in status_list:
+        if each == status:
+            index = status_list.index(status)
+            status_list[index] = status + " (Default)"
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select(title, status_list)
+    if (ret == -1):
+        return ret
+    else:
+        return org_list[ret]
 
 
 # Use season folders selection window
-def SetSeasonFolderMessage(flatten_folders):
+def SetFlattenFolders(flatten_folders):
   if flatten_folders == 1:
-    list = ["Yes", "No"]
+    list = ["Yes (no season folders)", "No (episodes folder-grouped by season)"]
   else:
-    list = ["No", "Yes"]
+    list = ["No (episodes folder-grouped by season)", "Yes (no season folders)"]
   dialog = xbmcgui.Dialog()
-  ret = dialog.select("Flatten Folders", list)
+  ret = dialog.select("Flatten files (no folders)", list)
   if (ret == -1):
     return ret
   elif (ret == 0):

@@ -27,6 +27,16 @@ https://github.com/SiCKRAGETV/SickRage
 
 -----
 
+## Plug-in API  
+
+#### Add New Show by ID for theTVDB.com:  
+
+    RunPlugin(plugin://plugin.video.sickrage?action=addshow&tvdb_id=TVDB_ID)
+
+#### Add New Show by TV show title:  
+
+    RunPlugin(plugin://plugin.video.sickrage?action=addshow&show_name=SHOW_NAME)
+
 ## Known Issues  
 
 #### TV Show Cast Members...  

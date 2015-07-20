@@ -9,19 +9,21 @@ import resources.lib.sickbeard as sickbeard
 import resources.lib.settings as settings
 
 
+my_addon = xbmcaddon.Addon('plugin.video.sickrage')
+
 # Initialize Sickbeard Class
 Sickbeard = sickbeard.SB()
 
 
 # Add the main directory folders.
 def mainMenu():
-        addDirectory('Upcoming Episodes', 2, True, 'special://home/addons/plugin.video.sickrage/upcoming.png')
-        addDirectory('History', 3, True, 'special://home/addons/plugin.video.sickrage/history.png')
-        addDirectory('Backlog', 9, True, 'special://home/addons/plugin.video.sickrage/backlog.png')
-        addDirectory('Show List', 1, True, 'special://home/addons/plugin.video.sickrage/manage.png')
-        addDirectory('Add New Show', 7, False, 'special://home/addons/plugin.video.sickrage/add.png')
+        addDirectory('Upcoming Episodes', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png')
+        addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png')
+        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png')
+        addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png')
+        addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png')
         if (settings.__show_log__ == "true"):
-            addDirectory('View Log File', 11, False, 'special://home/addons/plugin.video.sickrage/log.png')
+            addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png')
 
 
 # Add directory item.

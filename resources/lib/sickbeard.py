@@ -186,10 +186,12 @@ class SB:
     
 
     # Add a new show to SickRage.
-    def AddNewShow(self, tvdbid, location, status, use_folders, quality):
+    def AddNewShow(self, tvdbid, location, prev_aired_status, future_status, flatten_folders, quality):
         result = ""
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location'+location+'&status='+status+'&season_folder='+str(use_folders)+'&initial='+quality))
+            url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
+            print url
+            result=json.load(urllib.urlopen(url))
         except ValueError, e:
             settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return result['result']
