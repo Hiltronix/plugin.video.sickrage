@@ -40,3 +40,30 @@ def CreateNotification(header="", message="", icon=xbmcgui.NOTIFICATION_INFO, ti
     dialog.notification(heading=header, message=message, icon=icon, time=time, sound=sound)
 
 
+# Show message pop up.
+def messageWindow(header, message):
+    dialog = xbmcgui.Dialog()
+    dialog.ok(header, message)
+
+
+# Show error pop up then exit plugin.
+def errorWindow(header, message):
+    dialog = xbmcgui.Dialog()
+    dialog.ok(header, message)
+    sys.exit()
+    
+
+# Yes or No dialog style dialog.
+# Returns False for the first "No" value, and True for the second "Yes" value.
+# Returns -1 if cancelled.
+def selectNoYes(title, No, Yes):
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select(title, [No, Yes])
+    if (ret == -1):
+        return ret
+    if ret == 1:
+        return True
+    else:
+        return False
+
+

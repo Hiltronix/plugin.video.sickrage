@@ -15,5 +15,9 @@
 		<summary>SickRage Interface for Kodi/XBMC</summary>
 		<description>View and control SickRage from within Kodi/XBMC.</description>
 		<platform>all</platform>
+		<language>en</language>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+		<source>https://github.com/Hiltronix/plugin.video.sickrage</source>
+		<email>hiltronix@gmail.com</email>
 	</extension>
 </addon>
