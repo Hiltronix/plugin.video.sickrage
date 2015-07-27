@@ -1,27 +1,51 @@
 import sys
 import urllib
-import socket
+import urllib2
 import json
 import settings
+import xbmc
 import xbmcgui
 
 
-timeout = 45
-socket.setdefaulttimeout(timeout)
+def get_url_data(url=None, add_useragent=False):
+    # Fetches data from "url" (http or https) and return it as a string, with timeout.
+    attempts = 0
+    request = urllib2.Request(url)
+    if add_useragent:
+        headers = {'User-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0'}
+        for (key, value) in headers.iteritems():
+            request.add_header(key, value)
+    # Try up to 3 times to make connection.
+    while (attempts < 3) and (not xbmc.abortRequested):
+        try:
+            # Wait 5 seconds for connection.
+            response = urllib2.urlopen(request, timeout=5)
+            data = response.read()
+            return data
+        except:
+            print "Timeout getting data from: %s" % url
+            xbmc.sleep(500)
+            if xbmc.abortRequested:
+                break
+            attempts += 1
+    return None
 
 
 # SickRage class which mas all API calls to SickRage.
 class SB:
 
+    CONNECT_ERROR = "I was unable to retrieve data.\n\nError: "
+
     # Get the show ID numbers
     def GetShowIds(self):
         show_ids=[]
         try:
-            result=json.load(urllib.urlopen(settings.__url__+"?cmd=shows"))
+            response = get_url_data(settings.__url__+"?cmd=shows", False)
+            result = json.loads(response)
             for each in result['data']:
                 show_ids.append(each)
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return show_ids
     
 
@@ -30,13 +54,14 @@ class SB:
         show_info={}
         try:
             for id in show_ids:
-                result=json.load(urllib.urlopen(settings.__url__+'?cmd=show&tvdbid='+id))
+                response = get_url_data(settings.__url__+'?cmd=show&tvdbid='+id, False)
+                result = json.loads(response)
                 name = result['data']['show_name']
                 paused = result['data']['paused']
                 status = result['data']['status']
                 show_info[name] = [id, paused, status]
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return show_info
 
     
@@ -45,13 +70,15 @@ class SB:
         details = []
         total = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show&tvdbid='+show_id))
+            response = get_url_data(settings.__url__+'?cmd=show&tvdbid='+show_id, False)
+            result = json.loads(response)
             details=result['data']
             
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.stats&tvdbid='+show_id))
+            response = get_url_data(settings.__url__+'?cmd=show.stats&tvdbid='+show_id, False)
+            result = json.loads(response)
             total=result['data']['total']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))                   
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))                   
         return details, total
     
 
@@ -59,11 +86,12 @@ class SB:
     def GetSeasonNumberList(self, show_id):
         season_number_list = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.seasonlist&tvdbid='+show_id))
+            response = get_url_data(settings.__url__+'?cmd=show.seasonlist&tvdbid='+show_id, False)
+            result = json.loads(response)
             season_number_list = result['data']
             season_number_list.sort()
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return season_number_list
     
 
@@ -72,7 +100,8 @@ class SB:
         season_episodes = []
         try:
             season = str(season)
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.seasons&tvdbid='+show_id+'&season='+season))
+            response = get_url_data(settings.__url__+'?cmd=show.seasons&tvdbid='+show_id+'&season='+season, False)
+            result = json.loads(response)
             season_episodes = result['data']
               
             for key in season_episodes.iterkeys():
@@ -81,8 +110,8 @@ class SB:
                     if newkey not in season_episodes:
                         season_episodes[newkey] = season_episodes[key]
                         del season_episodes[key]
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))        
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))        
         return season_episodes
     
 
@@ -106,10 +135,11 @@ class SB:
     def GetFutureShows(self):
         future_list = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=future&sort=date&type=today|soon|later'))
+            response = get_url_data(settings.__url__+'?cmd=future&sort=date&type=today|soon|later', False)
+            result = json.loads(response)
             future_list = result['data']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return future_list
     
 
@@ -117,10 +147,11 @@ class SB:
     def GetHistory(self, num_entries):
         history = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=history&limit='+str(num_entries)))
+            response = get_url_data(settings.__url__+'?cmd=history&limit='+str(num_entries), False)
+            result = json.loads(response)
             history = result['data']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return history
     
 
@@ -128,15 +159,16 @@ class SB:
     def SearchShowName(self, name):
         search_results = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=sb.searchtvdb&name='+name+'&lang=en'))
+            response = get_url_data(settings.__url__+'?cmd=sb.searchtvdb&name='+name+'&lang=en', False)
+            result = json.loads(response)
             if result['result'] != 'success':
                 return search_results
             for each in result['data']['results']:
                 # Limit results to segments that contain an attribute 'tvdbid'.  SickRage webapi.py has a bug where it returns both tvdb and tvrage results together, even though they have separate search functions.
                 if (each.get('tvdbid') != None):
                     search_results.append(each)
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return search_results
     
 
@@ -144,12 +176,13 @@ class SB:
     def GetDefaults(self):
         defaults = []
         try:
-            defaults_result = json.load(urllib.urlopen(settings.__url__+'?cmd=sb.getdefaults'))
-            print defaults_result.keys()
-            defaults_data = defaults_result['data']
+            response = get_url_data(settings.__url__+'?cmd=sb.getdefaults', False)
+            result = json.loads(response)
+            print result.keys()
+            defaults_data = result['data']
             defaults = [defaults_data['status'], defaults_data['flatten_folders'], str(defaults_data['initial'])]
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return defaults
     
 
@@ -157,21 +190,23 @@ class SB:
     def GetRoodDirs(self):
         directory_result = []
         try:
-            directory_result = json.load(urllib.urlopen(settings.__url__+'?cmd=sb.getrootdirs'))
-            directory_result = directory_result['data']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
-        return directory_result
+            response = get_url_data(settings.__url__+'?cmd=sb.getrootdirs', False)
+            result = json.loads(response)
+            result = directory_result['data']
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+        return result
     
 
     # Get the version of SickRage.
     def GetSickRageVersion(self):
         version = ""
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=sb'))
+            response = get_url_data(settings.__url__+'?cmd=sb', False)
+            result = json.loads(response)
             version = result['data']['sb_version']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return version
     
 
@@ -179,9 +214,10 @@ class SB:
     def SetShowStatus(self, tvdbid, season, ep, status):
         result = []
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status+'&force=True'))
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+            response = get_url_data(settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status+'&force=True', False)
+            result = json.loads(response)
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
     
 
@@ -191,49 +227,54 @@ class SB:
         try:
             url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
             print url
-            result=json.load(urllib.urlopen(url))
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+            response = get_url_data(url, False)
+            result = json.loads(response)
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result['result']
     
 
     def ForceSearch(self, show_id):
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.update&tvdbid='+show_id))
+            response = get_url_data(settings.__url__+'?cmd=show.update&tvdbid='+show_id, False)
+            result = json.loads(response)
             message = result['message']
             success = result['result']
             settings.errorWindow("Force Update", message + " ["+success+"]")
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
 
     
     def SetPausedState(self, paused, show_id):
         message = ""
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&pause='+paused))
+            response = get_url_data(settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&pause='+paused, False)
+            result = json.loads(response)
             message = result['message']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
     
 
     def ManualSearch(self, tvdbid, season, ep):
         message = ""
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)))
+            response = get_url_data(settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep), False)
+            result = json.loads(response)
             message = result['message']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
     
 
     def DeleteShow(self, tvdbid, removefiles):
         message = ""
         try:
-            result=json.load(urllib.urlopen(settings.__url__+'?cmd=show.delete&tvdbid='+str(tvdbid)+'&removefiles='+str(removefiles)))
+            response = get_url_data(settings.__url__+'?cmd=show.delete&tvdbid='+str(tvdbid)+'&removefiles='+str(removefiles), False)
+            result = json.loads(response)
             message = result['message']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
       
 
@@ -241,7 +282,8 @@ class SB:
     def GetBacklog(self):
         results = [] 
         try:
-            result = json.load(urllib.urlopen(settings.__url__+"?cmd=backlog"))
+            response = get_url_data(settings.__url__+"?cmd=backlog", False)
+            result = json.loads(response)
             for show in result['data']:
                 show_name = show['show_name']
                 status = show['status']
@@ -249,8 +291,8 @@ class SB:
                     episode['show_name'] = show_name
                     episode['status'] = status
                     results.append(episode)
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return results
 
 
@@ -258,9 +300,10 @@ class SB:
     def GetLog(self, min_level):
         log_list = []
         try:
-            result = json.load(urllib.urlopen(settings.__url__ + '?cmd=logs&min_level=' + str(min_level)))
+            response = get_url_data(settings.__url__ + '?cmd=logs&min_level=' + str(min_level), False)
+            result = json.loads(response)
             log_list = result['data']
-        except ValueError, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return log_list
       

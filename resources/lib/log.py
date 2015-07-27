@@ -17,10 +17,14 @@ def levelSelection():
     return ret  
 
   
-# Set the status of a show.
+# View log file.
 def viewLog(level):
     level_list = ["info", "warning", "error", "debug"]
-    log_list = Sickbeard.GetLog(level_list[level])
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        log_list = Sickbeard.GetLog(level_list[level])
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
     log_str = '\n'.join(log_list)
     if (len(log_str) == 0):
         log_str = 'No Data.'

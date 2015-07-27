@@ -6,6 +6,7 @@ import json
 import urllib
 import urllib2
 import cookielib
+import sickbeard
 
 
 def createURL(ip, port, use_ssl, custom_url):
@@ -26,12 +27,13 @@ def GetApiKey(ip, port, use_ssl, username, password, custom_url):
     api_key = ''
     try:
         url = base_url + '/getkey/?u=' + username + '&p=' + password
-        result = json.load(urllib.urlopen(url))
+        response = sickbeard.get_url_data(url, False)
+        result = json.loads(response)
         api_key = result['api_key']
         if api_key is None:
             api_key = ''
-    except ValueError, e:
-        errorWindow(sys._getframe().f_code.co_name, str(e))
+    except Exception, e:
+        pass
     if api_key == '':
         displayError('4')
     return api_key
@@ -128,7 +130,7 @@ def displayError(error_code, err=""):
     elif error_code == "3":
         errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
     elif error_code == "4":
-        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that API key was generated on webserver, and webserver is running.")
+        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that the API key was generated on webserver, and if webserver is running.")
     elif error_code == "5":
         errorWindow("Exception Error", str(err))
 
