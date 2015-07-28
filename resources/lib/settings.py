@@ -1,5 +1,6 @@
-import xbmcaddon
+import xbmc
 import xbmcgui
+import xbmcaddon
 import os
 import sys
 import json
@@ -27,7 +28,7 @@ def GetApiKey(ip, port, use_ssl, username, password, custom_url):
     api_key = ''
     try:
         url = base_url + '/getkey/?u=' + username + '&p=' + password
-        response = sickbeard.get_url_data(url, False)
+        response = sickbeard.GetUrlData(url, False)
         result = json.loads(response)
         api_key = result['api_key']
         if api_key is None:
@@ -138,6 +139,7 @@ def displayError(error_code, err=""):
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.
 if (__api_key__ == ""):
     __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+    __addon__.setSetting('SickRage API Key', __api_key__)
     
 # Create the URL used to access webserver.
 if __ssl_bool__ == "true":

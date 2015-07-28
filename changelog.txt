@@ -1,3 +1,7 @@
+2015-07-28 v.1.2.1
+- Fix issue with context menus selections complaining about missing API Key.
+- API Key is now stored in the addon settings on the system when retrieved using username/password, and isn't being retrieved each time it's needed.  Making server calls slightly faster.
+
 2015-07-26 v.1.2.0
 - Added timeout feature to all data access attempts to the server.  Otherwise add-on and/or Kodi/XBMC would hang when server was not responding.
 

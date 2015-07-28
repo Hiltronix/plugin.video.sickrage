@@ -3,18 +3,21 @@ import xbmcgui
 import sys
 import sickbeard
 
-# Initialize Sickbeard Class
+# Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
+
 
 __tvdbid__ = sys.argv[1]
 __season__ = sys.argv[2]
 __episode__ = sys.argv[3]
 
-# Show status selection dialog
+
+# Show status selection dialog.
 def statusSelection():
   dialog = xbmcgui.Dialog()
   ret = dialog.select("Set Status", ["Wanted", "Skipped", "Archived", "Ignored"])
   return ret  
+
   
 # Set the status of a show.
 def setStatus(status):
