@@ -1,3 +1,8 @@
+2015-07-29 v.1.2.2
+- Poster images are now cached locally, downloadied from the server instead of accessing them directly.  Making it more compatible with SickBeard, and speeding things up slightly.
+- Note: The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.
+- Added Settings option to enable a 'Clear Image Cache' feature in the main menu.  Allowing new images to be retrieved from the server, or simply freeing up space locally from deleted shows.
+
 2015-07-28 v.1.2.1
 - Fix issue with context menus selections complaining about missing API Key.
 - API Key is now stored in the addon settings on the system when retrieved using username/password, and isn't being retrieved each time it's needed.  Making server calls slightly faster.

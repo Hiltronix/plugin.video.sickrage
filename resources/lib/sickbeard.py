@@ -1,3 +1,4 @@
+import os
 import sys
 import urllib
 import urllib2
@@ -116,20 +117,78 @@ class SB:
         return season_episodes
     
 
-    # Gets the show banner from SickRage.
+    # Check if there is a cached poster image to use.  If not get image from server, and save in local cache.
+    # Returns path to image if found.
+    def GetShowPoster(self, show_id):
+        image = None
+        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.poster.jpg')
+        if not os.path.exists(file_path):
+            # Download image from SB server.
+            try:
+                image = GetUrlData(settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), False)
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            # Write image file to local cache.
+            try:
+                if not os.path.exists(os.path.dirname(file_path)):
+                    os.makedirs(os.path.dirname(file_path))
+                f = open(file_path, 'wb')
+                f.write(image)
+                f.close()
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        return file_path
+
+
+    # Check if there is a cached banner image to use.  If not get image from server, and save in local cache.
+    # Returns path to image if found.
     def GetShowBanner(self, show_id):
-        if settings.__ssl_bool__ == "true":
-            return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
-        else:
-            return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
+        image = None
+        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.banner.jpg')
+        if not os.path.exists(file_path):
+            # Download image from SB server.
+            try:
+                image = GetUrlData(settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), False)
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            # Write image file to local cache.
+            try:
+                if not os.path.exists(os.path.dirname(file_path)):
+                    os.makedirs(os.path.dirname(file_path))
+                f = open(file_path, 'wb')
+                f.write(image)
+                f.close()
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        return file_path
+
+
+    # Clear all image files from the image cache.
+    def ClearImageCache(self):
+        path = xbmc.translatePath('special://temp/sb/cache/images/')
+        if os.path.exists(path):
+            for file in os.listdir(path):
+                if file.lower().endswith(".jpg"):
+                    os.unlink(os.path.join(path, file))
+            for file in os.listdir(path):
+                if file.lower().endswith(".png"):
+                    os.unlink(os.path.join(path, file))
+
+
+    # Gets the show banner from SickRage.
+    #def GetShowBanner(self, show_id):
+    #    if settings.__ssl_bool__ == "true":
+    #        return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
+    #    else:
+    #        return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
     
 
     # Check if there is a cached thumbnail to use, if not use SickRage poster.
-    def GetShowPoster(self, show_id):
-        if settings.__ssl_bool__ == "true":
-            return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
-        else:
-            return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
+    #def GetShowPoster(self, show_id):
+    #    if settings.__ssl_bool__ == "true":
+    #        return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
+    #    else:
+    #        return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
     
 
     # Get list of upcoming episodes

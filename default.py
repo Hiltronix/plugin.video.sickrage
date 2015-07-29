@@ -24,6 +24,8 @@ def mainMenu():
         addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png')
         if (settings.__show_log__ == "true"):
             addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png')
+        if (settings.__show_clearcache__ == "true"):
+            addDirectory('Clear Image Cache', 12, False, my_addon.getAddonInfo('path')+'/settings.png')
 
 
 # Add directory item.
@@ -177,5 +179,13 @@ elif menu_number == 10:
 elif menu_number == 11:
     import resources.lib.log as log
     log.main()
+
+# Clear the image cache.
+elif menu_number == 12:
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        Sickbeard.ClearImageCache()
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        
