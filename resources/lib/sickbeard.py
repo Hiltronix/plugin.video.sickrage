@@ -74,11 +74,11 @@ class SB:
         try:
             response = GetUrlData(settings.__url__+'?cmd=show&tvdbid='+show_id, False)
             result = json.loads(response)
-            details=result['data']
+            details = result['data']
             
             response = GetUrlData(settings.__url__+'?cmd=show.stats&tvdbid='+show_id, False)
             result = json.loads(response)
-            total=result['data']['total']
+            total = result['data']['total']
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))                   
         return details, total
@@ -252,7 +252,7 @@ class SB:
         try:
             response = GetUrlData(settings.__url__+'?cmd=sb.getrootdirs', False)
             result = json.loads(response)
-            result = directory_result['data']
+            result = result['data']
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
@@ -308,7 +308,7 @@ class SB:
     def SetPausedState(self, paused, show_id):
         message = ""
         try:
-            response = GetUrlData(settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&pause='+paused, False)
+            response = GetUrlData(settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&tvdbid='+show_id+'&pause='+paused, False)
             result = json.loads(response)
             message = result['message']
         except Exception, e:

@@ -1,6 +1,14 @@
+2015-07-30 v.1.2.3
+- Added Sickbeard compatibility.  Option switch in Settings > Login.
+	SickBeard Limitations & Issues:
+		- Sickbeard does not (and devs won't add) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.
+			- This may break, so manual entry of API Key may be required.
+		- The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.
+		- The SickBeard API does not allow for retrieving the backlog list.
+- Bug fixes.
+
 2015-07-29 v.1.2.2
 - Poster images are now cached locally, downloadied from the server instead of accessing them directly.  Making it more compatible with SickBeard, and speeding things up slightly.
-- Note: The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.
 - Added Settings option to enable a 'Clear Image Cache' feature in the main menu.  Allowing new images to be retrieved from the server, or simply freeing up space locally from deleted shows.
 
 2015-07-28 v.1.2.1

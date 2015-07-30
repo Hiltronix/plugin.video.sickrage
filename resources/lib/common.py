@@ -66,4 +66,3 @@ def selectNoYes(title, No, Yes):
     else:
         return False
 
-

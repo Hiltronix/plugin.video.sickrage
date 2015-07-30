@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="Network">
-		<setting id="SickRage IP" type="ipaddress" label="SickRage IP" default="" />
-		<setting id="SickRage Port" type="number" label="SickRage Port" default="" />
+		<setting id="SickRage IP" type="ipaddress" label="Server IP" default="" />
+		<setting id="SickRage Port" type="number" label="Server Port" default="" />
 		<setting id="Use SSL" type="bool" label="Use SSL" default="false" />
 		<setting type="sep" />
-		<setting id="CustomURL" type="bool" label="Use Custom SickRage URL" default="false" />
-		<setting id="SickRage URL" type="text" label="SickRage URL" default="http://" enable="eq(-1,true)"/>
+		<setting id="CustomURL" type="bool" label="Use Custom URL" default="false" />
+		<setting id="SickRage URL" type="text" label="Custom URL" default="http://" enable="eq(-1,true)"/>
 	</category>
 	<category label="Login">
+		<setting id="ServerType" type="select" label="Server Type" values="SickRage|SickBeard" default="SickRage" />
 		<setting label="Username / Password can be used to auto retrieve API key:" type="lsep"/>
-		<setting id="SickRage Username" type="text" label="SickRage Username" default="" />
-		<setting id="SickRage Password" type="text" label="SickRage Password" default="" />
+		<setting id="SickRage Username" type="text" label="Username" default="" />
+		<setting id="SickRage Password" type="text" label="Password" default="" />
 		<setting label="OR manually type or Copy/Paste API key:" type="lsep"/>
-		<setting id="SickRage API Key" type="text" label="SickRage API Key" default="" />
+		<setting id="SickRage API Key" type="text" label="API Key" default="" />
 		<setting label="If username/password is set on webserver, one or the other above is required." type="lsep"/>
 		<setting type="sep" />
-		<setting label="Note: SickRage API key MUST be generated on webserver." type="lsep"/>
+		<setting label="Note: The API key MUST be generated on webserver." type="lsep"/>
 	</category>
 	<category label="App Settings">
 		<setting id="ExtUpcoming" type="bool" label="Show Extended Upcoming Episodes (>1 week)" default="false" />
 		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
-		<setting id="ShowLog" type="bool" label="Show Log File Option in Main Menu" default="true" />
+		<setting id="ShowLog" type="bool" label="Show Log File Option in Main Menu" default="false" />
 		<setting id="ShowClearCache" type="bool" label="Show Clear Image Cache Option in Main Menu" default="false" />
 	</category>
 </settings>

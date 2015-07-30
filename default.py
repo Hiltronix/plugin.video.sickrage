@@ -5,8 +5,9 @@ import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import resources.lib.settings
-import resources.lib.sickbeard as sickbeard
+import resources.lib.common as common
 import resources.lib.settings as settings
+import resources.lib.sickbeard as sickbeard
 
 
 my_addon = xbmcaddon.Addon('plugin.video.sickrage')
@@ -19,7 +20,8 @@ Sickbeard = sickbeard.SB()
 def mainMenu():
         addDirectory('Upcoming Episodes', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png')
         addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png')
-        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png')
+        if (settings.__servertype__ == "SickRage"):
+            addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png')
         addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png')
         addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png')
         if (settings.__show_log__ == "true"):
@@ -187,5 +189,6 @@ elif menu_number == 12:
         Sickbeard.ClearImageCache()
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
+    common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        

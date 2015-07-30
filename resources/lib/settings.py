@@ -6,6 +6,7 @@ import sys
 import json
 import urllib
 import urllib2
+import base64
 import cookielib
 import sickbeard
 
@@ -47,15 +48,20 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, custom_url):
     base_url = createURL(ip, port, use_ssl, custom_url)
     if username and password:
         try:
-            auth_url = base_url + "/login/"
-            url = base_url + '/config/general/'
-            login_data = urllib.urlencode({'username' : username, 'password' : password})
-            cj = cookielib.CookieJar()
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-            urllib2.install_opener(opener)
-            opener.open(auth_url, login_data)
-            resp = opener.open(url)
+            request = urllib2.Request(base_url + '/config/general/')
+            base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+            request.add_header("Authorization", "Basic %s" % base64string)
+            resp = urllib2.urlopen(request)
             result = resp.readlines()
+            #auth_url = base_url + "/login/"
+            #url = base_url + '/config/general/'
+            #login_data = urllib.urlencode({'username' : username, 'password' : password})
+            #cj = cookielib.CookieJar()
+            #opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+            #urllib2.install_opener(opener)
+            #opener.open(auth_url, login_data)
+            #resp = opener.open(url)
+            #result = resp.readlines()
             resp.close()
         except urllib2.HTTPError:
             displayError("2")
@@ -73,7 +79,7 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, custom_url):
 
     api_line = ""
     for line in result:
-      if "name=\"use_api\"" in str(line):
+      if "id=\"use_api\"" in str(line):
         if "checked=\"checked\"" not in str(line):
             displayError("4")
       if "id=\"api_key\"" in str(line):
@@ -93,6 +99,7 @@ __addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
 __ip__ = __addon__.getSetting('SickRage IP')
 __port__= __addon__.getSetting('SickRage Port')
 __ssl_bool__= __addon__.getSetting('Use SSL')
+__servertype__ = __addon__.getSetting('ServerType')
 __username__ = __addon__.getSetting('SickRage Username')
 __password__= __addon__.getSetting('SickRage Password')
 __url_bool__= __addon__.getSetting('CustomURL')
@@ -139,7 +146,10 @@ def displayError(error_code, err=""):
 
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.
 if (__api_key__ == ""):
-    __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+    if (__servertype__ == 'SickRage'):
+        __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+    else:
+        __api_key__ = GetApiKeyScraper(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
     __addon__.setSetting('SickRage API Key', __api_key__)
     
 # Create the URL used to access webserver.
