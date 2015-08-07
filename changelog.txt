@@ -1,3 +1,9 @@
+2015-08-07 v.1.3.1
+- Added Media View options for alternative screen formats. 
+- Fan art is now downloaded and cached as well.  There is a delay when downloading images for caching the first time and after clearing cache.
+- Added sort selection to 'Show List'.
+- Fixed a unicode issue.
+
 2015-08-06 v.1.3.0
 - Speed improvements in folder lists.
 - When adding a new show, it now checks if show already exists, instead of just giving a generic error message.
@@ -5,11 +11,11 @@
 
 2015-07-30 v.1.2.3
 - Added Sickbeard compatibility.  Option switch in Settings > Login.
-	SickBeard Limitations & Issues:
-		- Sickbeard does not (and devs won't add) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.
-			- This may break, so manual entry of API Key may be required.
-		- The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.
-		- The SickBeard API does not allow for retrieving the backlog list.
+    SickBeard Limitations & Issues:
+        - Sickbeard does not (and devs won't add) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.
+            - This may break, so manual entry of API Key may be required.
+        - The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.
+        - The SickBeard API does not allow for retrieving the backlog list.
 - Bug fixes.
 
 2015-07-29 v.1.2.2

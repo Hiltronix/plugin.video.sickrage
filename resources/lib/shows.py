@@ -30,7 +30,7 @@ def GetShowInfo():
             status = '    [COLOR red]'+status+'[/COLOR]'
         else:
             status = '    [COLOR gray]'+status+'[/COLOR]'
-        show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), paused])
+        show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused])
       
     return show_names
 
@@ -39,7 +39,7 @@ def GetShowInfo():
 def menu():
     show_info = GetShowInfo()
     show_total = len(show_info)
-    for show_name, name, tvdbid, thumbnail_path, paused in show_info:
+    for show_name, name, tvdbid, thumbnail_path, fanart_path, paused in show_info:
 
         context_menu_items = []
         context_menu_items.append(('Show Info', 'XBMC.Action(Info)'))
@@ -54,13 +54,17 @@ def menu():
         context_menu_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
         context_menu_items.append(('Go Back', 'XBMC.Action(back)'))
         
-        addShowDirectory(show_name, name, tvdbid, 4, thumbnail_path, show_total, context_menu_items)
+        addShowDirectory(show_name, name, tvdbid, 4, thumbnail_path, fanart_path, show_total, context_menu_items)
+
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_TITLE)
+    xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
 
 
 # Add directory item.
-def addShowDirectory(show_name, name, tvdbid, menu_number, thumbnail_path, show_total, context_menu_items):
+def addShowDirectory(show_name, name, tvdbid, menu_number, thumbnail_path, fanart_path, show_total, context_menu_items):
     return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
+    list_item.setProperty('fanart_image', fanart_path) 
     meta = {}
     metaget = metahandlers.MetaData()
     try:

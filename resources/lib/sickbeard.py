@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import urllib
@@ -14,8 +16,21 @@ def getFromDict(dataDict, mapList):
     return reduce(lambda d, k: d[k], mapList, dataDict)
 
 
-def GetUrlData(url=None, add_useragent=False):
+# Replace troublesome characters, that effect sorting.
+def FixBadChar(text):
+    text = text.replace(u'\u2019', u"'")  # Replace curved apostrophe ’ with standard ' apostrophe.
+    text = text.replace(u'\u2010', u"-")  # Replace wide dash with standard hyphen.
+    text = text.replace(u'\u2011', u"-")  # Replace wide dash with standard hyphen.
+    text = text.replace(u'\u2012', u"-")  # Replace wide dash with standard hyphen.
+    text = text.replace(u'\u2013', u"-")  # Replace wide dash with standard hyphen.
+    text = text.replace(u'\u2014', u"-")  # Replace wide dash with standard hyphen.
+    text = text.replace(u'\u2015', u"-")  # Replace wide dash with standard hyphen.
+    return text
+    
+
+def GetUrlData(url=None, add_useragent=False, encodeType='utf-8'):
     # Fetches data from "url" (http or https) and return it as a string, with timeout.
+    # Set "encodeType" to None for image and binary files.
     attempts = 0
     request = urllib2.Request(url)
     if add_useragent:
@@ -27,8 +42,14 @@ def GetUrlData(url=None, add_useragent=False):
         try:
             # Wait 5 seconds for connection.
             response = urllib2.urlopen(request, timeout=5)
-            data = response.read()
-            return data
+            if encodeType == None:
+                data = response.read()
+                return data
+            else:
+                encoding = response.headers.getparam('charset')
+                print 'Encoding: ' + encoding
+                data = response.read().decode(encoding)
+                return data.encode(encodeType, 'ignore')
         except:
             print "Timeout getting data from: %s" % url
             xbmc.sleep(500)
@@ -59,7 +80,7 @@ class SB:
                 show['next_ep_airdate'] = getFromDict(result['data'], [each, 'next_ep_airdate'])
                 show['paused'] = getFromDict(result['data'], [each, 'paused'])
                 show['quality'] = getFromDict(result['data'], [each, 'quality'])
-                show['show_name'] = getFromDict(result['data'], [each, 'show_name'])
+                show['show_name'] = FixBadChar(getFromDict(result['data'], [each, 'show_name']))
                 show['sports'] = getFromDict(result['data'], [each, 'sports'])
                 show['status'] = getFromDict(result['data'], [each, 'status'])
                 show['subtitles'] = getFromDict(result['data'], [each, 'subtitles'])
@@ -159,7 +180,9 @@ class SB:
         if not os.path.exists(file_path):
             # Download image from SB server.
             try:
-                image = GetUrlData(settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), False)
+                image = GetUrlData(settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), False, None)
+                if image == None:
+                    return ''
             except Exception, e:
                 settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
             # Write image file to local cache.
@@ -182,7 +205,34 @@ class SB:
         if not os.path.exists(file_path):
             # Download image from SB server.
             try:
-                image = GetUrlData(settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), False)
+                image = GetUrlData(settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), False, None)
+                if image == None:
+                    return ''
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            # Write image file to local cache.
+            try:
+                if not os.path.exists(os.path.dirname(file_path)):
+                    os.makedirs(os.path.dirname(file_path))
+                f = open(file_path, 'wb')
+                f.write(image)
+                f.close()
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        return file_path
+
+
+    # Check if there is a cached fanart image to use.  If not get image from server, and save in local cache.
+    # Returns path to image if found.
+    def GetShowFanArt(self, show_id):
+        image = None
+        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.fanart.jpg')
+        if not os.path.exists(file_path):
+            # Download image from SB server.
+            try:
+                image = GetUrlData(settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), False, None)
+                if image == None:
+                    return ''
             except Exception, e:
                 settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
             # Write image file to local cache.

@@ -108,7 +108,7 @@ except:
     pass
 
 try:
-    show_name = urllib.unquote_plus(params["show_name"])
+    show_name = urllib.unquote_plus(params["show_name"]).decode('utf-8')
     print show_name
 except:
     pass
@@ -184,11 +184,12 @@ elif menu_number == 11:
 
 # Clear the image cache.
 elif menu_number == 12:
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
-    try:
-        Sickbeard.ClearImageCache()
-    finally:
-        xbmc.executebuiltin("Dialog.Close(busydialog)")
-    common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    if common.selectNoYes('Clear Image Cache?', 'No', 'Yes') == 1:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
+        try:
+            Sickbeard.ClearImageCache()
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
+        common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))        

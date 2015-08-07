@@ -47,13 +47,17 @@ def menu():
         context_menu_items.append(('Go Back', 'XBMC.Action(back)'))
         
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
-        addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, history_total, context_menu_items)
+        fanart_path = Sickbeard.GetShowFanArt(tvdbid)
+        addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, fanart_path, history_total, context_menu_items)
+
+    xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
 
 
 # Add history items to directory
-def addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, history_total, context_items):
+def addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, fanart_path, history_total, context_items):
     url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(history_name, thumbnailImage=thumbnail_path)
+    list_item.setProperty('fanart_image', fanart_path) 
     meta = {}
     metaget = metahandlers.MetaData()
     try:
