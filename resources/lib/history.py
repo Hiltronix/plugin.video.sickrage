@@ -1,8 +1,9 @@
-import xbmcplugin
-import xbmcgui
 import sys
-import sickbeard
 import urllib
+import xbmc
+import xbmcgui
+import xbmcplugin
+import sickbeard
 import settings
 from metahandler import metahandlers
 
@@ -11,26 +12,18 @@ from metahandler import metahandlers
 Sickbeard = sickbeard.SB()
 
 
-# Get a list of episodes grabbed by SickRage
+# Get a list of episodes snatched and downloaded by SickRage.
 def GetHistoryItems():
-  show_ids = Sickbeard.GetShowIds()
-  show_info = Sickbeard.GetShowInfo(show_ids)
-
-  show_names = {}
-  for show_name, tvdbid in sorted(show_info.iteritems()):
-    show_names[show_name] = str(tvdbid[0])
-    
-  history = Sickbeard.GetHistory(settings.__history_max__)
-  history_list = []
-  for show in history:
-    tvdbid = show_names[show['show_name']]
-    if (show['status'] == 'Downloaded'):
-        status = '[COLOR cyan]' + show['status'] + '[/COLOR]'
-    else:
-        status = show['status']
-    history_list.append([show['show_name'], '[COLOR gold]'+show['show_name']+'[/COLOR] '+str(show['season'])+'x'+str(show['episode'])+' '+show['date']+'    '+status, str(tvdbid), show['season'], show['episode']])
+    history = Sickbeard.GetHistory(settings.__history_max__)
+    history_list = []
+    for show in history:
+      if (show['status'] == 'Downloaded'):
+          status = '[COLOR cyan]' + show['status'] + '[/COLOR]'
+      else:
+          status = show['status']
+      history_list.append([show['show_name'], '[COLOR gold]'+show['show_name']+'[/COLOR] '+str(show['season'])+'x'+str(show['episode'])+' '+show['date']+'    '+status, str(show['tvdbid']), show['season'], show['episode']])
   
-  return history_list
+    return history_list
 
 
 # Add directory items for each episode recently grabbed
@@ -39,17 +32,22 @@ def menu():
     history_total = len(history_list)
     for show_name, history_name, tvdbid, season, episode in history_list:
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
-        context_items = [('Show Info', 'XBMC.Action(Info)'),\
-                         ('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
-                         ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
-                         ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
-                         ('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'),\
-                         ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
-                         ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
-                         ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
-                         ('Go Back', 'XBMC.Action(back)')]
+
+        context_menu_items = []
+        context_menu_items.append(('Show Info', 'XBMC.Action(Info)'))
+        context_menu_items.append(('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
+        context_menu_items.append(('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
+        context_menu_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'))
+        context_menu_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'))
+        context_menu_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'))
+        context_menu_items.append(('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
+        if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
+            context_menu_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
+        context_menu_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
+        context_menu_items.append(('Go Back', 'XBMC.Action(back)'))
+        
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
-        addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, history_total, context_items)
+        addHistoryDirectory(show_name, history_name, tvdbid, season, episode, thumbnail_path, history_total, context_menu_items)
 
 
 # Add history items to directory

@@ -97,20 +97,26 @@ def GetUpcomingEpisodes():
 
 
 def menu():
-      upcoming_episodes_list = GetUpcomingEpisodes()
-      upcoming_total = len(upcoming_episodes_list)
-      for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:
+    upcoming_episodes_list = GetUpcomingEpisodes()
+    upcoming_total = len(upcoming_episodes_list)
+    for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
-        context_menu_items = [('Show Info', 'XBMC.Action(Info)'),\
-                              ('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
-                              ('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'),\
-                              ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
-                              ('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'),\
-                              ('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'),\
-                              ('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'),\
-                              (paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'),\
-                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
-                              ('Go Back', 'XBMC.Action(back)')]
+        
+        context_menu_items = []
+        context_menu_items.append(('Show Info', 'XBMC.Action(Info)'))
+        context_menu_items.append(('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
+        context_menu_items.append(('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
+        context_menu_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'))
+        context_menu_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'))
+        context_menu_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'))
+        context_menu_items.append(('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
+        context_menu_items.append((paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'))
+        if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
+            context_menu_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
+        else:
+            context_menu_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
+        context_menu_items.append(('Go Back', 'XBMC.Action(back)'))
+        
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         addShowDirectory(show_name, ep_name, tvdbid, season, episode, 6, thumbnail_path, upcoming_total, context_menu_items)
 

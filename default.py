@@ -175,7 +175,7 @@ elif menu_number == 10:
     if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
         xbmc.executebuiltin('XBMC.RunScript(script.extendedinfo,info=extendedtvinfo,tvdb_id=%s)' %(tvdb_id))
     else:
-        settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Get Add-ons > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
+        settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Install from Repo > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
                 
 # View log file.
 elif menu_number == 11:

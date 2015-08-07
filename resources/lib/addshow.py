@@ -45,7 +45,18 @@ def AddShow(show_name):
     selected_show = ShowSelectMessage(search_results)
     if (selected_show == -1):
         return
-  
+
+    # Check is show already exists in the show list.
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        shows = Sickbeard.GetShows()
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
+    for show in shows:
+        if search_results[selected_show]['name'] == show['show_name']:
+            ShowMessage('Duplicate Show', "'" + search_results[selected_show]['name'] + "' already exists in your show list.")
+            return
+
     # "Pick the parent folder" prompt.
     # 1. Need to get sb.getrootdirs and select one... No adding/deleting for now, would need to browse remote dir :(  
     root_dir = SelectRootDirMessage()
@@ -53,7 +64,11 @@ def AddShow(show_name):
         return
 
     # 2. sb.getdefaults for status of show eps.  Need to make each option selectable so you can change initial status, folders, quality.
-    default_status, default_folders, default_quality = Sickbeard.GetDefaults()
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        default_status, default_folders, default_quality = Sickbeard.GetDefaults()
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
     
     # Set status for previously aired episodes.
     prev_aired_status = SetStatus("Status for previously aired episodes", default_status)
@@ -78,7 +93,11 @@ def AddShow(show_name):
         return
   
     tvdbid = search_results[selected_show]['tvdbid']
-    ret = Sickbeard.AddNewShow(tvdbid, root_dir, prev_aired_status, future_status, flatten_folders, quality)
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        ret = Sickbeard.AddNewShow(tvdbid, root_dir, prev_aired_status, future_status, flatten_folders, quality)
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
     if ret == "success":
         ShowMessage("Add Show", "Successfully added "+search_results[selected_show]['name'])
     else:

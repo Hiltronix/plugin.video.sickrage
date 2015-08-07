@@ -1,8 +1,9 @@
-import xbmcplugin
-import xbmcgui
 import sys
-import sickbeard
 import urllib
+import xbmc
+import xbmcgui
+import xbmcplugin
+import sickbeard
 from metahandler import metahandlers
 
 
@@ -31,12 +32,18 @@ def menu(tvdbid, show_name, season_number):
         season_numbers.append(str(ep_number))
         season_status_args = ", "+ep_tvdbid+", "+ep_season+", "+"|".join(season_numbers)
         episode_status_args = ", "+ep_tvdbid+", "+ep_season+", "+ep_number
-        context_menu_items = [('Show Info', 'XBMC.Action(Info)'),\
-                              ('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'),\
-                              ('Set Season Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+season_status_args+')'),\
-                              ('Download Episode', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/manualsearch.py'+episode_status_args+')'),\
-                              ('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'),\
-                              ('Go Back', 'XBMC.Action(back)')]
+
+        context_menu_items = []
+        context_menu_items.append(('Show Info', 'XBMC.Action(Info)'))
+        context_menu_items.append(('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
+        context_menu_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'))
+        context_menu_items.append(('Set Season Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+season_status_args+')'))
+        context_menu_items.append(('Download Episode', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/manualsearch.py'+episode_status_args+')'))
+        if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
+            context_menu_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
+        context_menu_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
+        context_menu_items.append(('Go Back', 'XBMC.Action(back)'))
+
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         addEpisodeDirectory(show_name, season_number, ep_number, ep_name, ep_status, ep_airdate, ep_tvdbid, ep_season, thumbnail_path, episode_total, context_menu_items)
 

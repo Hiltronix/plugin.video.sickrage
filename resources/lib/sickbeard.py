@@ -8,6 +8,12 @@ import xbmc
 import xbmcgui
 
 
+# Get data from a dictionary with position provided as if it were a list.
+# Example: test = getFromDict(result['data'], ['75897', 'show_name'])
+def getFromDict(dataDict, mapList):
+    return reduce(lambda d, k: d[k], mapList, dataDict)
+
+
 def GetUrlData(url=None, add_useragent=False):
     # Fetches data from "url" (http or https) and return it as a string, with timeout.
     attempts = 0
@@ -38,6 +44,34 @@ class SB:
     CONNECT_ERROR = "I was unable to retrieve data.\n\nError: "
 
     
+    # Get the list of shows.
+    def GetShows(self):
+        shows=[]
+        try:
+            response = GetUrlData('https://192.168.0.115:8080/api/d4271985aa9627ffc5180be0f9a3e057/?cmd=shows', False)
+            result = json.loads(response)
+            for each in result['data']:
+                show = {}
+                show['anime'] = getFromDict(result['data'], [each, 'anime'])
+                show['indexerid'] = str(getFromDict(result['data'], [each, 'indexerid']))
+                show['language'] = getFromDict(result['data'], [each, 'language'])
+                show['network'] = getFromDict(result['data'], [each, 'network'])
+                show['next_ep_airdate'] = getFromDict(result['data'], [each, 'next_ep_airdate'])
+                show['paused'] = getFromDict(result['data'], [each, 'paused'])
+                show['quality'] = getFromDict(result['data'], [each, 'quality'])
+                show['show_name'] = getFromDict(result['data'], [each, 'show_name'])
+                show['sports'] = getFromDict(result['data'], [each, 'sports'])
+                show['status'] = getFromDict(result['data'], [each, 'status'])
+                show['subtitles'] = getFromDict(result['data'], [each, 'subtitles'])
+                show['tvdbid'] = str(getFromDict(result['data'], [each, 'tvdbid']))
+                show['tvrage_id'] = str(getFromDict(result['data'], [each, 'tvrage_id']))
+                show['tvrage_name'] = getFromDict(result['data'], [each, 'tvrage_name'])
+                shows.append(show)
+        except Exception, e:
+            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+        return shows
+    
+
     # Get the show ID numbers
     def GetShowIds(self):
         show_ids=[]
@@ -97,7 +131,7 @@ class SB:
         return season_number_list
     
 
-    # Get the list of episodes ina given season.
+    # Get the list of episodes in a given season.
     def GetSeasonEpisodeList(self, show_id, season):
         season_episodes = []
         try:
