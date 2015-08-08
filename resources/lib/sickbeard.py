@@ -172,19 +172,26 @@ class SB:
         return season_episodes
     
 
-    # Check if there is a cached poster image to use.  If not get image from server, and save in local cache.
+    # Check if there is a cached poster image to use.
+    # If not get image from server, and save in local cache.
     # Returns path to image if found.
+    # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
     def GetShowPoster(self, show_id):
         image = None
+        if show_id == '0':
+            return ''
         file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.poster.jpg')
         if not os.path.exists(file_path):
             # Download image from SB server.
             try:
                 image = GetUrlData(settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), False, None)
-                if image == None:
-                    return ''
+                if (image == None) or (len(image) < 1024):
+                    # Get generic image instead.
+                    with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_poster.jpg'), mode='rb') as f:
+                        image = f.read()
             except Exception, e:
                 settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                return ''
             # Write image file to local cache.
             try:
                 if not os.path.exists(os.path.dirname(file_path)):
@@ -197,44 +204,58 @@ class SB:
         return file_path
 
 
-    # Check if there is a cached banner image to use.  If not get image from server, and save in local cache.
+    # Check if there is a cached fanart image to use.
+    # If not get image from server, and save in local cache.
     # Returns path to image if found.
-    def GetShowBanner(self, show_id):
-        image = None
-        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.banner.jpg')
-        if not os.path.exists(file_path):
-            # Download image from SB server.
-            try:
-                image = GetUrlData(settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), False, None)
-                if image == None:
-                    return ''
-            except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
-            # Write image file to local cache.
-            try:
-                if not os.path.exists(os.path.dirname(file_path)):
-                    os.makedirs(os.path.dirname(file_path))
-                f = open(file_path, 'wb')
-                f.write(image)
-                f.close()
-            except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
-        return file_path
-
-
-    # Check if there is a cached fanart image to use.  If not get image from server, and save in local cache.
-    # Returns path to image if found.
+    # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
     def GetShowFanArt(self, show_id):
         image = None
+        if show_id == '0':
+            return ''
         file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.fanart.jpg')
         if not os.path.exists(file_path):
             # Download image from SB server.
             try:
                 image = GetUrlData(settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), False, None)
-                if image == None:
-                    return ''
+                if (image == None) or (len(image) < 1024):
+                    # Get generic image instead.
+                    with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_fanart.jpg'), mode='rb') as f:
+                        image = f.read()
             except Exception, e:
                 settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                return ''
+            # Write image file to local cache.
+            try:
+                if not os.path.exists(os.path.dirname(file_path)):
+                    os.makedirs(os.path.dirname(file_path))
+                f = open(file_path, 'wb')
+                f.write(image)
+                f.close()
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+        return file_path
+
+
+    # Check if there is a cached banner image to use.
+    # If not get image from server, and save in local cache.
+    # Returns path to image if found.
+    # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
+    def GetShowBanner(self, show_id):
+        image = None
+        if show_id == '0':
+            return ''
+        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.banner.jpg')
+        if not os.path.exists(file_path):
+            # Download image from SB server.
+            try:
+                image = GetUrlData(settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), False, None)
+                if (image == None) or (len(image) < 1024):
+                    # Get generic image instead.
+                    with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_banner.jpg'), mode='rb') as f:
+                        image = f.read()
+            except Exception, e:
+                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                return ''
             # Write image file to local cache.
             try:
                 if not os.path.exists(os.path.dirname(file_path)):
