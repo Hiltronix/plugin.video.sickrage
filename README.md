@@ -49,8 +49,8 @@ https://github.com/SiCKRAGETV/SickRage
 #### SickBeard Limitations & Issues:  
 - Sickbeard does not (and devs won't add) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.  
   This may break, so manual entry of API Key may be required.  
-- The SickBeard API shares images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.  
-- The SickBeard API does not allow for retrieving the backlog list.  
+- The SickBeard API returns images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.  
+- The SickBeard API does not allow for retrieving the backlog list at this time.  
 
 -----
 
