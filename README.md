@@ -54,14 +54,20 @@ https://github.com/SiCKRAGETV/SickRage
 
 -----
 
+## Donations  
+
+If you'd like to make a donation to help support this project and keep it current, please click [here](https://hiltronix.com/donations/).  
+
+-----
+
 ## Images  
 
 [![Screen Show 1](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_1sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_1.jpg)  
-![Screen Show 2](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_2sm.jpg)  
-![Screen Show 3](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_3sm.jpg)  
-![Screen Show 4](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4sm.jpg)  
-![Screen Show 5](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_5sm.jpg)  
-![Screen Show 6](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_6sm.jpg)  
+[![Screen Show 2](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_2sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_2.jpg)  
+[![Screen Show 3](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_3sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_3.jpg)  
+[![Screen Show 4](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4.jpg)  
+[![Screen Show 5](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_5sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_5.jpg)  
+[![Screen Show 6](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_6sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_6.jpg)  
 
 -----
 
