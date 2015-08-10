@@ -17,16 +17,6 @@ https://hiltronix.com/xbmc/
 
 -----
 
-## Related Links
-
-#### SickRage Website:  
-https://www.sickrage.tv
-
-#### SickRage Project on GitHub:  
-https://github.com/SiCKRAGETV/SickRage
-
------
-
 ## Plug-in API  
 
 #### Add New Show by ID for theTVDB.com:  
@@ -56,7 +46,8 @@ https://github.com/SiCKRAGETV/SickRage
 
 ## [Donations](https://hiltronix.com/donations/)  
 
-If you'd like to make a donation to help support this project and keep it current, please click [here](https://hiltronix.com/donations/).  
+If you would like to show your appreciation for this project, and/or help support it to keep it current, please consider making a donation.  
+[Click Here](https://hiltronix.com/donations/).  
 [![Support the project](https://github.com/Hiltronix/repo/blob/master/images/donate.png)](https://hiltronix.com/donations/)
 
 -----
@@ -69,6 +60,16 @@ If you'd like to make a donation to help support this project and keep it curren
 [![Screen Show 4](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4.jpg)  
 [![Screen Show 5](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_5sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_5.jpg)  
 [![Screen Show 6](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_6sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_6.jpg)  
+
+-----
+
+## Related Links
+
+#### SickRage Website:  
+https://www.sickrage.tv
+
+#### SickRage Project on GitHub:  
+https://github.com/SiCKRAGETV/SickRage
 
 -----
 
