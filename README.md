@@ -54,9 +54,10 @@ https://github.com/SiCKRAGETV/SickRage
 
 -----
 
-## [Donations](https://hiltronix.com/donations/) [![Support the project](https://github.com/Hiltronix/repo/blob/master/images/donate.png)](https://hiltronix.com/donations/)  
+## [Donations](https://hiltronix.com/donations/)  
 
 If you'd like to make a donation to help support this project and keep it current, please click [here](https://hiltronix.com/donations/).  
+[![Support the project](https://github.com/Hiltronix/repo/blob/master/images/donate.png)](https://hiltronix.com/donations/)
 
 -----
 
