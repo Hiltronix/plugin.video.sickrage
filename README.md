@@ -6,7 +6,7 @@ It allows the user to view and control SickRage or SickBeard from within Kodi/XB
 
 -----
 
-## Repo  
+## Kodi/XBMC Repo  
 The repository for this add-on can be found here:  
 
 https://github.com/Hiltronix/repo/
@@ -56,7 +56,7 @@ https://github.com/SiCKRAGETV/SickRage
 
 ## Images  
 
-![Screen Show 1](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_1sm.jpg)  
+[![Screen Show 1](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_1sm.jpg)](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_1.jpg)  
 ![Screen Show 2](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_2sm.jpg)  
 ![Screen Show 3](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_3sm.jpg)  
 ![Screen Show 4](https://github.com/Hiltronix/repo/blob/master/images/sickrage_addon_4sm.jpg)  
