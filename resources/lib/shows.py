@@ -4,6 +4,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import sickbeard
+import common
 from metahandler import metahandlers
 
 
@@ -12,7 +13,7 @@ Sickbeard = sickbeard.SB()
 
 
 # Get the tvdbid and show names.
-def GetShowInfo():
+def GetShowInfo(filter):
     shows = Sickbeard.GetShows()
     show_names = []
     for show in sorted(shows, key=lambda k: k['show_name'], reverse=False):
@@ -21,23 +22,31 @@ def GetShowInfo():
         paused = show['paused']
         status = show['status']
         if paused == 0:
-            paused = "Pause"
+            paused_msg = "Pause"
             ispaused = ""
         else:
-            paused = "Resume"
+            paused_msg = "Resume"
             ispaused = "    [COLOR cyan]Paused[/COLOR]"
-        if (status == 'Ended'):
-            status = '    [COLOR red]'+status+'[/COLOR]'
+        if status == 'Ended':
+            status_msg = '    [COLOR red]'+status+'[/COLOR]'
         else:
-            status = '    [COLOR gray]'+status+'[/COLOR]'
-        show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused])
+            status_msg = '    [COLOR gray]'+status+'[/COLOR]'
+        if filter:
+            if (filter == 'Continuing') and (status == 'Continuing'):
+                show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused_msg])
+            if (filter == 'Ended') and (status == 'Ended'):
+                show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused_msg])
+            if (filter == 'Paused') and (paused == 1):
+                show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused_msg])
+        else:
+            show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused_msg])
       
     return show_names
 
 
 # Parse through shows and add dirs for each.
-def menu():
-    show_info = GetShowInfo()
+def menu(filter=''):
+    show_info = GetShowInfo(filter)
     show_total = len(show_info)
     for show_name, name, tvdbid, thumbnail_path, fanart_path, paused in show_info:
 
@@ -58,6 +67,7 @@ def menu():
 
     xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_TITLE)
     xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
+    common.CreateNotification(header='Show List', message=str(show_total)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
 
 
 # Add directory item.

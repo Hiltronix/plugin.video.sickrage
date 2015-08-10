@@ -20,7 +20,6 @@
 		<setting label="Note: The API key MUST be generated on webserver." type="lsep"/>
 	</category>
 	<category label="App Settings">
-		<setting id="ExtUpcoming" type="bool" label="Show Extended Upcoming Episodes (>1 week)" default="false" />
 		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
 		<setting id="ShowLog" type="bool" label="Show Log File Option in Main Menu" default="false" />
 		<setting id="ShowClearCache" type="bool" label="Show Clear Image Cache Option in Main Menu" default="false" />

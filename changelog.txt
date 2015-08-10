@@ -1,5 +1,10 @@
+2015-08-09 v.1.3.3
+- Added the 'Extended' option in 'Upcoming Episodes' as a convenient option when selecting Upcoming.  Removed option from settings.
+- Added 'Show List' filter selection menu for All Shows, Continuing, Ended, or Paused.
+- Updated history icon.
+
 2015-08-08 v.1.3.2
-- Cache generic images for posters, fanart and banners when server can't supply one.  This speeds up building show lists considerably.
+- Cache a generic image for posters, fanart and banners, when the server can't supply one.  This speeds up building show lists considerably when images are missing.
 - Catch and ignore json error messages when image files are requested from SickRage/SickBeard but not found.
 
 2015-08-07 v.1.3.1

@@ -35,7 +35,7 @@ def GetWeekDay(weekday):
 
 
 # Get upcoming episodes.
-def GetUpcomingEpisodes():
+def GetUpcomingEpisodes(ext_upcoming=False):
     coming_soon = Sickbeard.GetFutureShows()
     upcoming_episodes_list = []
     
@@ -73,7 +73,7 @@ def GetUpcomingEpisodes():
               upcoming_episodes_list.append([str(show['tvdbid']), day+": [COLOR gold]"+show['show_name']+"[/COLOR] - "+str(show['season'])+"x"+str(show['episode'])+" "+show['ep_name']+ispaused, show['show_name'], paused, show['season'], show['episode']])
 
     # Get upcoming later eps.
-    if (settings.__ext_upcoming__ == "true"):
+    if ext_upcoming:
         if len(coming_soon["later"]) != 0:    
           show_list={}
           for show in coming_soon['later']:
@@ -96,8 +96,8 @@ def GetUpcomingEpisodes():
     return upcoming_episodes_list
 
 
-def menu():
-    upcoming_episodes_list = GetUpcomingEpisodes()
+def menu(ext_upcoming=False):
+    upcoming_episodes_list = GetUpcomingEpisodes(ext_upcoming)
     upcoming_total = len(upcoming_episodes_list)
     for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)

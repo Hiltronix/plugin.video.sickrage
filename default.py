@@ -18,22 +18,22 @@ Sickbeard = sickbeard.SB()
 
 # Add the main directory folders.
 def mainMenu():
-        addDirectory('Upcoming Episodes', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png')
-        addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png')
+        addDirectory('Upcoming Episodes', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png')
+        addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', my_addon.getAddonInfo('path')+'/resources/images/history_thn.png')
         if (settings.__servertype__ == "SickRage"):
-            addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png')
-        addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png')
-        addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png')
+            addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', my_addon.getAddonInfo('path')+'/resources/images/backlog_thn.png')
+        addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', my_addon.getAddonInfo('path')+'/resources/images/manage_thn.png')
+        addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', my_addon.getAddonInfo('path')+'/resources/images/add_thn.png')
         if (settings.__show_log__ == "true"):
-            addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png')
+            addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png', my_addon.getAddonInfo('path')+'/resources/images/log_thn.png')
         if (settings.__show_clearcache__ == "true"):
-            addDirectory('Clear Image Cache', 12, False, my_addon.getAddonInfo('path')+'/settings.png')
+            addDirectory('Clear Image Cache', 12, False, my_addon.getAddonInfo('path')+'/settings.png', my_addon.getAddonInfo('path')+'/resources/images/settings_thn.png')
 
 
 # Add directory item.
-def addDirectory(menu_item_name, menu_number, folder, icon):
+def addDirectory(menu_item_name, menu_number, folder, icon, thumbnail):
         return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
-        list_item = xbmcgui.ListItem(menu_item_name, iconImage=icon)
+        list_item = xbmcgui.ListItem(menu_item_name, iconImage=thumbnail, thumbnailImage=icon)
         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=3)
 
 
@@ -125,11 +125,29 @@ if menu_number == None:
        
 elif menu_number == 1:
     import resources.lib.shows as shows
-    shows.menu()
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select('Show List', ['All', 'Continuing', 'Ended', 'Paused'])
+    if ret == -1:
+        mainMenu()
+    if ret == 0:
+        shows.menu()
+    if ret == 1:
+        shows.menu('Continuing')
+    if ret == 2:
+        shows.menu('Ended')
+    if ret == 3:
+        shows.menu('Paused')
         
 elif menu_number == 2:
     import resources.lib.upcoming as upcoming
-    upcoming.menu()
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select('Upcoming Episodes', ['1 Week', 'Extended'])
+    if ret == -1:
+        mainMenu()
+    if ret == 0:
+        upcoming.menu()
+    if ret == 1:
+        upcoming.menu(True)
         
 elif menu_number == 3:
     import resources.lib.history as history

@@ -112,7 +112,6 @@ __history_max__=__addon__.getSetting('HistoryMax')
 if (int(__history_max__) > 99):
     __addon__.setSetting('HistoryMax', '99')
     __history_max__ = 99
-__ext_upcoming__= __addon__.getSetting('ExtUpcoming')
 __show_log__= __addon__.getSetting('ShowLog')
 __show_clearcache__= __addon__.getSetting('ShowClearCache')
 
