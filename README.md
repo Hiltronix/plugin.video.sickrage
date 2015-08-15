@@ -1,4 +1,4 @@
-# plugin.video.sickrage
+# plugin.video.sickrage  
 #### SickRage/SickBeard Interface Add-on for Kodi/XBMC  
 
 This is an add-on/plugin for the Kodi/XBMC Home Theatre software.  
@@ -78,3 +78,10 @@ https://github.com/SiCKRAGETV/SickRage
 This add-on/plugin for Kodi/XBMC is an updated version of the Sickbeard plugin originally created by Zach Moore.  It expands on his original work starting at his version 1.0.10.  
 http://forum.kodi.tv/showthread.php?tid=124808   
 
+-----
+
+## Disclaimer  
+
+Kodi is a registered trademark of the XBMC Foundation. We are not connected to or in any other way affiliated with Kodi, Team Kodi, or the XBMC Foundation.  
+Furthermore, any software, addons, or products offered by us will receive no support in official Kodi channels, including the Kodi forums and various social networks.  
+We do not host any video content, nor do we condone piracy. Please use these add-ons at your own risk and abide by your country's copyright laws.

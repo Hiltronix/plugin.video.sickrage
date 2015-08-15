@@ -69,7 +69,7 @@ class SB:
     def GetShows(self):
         shows=[]
         try:
-            response = GetUrlData('https://192.168.0.115:8080/api/d4271985aa9627ffc5180be0f9a3e057/?cmd=shows', False)
+            response = GetUrlData(settings.__url__+'?cmd=shows', False)
             result = json.loads(response)
             for each in result['data']:
                 show = {}
