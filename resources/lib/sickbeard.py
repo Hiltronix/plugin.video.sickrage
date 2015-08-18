@@ -13,7 +13,10 @@ import xbmcgui
 # Get data from a dictionary with position provided as if it were a list.
 # Example: test = getFromDict(result['data'], ['75897', 'show_name'])
 def getFromDict(dataDict, mapList):
-    return reduce(lambda d, k: d[k], mapList, dataDict)
+    try:
+        return reduce(lambda d, k: d[k], mapList, dataDict)
+    except:
+        return None
 
 
 # Replace troublesome characters, that effect sorting.

@@ -46,7 +46,7 @@ def AddShow(show_name):
     if (selected_show == -1):
         return
 
-    # Check is show already exists in the show list.
+    # Check if show already exists in the show list.
     xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
         shows = Sickbeard.GetShows()
