@@ -4,6 +4,7 @@ import os
 import sys
 import urllib
 import urllib2
+import socket
 import json
 import settings
 import xbmc
@@ -41,7 +42,7 @@ def GetUrlData(url=None, add_useragent=False, encodeType='utf-8'):
         for (key, value) in headers.iteritems():
             request.add_header(key, value)
     # Try up to 3 times to make connection.
-    while (attempts < 3) and (not xbmc.abortRequested):
+    while (attempts < 5) and (not xbmc.abortRequested):
         try:
             # Wait 5 seconds for connection.
             response = urllib2.urlopen(request, timeout=5)
@@ -53,8 +54,14 @@ def GetUrlData(url=None, add_useragent=False, encodeType='utf-8'):
                 print 'Encoding: ' + encoding
                 data = response.read().decode(encoding)
                 return data.encode(encodeType, 'ignore')
-        except:
-            print "Timeout getting data from: %s" % url
+        except urllib2.URLError, e:
+            print "URLError Msg: %s   Getting data from: %s" %(e, url)
+            xbmc.sleep(500)
+            if xbmc.abortRequested:
+                break
+            attempts += 1
+        except socket.timeout, e:
+            print "Socket Timeout Error Msg: %s   Getting data from: %s" %(e, url)
             xbmc.sleep(500)
             if xbmc.abortRequested:
                 break
@@ -394,7 +401,7 @@ class SB:
         result = ""
         try:
             url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
-            print url
+            print 'Add Show Request:' + url
             response = GetUrlData(url, False)
             result = json.loads(response)
         except Exception, e:

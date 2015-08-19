@@ -45,6 +45,8 @@ def AddShow(show_name):
     selected_show = ShowSelectMessage(search_results)
     if (selected_show == -1):
         return
+        
+    print 'Selected Add Show: ' + search_results[selected_show]['name'] + ' ' + str(search_results[selected_show]['tvdbid'])
 
     # Check if show already exists in the show list.
     xbmc.executebuiltin("ActivateWindow(busydialog)")
@@ -54,26 +56,34 @@ def AddShow(show_name):
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     for show in shows:
         if search_results[selected_show]['name'] == show['show_name']:
-            ShowMessage('Duplicate Show', "'" + search_results[selected_show]['name'] + "' already exists in your show list.")
+            header = 'Duplicate Show'
+            msg = "'" + search_results[selected_show]['name'] + "' already exists in your show list."
+            ShowMessage(header, msg)
+            print header + ': ' + msg
             return
 
     # "Pick the parent folder" prompt.
-    # 1. Need to get sb.getrootdirs and select one... No adding/deleting for now, would need to browse remote dir :(  
     root_dir = SelectRootDirMessage()
     if (root_dir == -1):
         return
+        
+    print 'Add Show Root Dir: ' + root_dir
 
-    # 2. sb.getdefaults for status of show eps.  Need to make each option selectable so you can change initial status, folders, quality.
+    # sb.getdefaults for status of show eps.  Need to make each option selectable so you can change initial status, folders, quality.
     xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
         default_status, default_folders, default_quality = Sickbeard.GetDefaults()
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
+        
+    print 'Add Show Retrieved Defaults'
     
     # Set status for previously aired episodes.
     prev_aired_status = SetStatus("Status for previously aired episodes", default_status)
     if (prev_aired_status == -1):
         return
+        
+    print 'Add Show Set Prev Status: ' + str(prev_aired_status)
 
     # Set status for future episodes.
     future_status = ''
@@ -82,26 +92,37 @@ def AddShow(show_name):
         if (future_status == -1):
             return
 
+    print 'Add Show Set Future Status: ' + str(future_status)
+
     # "Use season folders?" prompt.
     flatten_folders = SetFlattenFolders(default_folders)
     if (flatten_folders == -1):
         return
+
+    print 'Add Show Set Season Folders: ' + str(flatten_folders)
 
     # "Set initial status of episodes" prompt.
     quality = SetQualityMessage(default_quality)
     if (quality == -1):
         return
   
+    print 'Add Show Set Quality: ' + str(quality)
+
     tvdbid = search_results[selected_show]['tvdbid']
     xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
         ret = Sickbeard.AddNewShow(tvdbid, root_dir, prev_aired_status, future_status, flatten_folders, quality)
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
+    header = 'Add Show'
     if ret == "success":
-        ShowMessage("Add Show", "Successfully added "+search_results[selected_show]['name'])
+        msg = "Successfully added "+search_results[selected_show]['name']
+        ShowMessage(header, msg)
+        print header + ': ' + msg
     else:
-        ShowMessage("Add Show", "Failed to add "+search_results[selected_show]['name'])
+        ShowMessage(header, msg)
+        msg = "Failed to add "+search_results[selected_show]['name']
+        print header + ': ' + msg
 
 
 # Search results selection window

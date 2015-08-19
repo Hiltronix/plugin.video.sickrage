@@ -34,7 +34,7 @@ def mainMenu():
 def addDirectory(menu_item_name, menu_number, folder, icon, thumbnail):
         return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
         list_item = xbmcgui.ListItem(menu_item_name, iconImage=thumbnail, thumbnailImage=icon)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=3)
+        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=7)
 
 
 # Get the parameters from the URL supplied as an arg to this script.
@@ -126,8 +126,8 @@ if menu_number == None:
 elif menu_number == 1:
     import resources.lib.shows as shows
     dialog = xbmcgui.Dialog()
-    ret = dialog.select('Show List', ['All', 'Continuing', 'Ended', 'Paused'])
-    if ret == -1:
+    ret = dialog.select('Show List', ['All', 'Continuing', 'Ended', 'Paused', 'Exit'])
+    if (ret == -1) or (ret == 4):
         mainMenu()
     if ret == 0:
         shows.menu()
@@ -210,4 +210,5 @@ elif menu_number == 12:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
 
-xbmcplugin.endOfDirectory(int(sys.argv[1]))        
+xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
