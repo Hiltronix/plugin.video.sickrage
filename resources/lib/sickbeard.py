@@ -400,7 +400,7 @@ class SB:
     def AddNewShow(self, tvdbid, location, prev_aired_status, future_status, flatten_folders, quality):
         result = ""
         try:
-            url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
+            url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+urllib.quote(location)+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
             print 'Add Show Request:' + url
             response = GetUrlData(url, False)
             result = json.loads(response)
