@@ -16,12 +16,13 @@ Sickbeard = sickbeard.SB()
 def GetBacklogItems():
     backlog = Sickbeard.GetBacklog()
     backlog_list = []
+    status_msg = '[COLOR gray]Unknown[/COLOR]'
     for episode in backlog:
         if (episode['status'] == 'Ended'):
-            status = '[COLOR red]' + episode['status'] + '[/COLOR]'
-        else:
-            status = '[COLOR cyan]' + episode['status'] + '[/COLOR]'
-        backlog_list.append([episode['show_name'], '[COLOR gold]'+episode['show_name']+'[/COLOR] '+str(episode['season'])+'x'+str(episode['episode'])+' '+episode['name']+'  '+str(datetime.date.fromordinal(episode['airdate']))+'    '+status, str(episode['showid']), episode['season'], episode['episode']])
+            status_msg = '[COLOR red]' + str(episode['status']) + '[/COLOR]'
+        elif episode['status']:
+            status_msg = '[COLOR gray]' + str(episode['status']) + '[/COLOR]'
+        backlog_list.append([episode['show_name'], '[COLOR gold]'+episode['show_name']+'[/COLOR] '+str(episode['season'])+'x'+str(episode['episode'])+' '+episode['name']+'  '+str(datetime.date.fromordinal(episode['airdate']))+'    '+status_msg, str(episode['showid']), episode['season'], episode['episode']])
 
     return backlog_list
 

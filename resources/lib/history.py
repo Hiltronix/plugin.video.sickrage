@@ -16,12 +16,13 @@ Sickbeard = sickbeard.SB()
 def GetHistoryItems():
     history = Sickbeard.GetHistory(settings.__history_max__)
     history_list = []
+    status_msg = '[COLOR gray]Unknown[/COLOR]'
     for show in history:
       if (show['status'] == 'Downloaded'):
-          status = '[COLOR cyan]' + show['status'] + '[/COLOR]'
-      else:
-          status = show['status']
-      history_list.append([show['show_name'], '[COLOR gold]'+show['show_name']+'[/COLOR] '+str(show['season'])+'x'+str(show['episode'])+' '+show['date']+'    '+status, str(show['tvdbid']), show['season'], show['episode']])
+          status_msg = '[COLOR cyan]' + str(show['status']) + '[/COLOR]'
+      elif show['status']:
+          status_msg = str(show['status'])
+      history_list.append([show['show_name'], '[COLOR gold]'+show['show_name']+'[/COLOR] '+str(show['season'])+'x'+str(show['episode'])+' '+show['date']+'    '+status_msg, str(show['tvdbid']), show['season'], show['episode']])
   
     return history_list
 

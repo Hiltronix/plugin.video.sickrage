@@ -21,6 +21,7 @@ def GetShowInfo(filter):
         tvdbid = show['tvdbid']
         paused = show['paused']
         status = show['status']
+        status_msg = '    [COLOR gray]Unknown[/COLOR]'
         if paused == 0:
             paused_msg = "Pause"
             ispaused = ""
@@ -28,9 +29,9 @@ def GetShowInfo(filter):
             paused_msg = "Resume"
             ispaused = "    [COLOR cyan]Paused[/COLOR]"
         if status == 'Ended':
-            status_msg = '    [COLOR red]'+status+'[/COLOR]'
-        else:
-            status_msg = '    [COLOR gray]'+status+'[/COLOR]'
+            status_msg = '    [COLOR red]'+str(status)+'[/COLOR]'
+        elif status:
+            status_msg = '    [COLOR gray]'+str(status)+'[/COLOR]'
         if filter:
             if (filter == 'Continuing') and (status == 'Continuing'):
                 show_names.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), Sickbeard.GetShowPoster(tvdbid), Sickbeard.GetShowFanArt(tvdbid), paused_msg])
