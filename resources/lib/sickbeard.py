@@ -42,10 +42,10 @@ def GetUrlData(url=None, add_useragent=False, encodeType='utf-8'):
         for (key, value) in headers.iteritems():
             request.add_header(key, value)
     # Try up to 3 times to make connection.
-    while (attempts < 5) and (not xbmc.abortRequested):
+    while (attempts < 3) and (not xbmc.abortRequested):
         try:
-            # Wait 5 seconds for connection.
-            response = urllib2.urlopen(request, timeout=5)
+            # Wait 10 seconds for connection.
+            response = urllib2.urlopen(request, timeout=10)
             if encodeType == None:
                 data = response.read()
                 return data
