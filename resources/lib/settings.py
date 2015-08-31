@@ -1,13 +1,10 @@
-import xbmc
 import xbmcgui
 import xbmcaddon
-import os
 import sys
 import json
 import urllib
 import urllib2
 import base64
-import cookielib
 import sickbeard
 
 

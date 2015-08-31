@@ -66,7 +66,7 @@ def menu(filter=''):
         
         addShowDirectory(show_name, name, tvdbid, 4, thumbnail_path, fanart_path, show_total, context_menu_items)
 
-    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_TITLE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
     xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
     common.CreateNotification(header='Show List', message=str(show_total)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
 

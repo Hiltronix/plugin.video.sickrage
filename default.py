@@ -4,7 +4,6 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
-import resources.lib.settings
 import resources.lib.common as common
 import resources.lib.settings as settings
 import resources.lib.sickbeard as sickbeard
