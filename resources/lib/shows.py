@@ -59,6 +59,7 @@ def menu(filter=''):
         context_menu_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'))
         context_menu_items.append(('Force Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
         context_menu_items.append((paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'))
+        context_menu_items.append(('Update Show Images', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=13&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
         if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
             context_menu_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
         context_menu_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))

@@ -187,12 +187,12 @@ class SB:
     # If not get image from server, and save in local cache.
     # Returns path to image if found.
     # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
-    def GetShowPoster(self, show_id):
+    def GetShowPoster(self, show_id, update=False):
         image = None
         if show_id == '0':
             return ''
         file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.poster.jpg')
-        if not os.path.exists(file_path):
+        if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
@@ -207,7 +207,7 @@ class SB:
             try:
                 if not os.path.exists(os.path.dirname(file_path)):
                     os.makedirs(os.path.dirname(file_path))
-                f = open(file_path, 'wb')
+                f = open(file_path, 'wb+')
                 f.write(image)
                 f.close()
             except Exception, e:
@@ -219,12 +219,12 @@ class SB:
     # If not get image from server, and save in local cache.
     # Returns path to image if found.
     # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
-    def GetShowFanArt(self, show_id):
+    def GetShowFanArt(self, show_id, update=False):
         image = None
         if show_id == '0':
             return ''
         file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.fanart.jpg')
-        if not os.path.exists(file_path):
+        if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
@@ -239,7 +239,7 @@ class SB:
             try:
                 if not os.path.exists(os.path.dirname(file_path)):
                     os.makedirs(os.path.dirname(file_path))
-                f = open(file_path, 'wb')
+                f = open(file_path, 'wb+')
                 f.write(image)
                 f.close()
             except Exception, e:
@@ -251,12 +251,12 @@ class SB:
     # If not get image from server, and save in local cache.
     # Returns path to image if found.
     # If not found, or object is less than 1K meaning it's a json error message, then get generic image.
-    def GetShowBanner(self, show_id):
+    def GetShowBanner(self, show_id, update=False):
         image = None
         if show_id == '0':
             return ''
         file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.banner.jpg')
-        if not os.path.exists(file_path):
+        if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
@@ -271,7 +271,7 @@ class SB:
             try:
                 if not os.path.exists(os.path.dirname(file_path)):
                     os.makedirs(os.path.dirname(file_path))
-                f = open(file_path, 'wb')
+                f = open(file_path, 'wb+')
                 f.write(image)
                 f.close()
             except Exception, e:

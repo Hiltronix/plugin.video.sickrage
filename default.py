@@ -1,5 +1,6 @@
-import urllib
+import os
 import sys
+import urllib
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -208,6 +209,19 @@ elif menu_number == 12:
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+
+# Update a show's images.
+elif menu_number == 13:
+    xbmc.executebuiltin("ActivateWindow(busydialog)")
+    try:
+        # Update Poster image.
+        Sickbeard.GetShowPoster(tvdb_id, update=True)
+        # Update Fanart image.
+        Sickbeard.GetShowFanArt(tvdb_id, update=True)
+    finally:
+        xbmc.executebuiltin("Dialog.Close(busydialog)")
+    common.CreateNotification(header='Updated Cached Images for', message=show_name, icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    xbmc.executebuiltin('Container.Refresh')
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
