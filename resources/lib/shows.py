@@ -77,6 +77,7 @@ def addShowDirectory(show_name, name, tvdbid, menu_number, thumbnail_path, fanar
     return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode="+str(menu_number)+"&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
     list_item.setProperty('fanart_image', fanart_path) 
+    list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
     meta = {}
     metaget = metahandlers.MetaData()
     try:

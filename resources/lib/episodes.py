@@ -58,6 +58,7 @@ def addEpisodeDirectory(show_name, season_number, ep_number, ep_name, ep_status,
         ep_airdate = '(Aired ' + ep_airdate + ')   '
     list_item = xbmcgui.ListItem("[COLOR gold]"+str(ep_season)+"x"+str(ep_number)+". "+ep_name+"[/COLOR]   "+ep_airdate+ep_status, thumbnailImage=thumbnail_path)
     list_item.setProperty('fanart_image', fanart_path) 
+    list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
     meta = {}
     metaget = metahandlers.MetaData()
     try:

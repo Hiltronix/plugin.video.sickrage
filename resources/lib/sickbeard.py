@@ -53,19 +53,19 @@ def GetUrlData(url=None, add_useragent=False, cookie=None, encodeType='utf-8'):
                     data = response.read()
                     return data
         except urllib2.URLError, e:
-            print "URLError Msg: %s   Getting data from: %s" %(e, url)
+            print "URLError Msg: %s   Getting data from: %s" %(str(e), url)
             xbmc.sleep(500)
             if xbmc.abortRequested:
                 break
             attempts += 1
         except socket.timeout, e:
-            print "Socket Timeout Error Msg: %s   Getting data from: %s" %(e, url)
+            print "Socket Timeout Error Msg: %s   Getting data from: %s" %(str(e), url)
             xbmc.sleep(500)
             if xbmc.abortRequested:
                 break
             attempts += 1
         except Exception, e:
-            print "GetUrlData Exception Error: %s   Getting data from: %s" %(e, url)
+            print "GetUrlData Exception Error: %s   Getting data from: %s" %(str(e), url)
             return None
     return None
 
@@ -84,20 +84,51 @@ class SB:
             result = json.loads(response)
             for each in result['data']:
                 show = {}
-                show['anime'] = result['data'][each]['anime']
-                show['indexerid'] = str(result['data'][each]['indexerid'])
-                show['language'] = result['data'][each]['language']
-                show['network'] = result['data'][each]['network']
-                show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
-                show['paused'] = result['data'][each]['paused']
-                show['quality'] = result['data'][each]['quality']
-                show['show_name'] = FixBadChar(result['data'][each]['show_name'])
-                show['sports'] = result['data'][each]['sports']
-                show['status'] = result['data'][each]['status']
-                show['subtitles'] = result['data'][each]['subtitles']
+                # Minimum required fields listed first.
                 show['tvdbid'] = str(result['data'][each]['tvdbid'])
-                show['tvrage_id'] = str(result['data'][each]['tvrage_id'])
-                show['tvrage_name'] = result['data'][each]['tvrage_name']
+                show['show_name'] = FixBadChar(result['data'][each]['show_name'])
+                show['paused'] = result['data'][each]['paused']
+                show['status'] = result['data'][each]['status']
+                try:
+                    show['anime'] = result['data'][each]['anime']
+                except:
+                    show['anime'] = ''
+                try:
+                    show['indexerid'] = str(result['data'][each]['indexerid'])
+                except:
+                    show['indexerid'] = ''
+                try:
+                    show['language'] = result['data'][each]['language']
+                except:
+                    show['language'] = ''
+                try:
+                    show['network'] = result['data'][each]['network']
+                except:
+                    show['network'] = ''
+                try:
+                    show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
+                except:
+                    show['next_ep_airdate'] = ''
+                try:
+                    show['quality'] = result['data'][each]['quality']
+                except:
+                    show['quality'] = ''
+                try:
+                    show['sports'] = result['data'][each]['sports']
+                except:
+                    show['sports'] = ''
+                try:
+                    show['subtitles'] = result['data'][each]['subtitles']
+                except:
+                    show['subtitles'] = ''
+                try:
+                    show['tvrage_id'] = str(result['data'][each]['tvrage_id'])
+                except:
+                    show['tvrage_id'] = ''
+                try:
+                    show['tvrage_name'] = result['data'][each]['tvrage_name']
+                except:
+                    show['tvrage_name'] = ''
                 shows.append(show)
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
