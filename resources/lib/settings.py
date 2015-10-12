@@ -8,21 +8,23 @@ import base64
 import sickbeard
 
 
-def createURL(ip, port, use_ssl, custom_url):
+def createURL(ip, port, use_ssl, web_root, custom_url):
     if custom_url != "":
         return custom_url
+    if web_root != "":
+        web_root = '/' + web_root
     if str(ip) == "" or str(port) == "":
         displayError("1")
     else:
         if use_ssl == "true":
-            return "https://"+str(ip)+":"+str(port)
+            return "https://"+str(ip)+":"+str(port)+web_root
         else:
-            return "http://"+str(ip)+":"+str(port)
+            return "http://"+str(ip)+":"+str(port)+web_root
 
 
-def GetApiKey(ip, port, use_ssl, username, password, custom_url):
+def GetApiKey(ip, port, use_ssl, username, password, web_root, custom_url):
     # Get API key from webserver using official API request.
-    base_url = createURL(ip, port, use_ssl, custom_url)
+    base_url = createURL(ip, port, use_ssl, web_root, custom_url)
     api_key = ''
     try:
         url = base_url + '/getkey/?u=' + username + '&p=' + password
@@ -40,9 +42,9 @@ def GetApiKey(ip, port, use_ssl, username, password, custom_url):
 
 # Hackish attempt to scrape the API key from the webserver.
 # Parses the HTML of the General Config > Interface page and pulls the API key if found.
-def GetApiKeyScraper(ip, port, use_ssl, username, password, custom_url):
+def GetApiKeyScraper(ip, port, use_ssl, username, password, web_root, custom_url):
     # Get API key from Sickbeark
-    base_url = createURL(ip, port, use_ssl, custom_url)
+    base_url = createURL(ip, port, use_ssl, web_root, custom_url)
     if username and password:
         try:
             request = urllib2.Request(base_url + '/config/general/')
@@ -96,6 +98,7 @@ __addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
 __ip__ = __addon__.getSetting('SickRage IP')
 __port__= __addon__.getSetting('SickRage Port')
 __ssl_bool__= __addon__.getSetting('Use SSL')
+__web_root__=__addon__.getSetting('Web Root')
 __servertype__ = __addon__.getSetting('ServerType')
 __username__ = __addon__.getSetting('SickRage Username')
 __password__= __addon__.getSetting('SickRage Password')
@@ -143,13 +146,15 @@ def displayError(error_code, err=""):
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.
 if (__api_key__ == ""):
     if (__servertype__ == 'SickRage'):
-        __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+        __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __web_root__, __custom_url__)
     else:
-        __api_key__ = GetApiKeyScraper(__ip__, __port__, __ssl_bool__, __username__, __password__, __custom_url__)
+        __api_key__ = GetApiKeyScraper(__ip__, __port__, __ssl_bool__, __username__, __password__, __web_root__, __custom_url__)
     __addon__.setSetting('SickRage API Key', __api_key__)
     
 # Create the URL used to access webserver.
+if __web_root__ != "":
+    __web_root__ = "/"+__web_root__
 if __ssl_bool__ == "true":
-    __url__='https://'+__ip__+':'+__port__+'/api/'+__api_key__+'/'
+    __url__='https://'+__ip__+':'+__port__+__web_root__+'/api/'+__api_key__+'/'
 else:
-    __url__='http://'+__ip__+':'+__port__+'/api/'+__api_key__+'/'
+    __url__='http://'+__ip__+':'+__port__+__web_root__+'/api/'+__api_key__+'/'

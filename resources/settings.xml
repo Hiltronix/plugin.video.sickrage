@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="Network">
-		<setting id="SickRage IP" type="ipaddress" label="Server IP" default="" />
-		<setting id="SickRage Port" type="number" label="Server Port" default="" />
+		<setting id="SickRage IP" type="ipaddress" label="Server IP" default="127.0.0.1" />
+		<setting id="SickRage Port" type="number" label="Server Port" default="8083" />
 		<setting id="Use SSL" type="bool" label="Use SSL" default="false" />
+		<setting id="Web Root" type="text" label="Web Root" default="" />
 		<setting type="sep" />
 		<setting id="CustomURL" type="bool" label="Use Custom URL" default="false" />
 		<setting id="SickRage URL" type="text" label="Custom URL" default="http://" enable="eq(-1,true)"/>
