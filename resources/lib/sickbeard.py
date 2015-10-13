@@ -4,7 +4,6 @@ import os
 import sys
 import urllib
 import urllib2
-import socket
 import json
 import settings
 import xbmc
@@ -46,7 +45,7 @@ def GetUrlData(url=None, add_useragent=False, cookie=None, encodeType='utf-8'):
             else:
                 encoding = response.headers.getparam('charset')
                 if encoding:
-                    print 'Encoding: ' + str(encoding)
+                    #print 'GetUrlData Encoding: ' + str(encoding)
                     data = response.read().decode(encoding)
                     return data.encode(encodeType, 'ignore')
                 else:
@@ -54,12 +53,6 @@ def GetUrlData(url=None, add_useragent=False, cookie=None, encodeType='utf-8'):
                     return data
         except urllib2.URLError, e:
             print "URLError Msg: %s   Getting data from: %s" %(str(e), url)
-            xbmc.sleep(500)
-            if xbmc.abortRequested:
-                break
-            attempts += 1
-        except socket.timeout, e:
-            print "Socket Timeout Error Msg: %s   Getting data from: %s" %(str(e), url)
             xbmc.sleep(500)
             if xbmc.abortRequested:
                 break
