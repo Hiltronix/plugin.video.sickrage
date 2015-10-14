@@ -1,7 +1,7 @@
 [B]2015-10-13 v.1.3.13[/B]
 - Added webroot config settings as per maikito26 request.
-- Removed Custom URL (that wasn't working anyway) in favour of prepending the webroot option.
-- Updated GetUrlData.
+- Removed Custom URL (that wasn't working anyway) in favour of the webroot option.
+- Updated GetUrlData function.
 
 [B]2015-09-08 v.1.3.12[/B]
 - Made 'Show List' query more version resilient, by allowing for missing fields in server database.
