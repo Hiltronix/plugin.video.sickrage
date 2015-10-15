@@ -9,15 +9,13 @@ import sickbeard
 
 
 def createURL(ip, port, use_ssl, web_root):
-    if web_root != "":
-        web_root = '/' + web_root
     if str(ip) == "" or str(port) == "":
         displayError("1")
     else:
         if use_ssl == "true":
-            return "https://"+str(ip)+":"+str(port)+web_root
+            return "https://" + str(ip) + ":" + str(port) + web_root
         else:
-            return "http://"+str(ip)+":"+str(port)+web_root
+            return "http://" + str(ip) + ":" + str(port) + web_root
 
 
 def GetApiKey(ip, port, use_ssl, username, password, web_root):
@@ -91,24 +89,6 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, web_root):
     return APIKey
 
 
-# Set constants.
-__addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
-__ip__ = __addon__.getSetting('SickRage IP')
-__port__= __addon__.getSetting('SickRage Port')
-__ssl_bool__= __addon__.getSetting('Use SSL')
-__web_root__=__addon__.getSetting('Web Root')
-__servertype__ = __addon__.getSetting('ServerType')
-__username__ = __addon__.getSetting('SickRage Username')
-__password__= __addon__.getSetting('SickRage Password')
-__api_key__=__addon__.getSetting('SickRage API Key')
-__history_max__=__addon__.getSetting('HistoryMax')
-if (int(__history_max__) > 99):
-    __addon__.setSetting('HistoryMax', '99')
-    __history_max__ = 99
-__show_log__= __addon__.getSetting('ShowLog')
-__show_clearcache__= __addon__.getSetting('ShowClearCache')
-
-
 # Show error pop up then exit plugin.
 def messageWindow(header, message):
     dialog = xbmcgui.Dialog()
@@ -134,6 +114,29 @@ def displayError(error_code, err=""):
         errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that the API key was generated on webserver, and if webserver is running.")
     elif error_code == "5":
         errorWindow("Exception Error", str(err))
+
+
+# Set constants.
+__addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
+__ip__ = __addon__.getSetting('SickRage IP')
+__port__ = __addon__.getSetting('SickRage Port')
+__ssl_bool__ = __addon__.getSetting('Use SSL')
+__web_root__ = __addon__.getSetting('Web Root')
+if not __web_root__.startswith('/'):
+    __web_root__ = '/' + __web_root__
+if __web_root__.endswith('/'):
+    __web_root__ = __web_root__[:-1]
+__addon__.setSetting('Web Root', __web_root__)
+__servertype__ = __addon__.getSetting('ServerType')
+__username__ = __addon__.getSetting('SickRage Username')
+__password__ = __addon__.getSetting('SickRage Password')
+__api_key__ =__addon__.getSetting('SickRage API Key')
+__history_max__ = __addon__.getSetting('HistoryMax')
+if (int(__history_max__) > 99):
+    __addon__.setSetting('HistoryMax', '99')
+    __history_max__ = 99
+__show_log__ = __addon__.getSetting('ShowLog')
+__show_clearcache__ = __addon__.getSetting('ShowClearCache')
 
 
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.

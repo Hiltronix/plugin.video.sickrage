@@ -8,7 +8,8 @@
 		<setting type="sep" />
 		<setting type="sep" />
 		<setting id="Web Root" type="text" label="Web Root" default="" />
-		<setting label="Note: Enter optional Web Root without slashes." type="lsep"/>
+		<setting label="Note: Web Root is optional as required." type="lsep"/>
+		<setting label="Example Final URL: https://127.0.0.1:8080/webroot" type="lsep"/>
 	</category>
 	<category label="Login">
 		<setting id="ServerType" type="select" label="Server Type" values="SickRage|SickBeard" default="SickRage" />
