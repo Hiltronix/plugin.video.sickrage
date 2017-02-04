@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.sickrage"
 	name="SickRage"
-	version="1.3.17"
+	version="1.4.0"
 	provider-name="Hiltronix">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
@@ -13,12 +13,23 @@
 		<provides>executable video</provides>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary>SickRage Interface for Kodi/XBMC</summary>
-		<description>View and control SickRage or SickBeard from within Kodi/XBMC.</description>
+		<summary>SickRage Interface for Kodi</summary>
+		<description>View and control SickRage or SickBeard from within Kodi.</description>
 		<platform>all</platform>
 		<language>en</language>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 		<source>https://github.com/Hiltronix/plugin.video.sickrage</source>
 		<email>hiltronix@gmail.com</email>
+		<news>- Fix error retrieving API key using username and password.[CR]- Updated icon and background images.</news>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+			<screenshot>resources/images/sickrage_addon_1.jpg</screenshot>
+			<screenshot>resources/images/sickrage_addon_2.jpg</screenshot>
+			<screenshot>resources/images/sickrage_addon_3.jpg</screenshot>
+			<screenshot>resources/images/sickrage_addon_4.jpg</screenshot>
+			<screenshot>resources/images/sickrage_addon_5.jpg</screenshot>
+			<screenshot>resources/images/sickrage_addon_6.jpg</screenshot>
+		</assets>
 	</extension>
 </addon>

@@ -24,7 +24,7 @@ def GetApiKey(ip, port, use_ssl, username, password, web_root):
     api_key = ''
     try:
         url = base_url + '/getkey/?u=' + username + '&p=' + password
-        response = sickbeard.GetUrlData(url, False)
+        response = sickbeard.GetUrlData(url)
         result = json.loads(response)
         api_key = result['api_key']
         if api_key is None:

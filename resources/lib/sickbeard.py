@@ -200,7 +200,6 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                #image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
@@ -233,7 +232,6 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                #image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
@@ -266,7 +264,6 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                #image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
                 image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
@@ -410,7 +407,6 @@ class SB:
     def AddNewShow(self, tvdbid, location, prev_aired_status, future_status, flatten_folders, quality):
         result = ""
         try:
-            #url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+urllib.quote(location)+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
             url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
             print 'Add Show Request:' + url
             response = GetUrlData(url=url)

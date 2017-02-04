@@ -1,3 +1,7 @@
+[B]2017-02-04 v.1.4.0[/B]
+- Fix error retrieving API key using username and password.
+- Updated icon and background images.
+
 [B]2017-02-03 v.1.3.17[/B]
 - Now using "Requests" module for network access.
 - Changed server IP input to allow for server host names as well.
