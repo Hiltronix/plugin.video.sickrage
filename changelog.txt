@@ -1,4 +1,10 @@
+[B]2017-02-04 v.1.4.2[/B]
+- Updated images.
+
 [B]2017-02-04 v.1.4.1[/B]
+- Updated images.
+
+[B]2017-02-04 v.1.4.0[/B]
 - Fix error retrieving API key using username and password.
 - Updated icon and background images.
 
