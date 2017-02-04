@@ -4,6 +4,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import sickbeard
+import settings
 from metahandler import metahandlers
 
 
@@ -60,7 +61,7 @@ def addEpisodeDirectory(show_name, season_number, ep_number, ep_name, ep_status,
     list_item.setProperty('fanart_image', fanart_path) 
     list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
     meta = {}
-    metaget = metahandlers.MetaData()
+    metaget = metahandlers.MetaData(tmdb_api_key=settings.__tmdb_api_key__)
     try:
         meta = metaget.get_episode_meta(show_name, ep_tvdbid, int(ep_season), int(ep_number), '', '', '')
     except:

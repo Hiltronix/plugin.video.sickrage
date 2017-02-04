@@ -2,9 +2,8 @@
 
 import os
 import sys
-import urllib
-import urllib2
 import json
+import requests
 import settings
 import xbmc
 import xbmcgui
@@ -22,45 +21,27 @@ def FixBadChar(text):
     return text
     
 
-def GetUrlData(url=None, add_useragent=False, cookie=None, encodeType='utf-8'):
+def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
     # Fetches data from "url" (http or https) and return it as a string, with timeout.
-    # Set "encodeType" to None for image and binary files.
-    attempts = 0
-    request = urllib2.Request(url)
-    if cookie:
-        headers = {'Cookie': cookie}
-        for (key, value) in headers.iteritems():
-            request.add_header(key, value)
-    if add_useragent:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0'}
-        for (key, value) in headers.iteritems():
-            request.add_header(key, value)
-    # Try up to 3 times to make connection.
-    while (attempts < 3) and (not xbmc.abortRequested):
-        try:
-            response = urllib2.urlopen(request, timeout=10)  # Wait 10 seconds for connection.
-            if not encodeType:
-                data = response.read()
-                return data
-            else:
-                encoding = response.headers.getparam('charset')
-                if encoding:
-                    #print 'GetUrlData Encoding: ' + str(encoding)
-                    data = response.read().decode(encoding)
-                    return data.encode(encodeType, 'ignore')
-                else:
-                    data = response.read()
-                    return data
-        except urllib2.URLError, e:
-            print "URLError Msg: %s   Getting data from: %s" %(str(e), url)
-            xbmc.sleep(500)
-            if xbmc.abortRequested:
-                break
-            attempts += 1
-        except Exception, e:
-            print "GetUrlData Exception Error: %s   Getting data from: %s" %(str(e), url)
+    # Supply any headers and proxies as dict.
+    # A default User-Agent will be added if the headers dict doesn't contain one.
+    # Set "verify" True if you want SSL certs to be verified.
+    # If using logging, pass your log handle.
+    try:
+        if not headers.get('User-Agent'):
+            headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0'
+
+        response = requests.get(url, headers=headers, proxies=proxies, verify=verify, timeout=3.0)
+        if response.status_code == 200:
+            return response.content
+        else:
             return None
-    return None
+    except Exception, e:
+        #print e
+        xbmc.log('sickrage.sickbeard.GetUrlData: {0}'.format(e), xbmc.LOGERROR)
+        if log:
+            log.debug('*** Exception ***', exc_info=1)
+        return None
 
 
 # SickRage class which mas all API calls to SickRage.
@@ -219,7 +200,8 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                #image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                image = GetUrlData(url=settings.__url__+'?cmd=show.getposter&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_poster.jpg'), mode='rb') as f:
@@ -251,7 +233,8 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                #image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                image = GetUrlData(url=settings.__url__+'?cmd=show.getfanart&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_fanart.jpg'), mode='rb') as f:
@@ -283,7 +266,8 @@ class SB:
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
-                image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                #image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id), add_useragent=True, encodeType=None)
+                image = GetUrlData(url=settings.__url__+'?cmd=show.getbanner&tvdbid='+str(show_id))
                 if (image == None) or (len(image) < 1024):
                     # Get generic image instead.
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_banner.jpg'), mode='rb') as f:
@@ -346,6 +330,7 @@ class SB:
     # Return a list of the last 'num_entries' snatched/downloaded episodes.
     def GetHistory(self, num_entries):
         history = []
+        xbmc.log('sickbeard.GetHistory')
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=history&limit='+str(num_entries))
             result = json.loads(response)
@@ -425,7 +410,8 @@ class SB:
     def AddNewShow(self, tvdbid, location, prev_aired_status, future_status, flatten_folders, quality):
         result = ""
         try:
-            url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+urllib.quote(location)+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
+            #url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+urllib.quote(location)+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
+            url = settings.__url__+'?cmd=show.addnew&tvdbid='+str(tvdbid)+'&location='+location+'&status='+prev_aired_status+'&future_status='+future_status+'&flatten_folders='+str(flatten_folders)+'&initial='+quality
             print 'Add Show Request:' + url
             response = GetUrlData(url=url)
             result = json.loads(response)
