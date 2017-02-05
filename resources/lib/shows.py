@@ -48,6 +48,19 @@ def GetShowInfo(filter):
 
 # Parse through shows and add dirs for each.
 def menu(filter=''):
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select('Show List', ['All', 'Continuing', 'Ended', 'Paused'])
+    if ret == -1:
+        xbmc.executebuiltin('XBMC.Action(back)')
+    if ret == 0:
+        filter = ''
+    if ret == 1:
+        filter = 'Continuing'
+    if ret == 2:
+        filter = 'Ended'
+    if ret == 3:
+        filter = 'Paused'
+
     show_info = GetShowInfo(filter)
     show_total = len(show_info)
     for show_name, name, tvdbid, thumbnail_path, fanart_path, paused in show_info:

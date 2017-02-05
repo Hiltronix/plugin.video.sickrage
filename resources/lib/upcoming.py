@@ -13,6 +13,10 @@ from metahandler import metahandlers
 Sickbeard = sickbeard.SB()
 
 
+def noop():
+    pass
+
+
 # Translates the int returned from SickRage to a weekday string
 def GetWeekDay(weekday):
     if weekday == 1:
@@ -97,6 +101,15 @@ def GetUpcomingEpisodes(ext_upcoming=False):
 
 
 def menu(ext_upcoming=False):
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select('Upcoming Episodes', ['1 Week', 'Extended'])
+    if ret == -1:
+        xbmc.executebuiltin('XBMC.Action(back)')
+    if ret == 0:
+        ext_upcoming = False
+    if ret == 1:
+        ext_upcoming = True
+
     upcoming_episodes_list = GetUpcomingEpisodes(ext_upcoming)
     upcoming_total = len(upcoming_episodes_list)
     for tvdbid, ep_name, show_name, paused, season, episode in upcoming_episodes_list:

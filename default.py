@@ -125,29 +125,11 @@ if menu_number == None:
        
 elif menu_number == 1:
     import resources.lib.shows as shows
-    dialog = xbmcgui.Dialog()
-    ret = dialog.select('Show List', ['All', 'Continuing', 'Ended', 'Paused', 'Exit'])
-    if (ret == -1) or (ret == 4):
-        mainMenu()
-    if ret == 0:
-        shows.menu()
-    if ret == 1:
-        shows.menu('Continuing')
-    if ret == 2:
-        shows.menu('Ended')
-    if ret == 3:
-        shows.menu('Paused')
+    shows.menu()
         
 elif menu_number == 2:
     import resources.lib.upcoming as upcoming
-    dialog = xbmcgui.Dialog()
-    ret = dialog.select('Upcoming Episodes', ['1 Week', 'Extended'])
-    if ret == -1:
-        mainMenu()
-    if ret == 0:
-        upcoming.menu()
-    if ret == 1:
-        upcoming.menu(True)
+    upcoming.menu()
         
 elif menu_number == 3:
     import resources.lib.history as history

@@ -1,3 +1,6 @@
+[B]2017-02-05 v.1.4.3[/B]
+- Fixed cancel dialog, return to main menu issue.
+
 [B]2017-02-04 v.1.4.2[/B]
 - Updated images.
 
