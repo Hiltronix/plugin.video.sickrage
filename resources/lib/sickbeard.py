@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import xbmc
 import os
 import sys
 import json
 import requests
 import settings
-import xbmc
-import xbmcgui
 
 
 # Replace troublesome characters, that effect sorting.
@@ -284,7 +283,7 @@ class SB:
         return file_path
 
 
-    # Clear all image files from the image cache.
+    # Clear image file cache.
     def ClearImageCache(self):
         path = xbmc.translatePath('special://temp/sb/cache/images/')
         if os.path.exists(path):
@@ -293,6 +292,23 @@ class SB:
                     os.unlink(os.path.join(path, file))
             for file in os.listdir(path):
                 if file.lower().endswith(".png"):
+                    os.unlink(os.path.join(path, file))
+        path = xbmc.translatePath('special://temp/sb/cache/actors/')
+        if os.path.exists(path):
+            for file in os.listdir(path):
+                if file.lower().endswith(".jpg"):
+                    os.unlink(os.path.join(path, file))
+            for file in os.listdir(path):
+                if file.lower().endswith(".png"):
+                    os.unlink(os.path.join(path, file))
+
+
+    # Clear episode meta data cache.
+    def ClearMetaDataCache(self):
+        path = xbmc.translatePath('special://temp/sb/cache/episodes/')
+        if os.path.exists(path):
+            for file in os.listdir(path):
+                if file.lower().endswith(".json"):
                     os.unlink(os.path.join(path, file))
 
 

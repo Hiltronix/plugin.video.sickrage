@@ -1,12 +1,21 @@
-import os
-import sys
-import urllib
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
+import os
+import sys
+import urllib
 import resources.lib.common as common
 import resources.lib.settings as settings
+import resources.lib.upcoming as upcoming
+import resources.lib.history as history
+import resources.lib.seasons as seasons
+import resources.lib.show_filter as show_filter
+import resources.lib.shows as shows
+import resources.lib.addshow as addshow
+import resources.lib.episodes as episodes
+import resources.lib.backlog as backlog
+import resources.lib.log as log
 import resources.lib.sickbeard as sickbeard
 
 
@@ -18,45 +27,50 @@ Sickbeard = sickbeard.SB()
 
 # Add the main directory folders.
 def mainMenu():
-        addDirectory('Upcoming Episodes', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png')
-        addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', my_addon.getAddonInfo('path')+'/resources/images/history_thn.png')
-        if (settings.__servertype__ == "SickRage"):
-            addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', my_addon.getAddonInfo('path')+'/resources/images/backlog_thn.png')
-        addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', my_addon.getAddonInfo('path')+'/resources/images/manage_thn.png')
-        addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', my_addon.getAddonInfo('path')+'/resources/images/add_thn.png')
-        if (settings.__show_log__ == "true"):
-            addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png', my_addon.getAddonInfo('path')+'/resources/images/log_thn.png')
-        if (settings.__show_clearcache__ == "true"):
-            addDirectory('Clear Image Cache', 12, False, my_addon.getAddonInfo('path')+'/settings.png', my_addon.getAddonInfo('path')+'/resources/images/settings_thn.png')
+    total_items = 5
+    addDirectory('Upcoming - 1 Week', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png', total_items)
+    addDirectory('Upcoming - Extended', 22, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png', total_items)
+    addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', my_addon.getAddonInfo('path')+'/resources/images/history_thn.png', total_items)
+    if (settings.__servertype__ == "SickRage"):
+        total_items += 1
+        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', my_addon.getAddonInfo('path')+'/resources/images/backlog_thn.png', total_items)
+    addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', my_addon.getAddonInfo('path')+'/resources/images/manage_thn.png', total_items)
+    addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', my_addon.getAddonInfo('path')+'/resources/images/add_thn.png', total_items)
+    if (settings.__show_log__ == "true"):
+        total_items += 1
+        addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png', my_addon.getAddonInfo('path')+'/resources/images/log_thn.png', total_items)
+    if (settings.__show_clearcache__ == "true"):
+        total_items += 1
+        addDirectory('Clear Cached Data', 12, False, my_addon.getAddonInfo('path')+'/settings.png', my_addon.getAddonInfo('path')+'/resources/images/settings_thn.png', total_items)
 
 
 # Add directory item.
-def addDirectory(menu_item_name, menu_number, folder, icon, thumbnail):
-        return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
-        list_item = xbmcgui.ListItem(menu_item_name, iconImage=thumbnail, thumbnailImage=icon)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=7)
+def addDirectory(menu_item_name, menu_number, folder, icon, thumbnail, total_items):
+    return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
+    list_item = xbmcgui.ListItem(menu_item_name, iconImage=thumbnail, thumbnailImage=icon)
+    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=total_items)
 
 
 # Get the parameters from the URL supplied as an arg to this script.
 def getParameters():
-        param=[]
-        try:
-          paramstring=sys.argv[2]
-          if len(paramstring)>=2:
-                  params=sys.argv[2]
-                  cleanedparams=params.replace('?','')
-                  if (params[len(params)-1]=='/'):
-                          params=params[0:len(params)-2]
-                  pairsofparams=cleanedparams.split('&')
-                  param={}
-                  for i in range(len(pairsofparams)):
-                          splitparams={}
-                          splitparams=pairsofparams[i].split('=')
-                          if (len(splitparams))==2:
-                                  param[splitparams[0]]=splitparams[1]
-          return param
-        except:
-          return param
+    param=[]
+    try:
+      paramstring=sys.argv[2]
+      if len(paramstring)>=2:
+              params=sys.argv[2]
+              cleanedparams=params.replace('?','')
+              if (params[len(params)-1]=='/'):
+                      params=params[0:len(params)-2]
+              pairsofparams=cleanedparams.split('&')
+              param={}
+              for i in range(len(pairsofparams)):
+                      splitparams={}
+                      splitparams=pairsofparams[i].split('=')
+                      if (len(splitparams))==2:
+                              param[splitparams[0]]=splitparams[1]
+      return param
+    except:
+      return param
           
           
 # Initialize URL parameters.
@@ -124,34 +138,33 @@ if menu_number == None:
     mainMenu()
        
 elif menu_number == 1:
-    import resources.lib.shows as shows
-    shows.menu()
+    show_filter.menu()
         
-elif menu_number == 2:
-    import resources.lib.upcoming as upcoming
-    upcoming.menu()
+elif menu_number == 14:
+    shows.menu(filter=name)
+        
+elif menu_number == 2:  # Upcoming 1 Week.
+    upcoming.menu(False)
+        
+elif menu_number == 22:   # Upcoming Extended.
+    upcoming.menu(True)
         
 elif menu_number == 3:
-    import resources.lib.history as history
     history.menu()
 
 elif menu_number == 4:
-    import resources.lib.seasons as seasons
     seasons.menu(tvdb_id, show_name)
 
 elif menu_number == 5:
-    import resources.lib.episodes as episodes
     episodes.menu(tvdb_id, show_name, number)
 
 elif menu_number == 6:
     xbmc.executebuiltin('XBMC.Action(Info)')
 
 elif menu_number == 7:
-    import resources.lib.addshow as addshow
     addshow.AddShow(show_name)
 
 elif menu_number == 8:
-    import resources.lib.addshow as addshow
     if (action == 'addshow'):
         if show_name:
             addshow.AddShow(show_name)
@@ -167,7 +180,6 @@ elif menu_number == 8:
             addshow.AddShow(show_name)
 
 elif menu_number == 9:
-    import resources.lib.backlog as backlog
     backlog.menu()
         
 # ExtendedInfo Script optional TV Show lookup feature.
@@ -179,15 +191,16 @@ elif menu_number == 10:
                 
 # View log file.
 elif menu_number == 11:
-    import resources.lib.log as log
     log.main()
 
 # Clear the image cache.
 elif menu_number == 12:
-    if common.selectNoYes('Clear Image Cache?', 'No', 'Yes') == 1:
+    size = common.GetDirSizeFormatted(xbmc.translatePath('special://temp/sb/cache/'))
+    if common.selectNoYes('Clear cached images and meta data?  [{0}]'.format(size), 'No', 'Yes') == 1:
         xbmc.executebuiltin("ActivateWindow(busydialog)")
         try:
             Sickbeard.ClearImageCache()
+            Sickbeard.ClearMetaDataCache()
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)

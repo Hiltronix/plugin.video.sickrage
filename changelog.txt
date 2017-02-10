@@ -1,3 +1,12 @@
+[B]2017-02-08 v.2.0.0[/B]
+- Switched to new TVdb scraper and meta data caching system.
+- User experience greatly improved after TVdb data is cached locally.
+- More meta data info is displayed.
+- Manually update cached data directly from TVdb from context menu.
+- Actors and their images are now displayed, when using Kodi 17.x or higher.
+- Added banner image support.
+- Total space used for cache now displayed in "Clear Cache".
+
 [B]2017-02-05 v.1.4.3[/B]
 - Fixed cancel dialog, return to main menu issue.
 
