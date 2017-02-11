@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.sickrage"
 	name="SickRage"
-	version="2.0.0"
+	version="2.0.1"
 	provider-name="Hiltronix">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
@@ -18,7 +18,8 @@
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 		<source>https://github.com/Hiltronix/plugin.video.sickrage</source>
 		<email>hiltronix@gmail.com</email>
-		<news>- Switched to new TVdb scraper and meta data caching system.[CR]
+		<news>- Improved list sorting.
+- Switched to new TVdb scraper and meta data caching system.[CR]
 - User experience greatly improved after TVdb data is cached locally.[CR]
 - More meta data info is displayed.[CR]
 - Manually update cached data directly from TVdb from context menu.[CR]

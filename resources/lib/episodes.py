@@ -53,16 +53,20 @@ def menu(tvdbid, show_name, season):
         banner_path = Sickbeard.GetShowBanner(tvdbid)
         addDirectory(show_name, season, ep_number, name, status, airdate, tvdbid, thumbnail_path, fanart_path, banner_path, total_items, context_items)
 
-    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
     xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
-    common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=3000, sound=False)
 
 
 def addDirectory(show_name, season, episode, name, status, airdate, tvdbid, thumbnail_path, fanart_path, banner_path, total_items, context_items):
     return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     if (airdate != ''):
-        airdate = '(Aired ' + airdate + ')   '
-    name = "[COLOR gold]" + str(season) + "x" + str(episode) + ". "+ name + "[/COLOR]   " + airdate + status
+        aired = '(Aired ' + airdate + ')   '
+    else:
+        aired = ''
+    name = "[COLOR gold]" + str(season) + "x" + str(episode) + ". "+ name + "[/COLOR]   " + aired + status
     list_item = xbmcgui.ListItem(name)
     list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
     list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
@@ -98,7 +102,11 @@ def addDirectory(show_name, season, episode, name, status, airdate, tvdbid, thum
         meta['overlay'] = 6
         meta['plot'] = TvdbApi.getFromDict(data, ['Details', 'overview'], '')
         list_item.setRating('tvdb', TvdbApi.getFromDict(data, ['Show', 'siteRating'], 0), TvdbApi.getFromDict(data, ['Show', 'siteRatingCount'], 0), True)
-        meta['premiered'] = TvdbApi.getFromDict(data, ['Details', 'firstAired'], '')
+        meta['premiered'] = TvdbApi.getFromDict(data, ['Details', 'firstAired'], airdate)
+        meta['aired'] = meta['premiered']
+        meta['dateadded'] = meta['premiered']
+        # Date for sorting must be in Kodi format dd.mm.yyyy
+        meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
         meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
         meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
         meta['writer'] = ', '.join(TvdbApi.getFromDict(data, ['Details', 'writers'], ''))

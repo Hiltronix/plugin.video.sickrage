@@ -56,7 +56,11 @@ def menu():
         banner_path = Sickbeard.GetShowBanner(tvdbid)
         addDirectory(show_name, name, tvdbid, season, episode, thumbnail_path, fanart_path, banner_path, total_items, context_items)
 
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
     xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=3000, sound=False)
 
 
 # Add history items to directory
@@ -98,6 +102,10 @@ def addDirectory(show_name, name, tvdbid, season, episode, thumbnail_path, fanar
         meta['plot'] = TvdbApi.getFromDict(data, ['Details', 'overview'], '')
         list_item.setRating('tvdb', TvdbApi.getFromDict(data, ['Show', 'siteRating'], 0), TvdbApi.getFromDict(data, ['Show', 'siteRatingCount'], 0), True)
         meta['premiered'] = TvdbApi.getFromDict(data, ['Details', 'firstAired'], '')
+        meta['aired'] = meta['premiered']
+        meta['dateadded'] = meta['premiered']
+        # Date for sorting must be in Kodi format dd.mm.yyyy
+        meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
         meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
         meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
         meta['writer'] = ', '.join(TvdbApi.getFromDict(data, ['Details', 'writers'], ''))

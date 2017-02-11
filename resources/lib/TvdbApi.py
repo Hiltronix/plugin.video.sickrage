@@ -117,7 +117,11 @@ def getFromDict(dataDict, mapList, default_result=None):
 # Example: getFromDict(dataDict, ["b", "v", "y"])
 # Returns 'None' if not found, unless a default result is provided.
     try:
-        return reduce(lambda d, k: d[k], mapList, dataDict)
+        value = reduce(lambda d, k: d[k], mapList, dataDict)
+        if value:
+            return value
+        else:
+            return default_result
     except Exception:
         return default_result
 

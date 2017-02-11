@@ -63,44 +63,48 @@ class SB:
                 show['paused'] = result['data'][each]['paused']
                 show['status'] = result['data'][each]['status']
                 try:
+                    show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
+                except Exception:
+                    show['next_ep_airdate'] = ''
+                try:
                     show['anime'] = result['data'][each]['anime']
-                except:
+                except Exception:
                     show['anime'] = ''
                 try:
                     show['indexerid'] = str(result['data'][each]['indexerid'])
-                except:
+                except Exception:
                     show['indexerid'] = ''
                 try:
                     show['language'] = result['data'][each]['language']
-                except:
+                except Exception:
                     show['language'] = ''
                 try:
                     show['network'] = result['data'][each]['network']
-                except:
+                except Exception:
                     show['network'] = ''
                 try:
                     show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
-                except:
+                except Exception:
                     show['next_ep_airdate'] = ''
                 try:
                     show['quality'] = result['data'][each]['quality']
-                except:
+                except Exception:
                     show['quality'] = ''
                 try:
                     show['sports'] = result['data'][each]['sports']
-                except:
+                except Exception:
                     show['sports'] = ''
                 try:
                     show['subtitles'] = result['data'][each]['subtitles']
-                except:
+                except Exception:
                     show['subtitles'] = ''
                 try:
                     show['tvrage_id'] = str(result['data'][each]['tvrage_id'])
-                except:
+                except Exception:
                     show['tvrage_id'] = ''
                 try:
                     show['tvrage_name'] = result['data'][each]['tvrage_name']
-                except:
+                except Exception:
                     show['tvrage_name'] = ''
                 shows.append(show)
         except Exception, e:

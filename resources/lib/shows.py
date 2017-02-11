@@ -23,6 +23,7 @@ def GetShowInfo(filter):
         name = show['show_name']
         tvdbid = show['tvdbid']
         paused = show['paused']
+        next_airdate = show['next_ep_airdate']
         status = show['status']
         status_msg = '    [COLOR gray]Unknown[/COLOR]'
         if paused == 0:
@@ -37,13 +38,13 @@ def GetShowInfo(filter):
             status_msg = '    [COLOR gray]'+str(status)+'[/COLOR]'
         if filter:
             if (filter == 'All'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg])
+                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Continuing') and (status == 'Continuing'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg])
+                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Ended') and (status == 'Ended'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg])
+                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Paused') and (paused == 1):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg])
+                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
     return list
 
 
@@ -52,7 +53,7 @@ def menu(filter='All'):
     show_info = GetShowInfo(filter)
     total_items = len(show_info)
 
-    for show_name, name, tvdbid, paused in show_info:
+    for show_name, name, tvdbid, paused, next_airdate in show_info:
 
         context_items = []
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
@@ -72,15 +73,17 @@ def menu(filter='All'):
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         fanart_path = Sickbeard.GetShowFanArt(tvdbid)
         banner_path = Sickbeard.GetShowBanner(tvdbid)
-        addDirectory(show_name, name, tvdbid, thumbnail_path, fanart_path, banner_path, total_items, context_items)
+        addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items)
 
-    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
     xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
-    common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=3000, sound=False)
 
 
-def addDirectory(show_name, name, tvdbid, thumbnail_path, fanart_path, banner_path, total_items, context_items):
-    return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=4&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+def addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items):
+    return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
     list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
     list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
@@ -116,7 +119,11 @@ def addDirectory(show_name, name, tvdbid, thumbnail_path, fanart_path, banner_pa
         meta['overlay'] = 6
         meta['plot'] = TvdbApi.getFromDict(data, ['Show', 'overview'], '')
         list_item.setRating('tvdb', TvdbApi.getFromDict(data, ['Show', 'siteRating'], 0), TvdbApi.getFromDict(data, ['Show', 'siteRatingCount'], 0), True)
-        meta['premiered'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], '')
+        meta['premiered'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], next_airdate)
+        meta['aired'] = meta['premiered']
+        meta['dateadded'] = meta['premiered']
+        # Date for sorting must be in Kodi format dd.mm.yyyy
+        meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
         meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
         meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
         meta['studio'] = TvdbApi.getFromDict(data, ['Show', 'network'], '')
@@ -137,5 +144,5 @@ def addDirectory(show_name, name, tvdbid, thumbnail_path, fanart_path, banner_pa
         meta['title'] = name
     list_item.setInfo(type="Video", infoLabels=meta)
     list_item.addContextMenuItems(context_items, replaceItems = True)
-    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=True, totalItems=total_items)  
+    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=False, totalItems=total_items)  
 
