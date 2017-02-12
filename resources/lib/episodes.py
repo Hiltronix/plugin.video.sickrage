@@ -93,6 +93,7 @@ def addDirectory(show_name, season, episode, name, status, airdate, tvdbid, thum
             except Exception, e:
                 print e
         meta['tvshowtitle'] = TvdbApi.getFromDict(data, ['Show', 'seriesName'], show_name)
+        meta['sorttitle'] = name
         meta['title'] = name # This is what is displayed at the top of the video dialog window.
         meta['originaltitle'] = TvdbApi.getFromDict(data, ['Details', 'episodeName'], name)
         meta['season'] = int(season)

@@ -2,8 +2,8 @@ import sys
 import xbmc
 import xbmcgui
 import xbmcaddon
+import common
 import sickbeard
-import resources.lib.common as common
 
 
 # Initialize Sickbeard Class

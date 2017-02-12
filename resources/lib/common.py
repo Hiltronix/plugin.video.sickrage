@@ -6,7 +6,9 @@ import sys
 import math
 
 
+# This path info may not be used in this module, but is elsewhere.
 my_addon = xbmcaddon.Addon('plugin.video.sickrage')
+ADDON_PATH = my_addon.getAddonInfo('path')
 
 
 def GetDirSizeFormatted(start_path):

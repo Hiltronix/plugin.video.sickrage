@@ -2,9 +2,9 @@ import xbmcgui
 import xbmcaddon
 import sys
 import json
+import base64
 import urllib
 import urllib2
-import base64
 import sickbeard
 
 
@@ -48,15 +48,6 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, web_root):
             request.add_header("Authorization", "Basic %s" % base64string)
             resp = urllib2.urlopen(request)
             result = resp.readlines()
-            #auth_url = base_url + "/login/"
-            #url = base_url + '/config/general/'
-            #login_data = urllib.urlencode({'username' : username, 'password' : password})
-            #cj = cookielib.CookieJar()
-            #opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-            #urllib2.install_opener(opener)
-            #opener.open(auth_url, login_data)
-            #resp = opener.open(url)
-            #result = resp.readlines()
             resp.close()
         except urllib2.HTTPError:
             displayError("2")

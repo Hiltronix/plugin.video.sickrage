@@ -20,6 +20,20 @@ def FixBadChar(text):
     return text
     
 
+def getFromDict(dataDict, mapList, default_result=None):
+# Similar to dictionary '.get' but for nested dictionaies.
+# Example: getFromDict(dataDict, ["b", "v", "y"])
+# Returns 'None' if not found, unless a default result is provided.
+    try:
+        value = reduce(lambda d, k: d[k], mapList, dataDict)
+        if value:
+            return value
+        else:
+            return default_result
+    except Exception:
+        return default_result
+
+
 def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
     # Fetches data from "url" (http or https) and return it as a string, with timeout.
     # Supply any headers and proxies as dict.
@@ -35,12 +49,17 @@ def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
             return response.content
         else:
             return None
+    except requests.ReadTimeout:
+        rtn = {'message': 'Request was sent.', 'result': 'Server timed out before replying.'}
+        return json.dumps(rtn, ensure_ascii=False)
     except Exception, e:
         #print e
         xbmc.log('sickrage.sickbeard.GetUrlData: {0}'.format(e), xbmc.LOGERROR)
         if log:
             log.debug('*** Exception ***', exc_info=1)
-        return None
+        err = 'Exception: {0}'.format(e)
+        rtn = {'message': err, 'result': 'Network Error!'}
+        return json.dumps(rtn, ensure_ascii=False)
 
 
 # SickRage class which mas all API calls to SickRage.
@@ -132,9 +151,9 @@ class SB:
             for id in show_ids:
                 response = GetUrlData(url=settings.__url__+'?cmd=show&tvdbid='+id)
                 result = json.loads(response)
-                name = result['data']['show_name']
-                paused = result['data']['paused']
-                status = result['data']['status']
+                name = getFromDict(result, ['data', 'show_name'])
+                paused = getFromDict(result, ['data', 'paused'])
+                status = getFromDict(result, ['data', 'status'])
                 show_info[name] = [id, paused, status]
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
@@ -148,7 +167,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show&tvdbid='+show_id)
             result = json.loads(response)
-            details = result['data']
+            details = result.get('data')
             
             response = GetUrlData(url=settings.__url__+'?cmd=show.stats&tvdbid='+show_id)
             result = json.loads(response)
@@ -164,7 +183,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.seasonlist&tvdbid='+show_id)
             result = json.loads(response)
-            season_number_list = result['data']
+            season_number_list = result.get('data')
             season_number_list.sort()
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
@@ -178,7 +197,7 @@ class SB:
             season = str(season)
             response = GetUrlData(url=settings.__url__+'?cmd=show.seasons&tvdbid='+show_id+'&season='+season)
             result = json.loads(response)
-            season_episodes = result['data']
+            season_episodes = result.get('data')
               
             for key in season_episodes.iterkeys():
                 if int(key) < 10:
@@ -338,7 +357,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=future&sort=date&type=today|soon|later')
             result = json.loads(response)
-            future_list = result['data']
+            future_list = result.get('data')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return future_list
@@ -351,7 +370,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=history&limit='+str(num_entries))
             result = json.loads(response)
-            history = result['data']
+            history = result.get('data')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return history
@@ -381,20 +400,23 @@ class SB:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.getdefaults')
             result = json.loads(response)
             print result.keys()
-            defaults_data = result['data']
-            defaults = [defaults_data['status'], defaults_data['flatten_folders'], str(defaults_data['initial'])]
+            defaults_data = result.get('data')
+            if defaults_data:
+                defaults = [defaults_data['status'], defaults_data['flatten_folders'], str(defaults_data['initial'])]
+            else:
+                defaults = ['skipped', 1, ["sdtv", "sddvd", "hdtv", "rawhdtv", "fullhdtv", "hdwebdl", "fullhdwebdl", "hdbluray", "fullhdbluray", "unknown"]]
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return defaults
     
 
     # Return a list of the save paths set in SickRage.
-    def GetRoodDirs(self):
+    def GetRootDirs(self):
         directory_result = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.getrootdirs')
             result = json.loads(response)
-            result = result['data']
+            result = result.get('data')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
@@ -406,7 +428,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb')
             result = json.loads(response)
-            version = result['data']['sb_version']
+            version = getFromDict(result, ['data', 'sb_version'], 'Unknown')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return version
@@ -431,17 +453,18 @@ class SB:
             print 'Add Show Request:' + url
             response = GetUrlData(url=url)
             result = json.loads(response)
+            success = result.get('result', 'Unknown result!')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
-        return result['result']
+        return success
     
 
     def ForceSearch(self, show_id):
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.update&tvdbid='+show_id)
             result = json.loads(response)
-            message = result['message']
-            success = result['result']
+            message = result.get('message')
+            success = result.get('result')
             settings.errorWindow("Force Update", message + " ["+success+"]")
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
@@ -452,18 +475,21 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&tvdbid='+show_id+'&pause='+paused)
             result = json.loads(response)
-            message = result['message']
+            message = result.get('message')
+            success = result.get('result')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
     
 
-    def ManualSearch(self, tvdbid, season, ep):
+    def ForceDownload(self, tvdbid, season, ep):
         message = ""
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep))
             result = json.loads(response)
-            message = result['message']
+            message = result.get('message')
+            success = result.get('result')
+            settings.errorWindow(sys._getframe().f_code.co_name, message + " ["+success+"]")
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
@@ -474,7 +500,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.delete&tvdbid='+str(tvdbid)+'&removefiles='+str(removefiles))
             result = json.loads(response)
-            message = result['message']
+            message = result.get('message')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
@@ -504,7 +530,7 @@ class SB:
         try:
             response = GetUrlData(url=settings.__url__ + '?cmd=logs&min_level=' + str(min_level))
             result = json.loads(response)
-            log_list = result['data']
+            log_list = result.get('data')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return log_list

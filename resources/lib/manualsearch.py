@@ -17,7 +17,7 @@ def messageWindow(message):
   
 # Set the status of a show.
 def manualSearch(tvdbid, season, episode):
-    message = Sickbeard.ManualSearch(tvdbid, season, episode)
+    message = Sickbeard.ForceDownload(tvdbid, season, episode)
     messageWindow(message)
 
 manualSearch(__tvdbid__, __season__, __episode__)

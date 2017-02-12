@@ -3,6 +3,7 @@ import xbmcgui
 import sys
 import sickbeard
 
+
 # Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
 

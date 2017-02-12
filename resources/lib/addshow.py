@@ -2,9 +2,9 @@ import sys
 import urllib
 import xbmc
 import xbmcgui
+import common
+import settings
 import sickbeard
-import resources.lib.common as common
-import resources.lib.settings as settings
 
 
 # Initialize Sickbeard Class
@@ -79,7 +79,7 @@ def AddShow(show_name):
     print 'Add Show Retrieved Defaults'
     
     # Set status for previously aired episodes.
-    prev_aired_status = SetStatus("Status for previously aired episodes", default_status)
+    prev_aired_status = SetStatus("Set Status for Previously Aired Episodes", default_status)
     if (prev_aired_status == -1):
         return
         
@@ -88,7 +88,7 @@ def AddShow(show_name):
     # Set status for future episodes.
     future_status = ''
     if (settings.__servertype__ == "SickRage"):
-        future_status = SetStatus("Status for all future episodes", "wanted")
+        future_status = SetStatus("Set Status for Upcoming Episodes", "wanted")
         if (future_status == -1):
             return
 
@@ -151,12 +151,12 @@ def ShowMessage(header, text):
 
 # Gets the root dirs from SB then shows selection window
 def SelectRootDirMessage():
-    directory_result = Sickbeard.GetRoodDirs()
+    directory_result = Sickbeard.GetRootDirs()
     directories = []
     for location in directory_result:
         directories.append(location['location'])
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Pick the parent folder", directories)
+    ret = dialog.select("Select Parent Folder", directories)
     if (ret == -1):
         return ret
     else:
@@ -184,9 +184,9 @@ def SetFlattenFolders(flatten_folders):
     if flatten_folders == 1:
         list = ["Yes (no season folders)", "No (episodes folder-grouped by season)"]
     else:
-        list = ["No (episodes folder-grouped by season)", "Yes (no season folders)"]
+        list = ["Grouped Seasons in Sep. Folders", "All Shows in the Same Folder"]
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Flatten files (no folders)", list)
+    ret = dialog.select("Group Seasons (Flatten Files Option)", list)
     if (ret == -1):
         return ret
     elif (ret == 0):
@@ -213,7 +213,7 @@ def SetQualityMessage(quality):
     else:
         quality_list = ["Any", "SD", "HD (Default)"]
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Preferred quality of episodes to be downloaded", quality_list)
+    ret = dialog.select("Preferred Quality of Episodes to be Downloaded", quality_list)
     if (ret == -1):
         return ret
     if (ret == 0):

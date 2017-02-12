@@ -1,6 +1,7 @@
-import sickbeard
-import xbmcgui
 import xbmc
+import xbmcgui
+import sickbeard
+
 
 Sickbeard = sickbeard.SB()
 

@@ -4,7 +4,7 @@ import xbmcplugin
 import xbmcaddon
 import sys
 import urllib
-import resources.lib.shows as shows
+import shows
 
 
 my_addon = xbmcaddon.Addon('plugin.video.sickrage')
