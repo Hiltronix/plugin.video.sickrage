@@ -1,6 +1,7 @@
 import xbmc
 import xbmcgui
 import sys
+import common
 import sickbeard
 
 
@@ -34,5 +35,7 @@ def setStatus(status):
 
 status = statusSelection()
 if (status != -1):
-    setStatus(status)
+    result = setStatus(status)
+    if result:
+        common.messageWindow('Set Episode Status', result)
     xbmc.executebuiltin("Container.Refresh")

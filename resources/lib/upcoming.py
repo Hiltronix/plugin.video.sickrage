@@ -39,6 +39,8 @@ def GetWeekDay(weekday):
 # Get upcoming episodes.
 def GetUpcomingEpisodes(ext_upcoming=False):
     coming_soon = Sickbeard.GetFutureShows()
+    if not coming_soon:
+        exit()
     list = []
     
     # Get todays upcoming eps.

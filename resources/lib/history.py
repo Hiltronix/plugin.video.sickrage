@@ -18,6 +18,8 @@ Sickbeard = sickbeard.SB()
 # Get a list of episodes snatched and downloaded by SickRage.
 def GetHistoryItems():
     history = Sickbeard.GetHistory(settings.__history_max__)
+    if not history:
+        exit()
     list = []
     status_msg = '[COLOR gray]Unknown[/COLOR]'
     for show in history:

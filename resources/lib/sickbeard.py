@@ -5,6 +5,7 @@ import os
 import sys
 import json
 import requests
+import common
 import settings
 
 
@@ -44,28 +45,28 @@ def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
         if not headers.get('User-Agent'):
             headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0'
 
-        response = requests.get(url, headers=headers, proxies=proxies, verify=verify, timeout=3.0)
+        response = requests.get(url, headers=headers, proxies=proxies, verify=verify, timeout=5.0)
         if response.status_code == 200:
             return response.content
         else:
             return None
-    except requests.ReadTimeout:
-        rtn = {'message': 'Request was sent.', 'result': 'Server timed out before replying.'}
-        return json.dumps(rtn, ensure_ascii=False)
+    except requests.Timeout:
+        common.messageWindow('Network Connection', 'The request timed out.[CR]The server may be busy or unavailable.')
+        return None
     except Exception, e:
         #print e
         xbmc.log('sickrage.sickbeard.GetUrlData: {0}'.format(e), xbmc.LOGERROR)
         if log:
             log.debug('*** Exception ***', exc_info=1)
         err = 'Exception: {0}'.format(e)
-        rtn = {'message': err, 'result': 'Network Error!'}
-        return json.dumps(rtn, ensure_ascii=False)
+        common.messageWindow('Network Connection', err)
+        return None
 
 
 # SickRage class which mas all API calls to SickRage.
 class SB:
 
-    CONNECT_ERROR = "I was unable to retrieve data.\n\nError: "
+    CONNECT_ERROR = "Error: "
 
     
     # Get the list of shows.
@@ -73,6 +74,8 @@ class SB:
         shows=[]
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=shows')
+            if not response:
+                return None
             result = json.loads(response)
             for each in result['data']:
                 show = {}
@@ -136,6 +139,8 @@ class SB:
         show_ids=[]
         try:
             response = GetUrlData(url=settings.__url__+"?cmd=shows")
+            if not response:
+                return None
             result = json.loads(response)
             for each in result['data']:
                 show_ids.append(each)
@@ -150,6 +155,8 @@ class SB:
         try:
             for id in show_ids:
                 response = GetUrlData(url=settings.__url__+'?cmd=show&tvdbid='+id)
+                if not response:
+                    return None
                 result = json.loads(response)
                 name = getFromDict(result, ['data', 'show_name'])
                 paused = getFromDict(result, ['data', 'paused'])
@@ -166,10 +173,14 @@ class SB:
         total = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show&tvdbid='+show_id)
+            if not response:
+                return None
             result = json.loads(response)
             details = result.get('data')
             
             response = GetUrlData(url=settings.__url__+'?cmd=show.stats&tvdbid='+show_id)
+            if not response:
+                return None
             result = json.loads(response)
             total = result['data']['total']
         except Exception, e:
@@ -182,6 +193,8 @@ class SB:
         season_number_list = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.seasonlist&tvdbid='+show_id)
+            if not response:
+                return
             result = json.loads(response)
             season_number_list = result.get('data')
             season_number_list.sort()
@@ -196,6 +209,8 @@ class SB:
         try:
             season = str(season)
             response = GetUrlData(url=settings.__url__+'?cmd=show.seasons&tvdbid='+show_id+'&season='+season)
+            if not response:
+                return
             result = json.loads(response)
             season_episodes = result.get('data')
               
@@ -356,6 +371,8 @@ class SB:
         future_list = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=future&sort=date&type=today|soon|later')
+            if not response:
+                return None
             result = json.loads(response)
             future_list = result.get('data')
         except Exception, e:
@@ -369,6 +386,8 @@ class SB:
         xbmc.log('sickbeard.GetHistory')
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=history&limit='+str(num_entries))
+            if not response:
+                return None
             result = json.loads(response)
             history = result.get('data')
         except Exception, e:
@@ -381,6 +400,8 @@ class SB:
         search_results = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.searchtvdb&name='+name+'&lang=en')
+            if not response:
+                return None
             result = json.loads(response)
             if result['result'] != 'success':
                 return search_results
@@ -398,6 +419,8 @@ class SB:
         defaults = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.getdefaults')
+            if not response:
+                return None
             result = json.loads(response)
             print result.keys()
             defaults_data = result.get('data')
@@ -415,6 +438,8 @@ class SB:
         directory_result = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.getrootdirs')
+            if not response:
+                return None
             result = json.loads(response)
             result = result.get('data')
         except Exception, e:
@@ -423,15 +448,18 @@ class SB:
     
 
     # Get the version of SickRage.
-    def GetSickRageVersion(self):
+    def GetVersion(self):
         version = ""
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb')
             result = json.loads(response)
+            api = getFromDict(result, ['data', 'api_version'], 'Unknown')
             version = getFromDict(result, ['data', 'sb_version'], 'Unknown')
+            if version == 'Unknown':
+                version = getFromDict(result, ['data', 'sr_version'], 'Unknown')
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
-        return version
+        return api, version
     
 
     # Set the status of an episode.
@@ -439,7 +467,10 @@ class SB:
         result = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=episode.setstatus&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep)+'&status='+status+'&force=True')
+            if not response:
+                return None
             result = json.loads(response)
+            # No result is actually returned from this call.
         except Exception, e:
             settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
@@ -462,6 +493,8 @@ class SB:
     def ForceSearch(self, show_id):
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.update&tvdbid='+show_id)
+            if not response:
+                return None
             result = json.loads(response)
             message = result.get('message')
             success = result.get('result')
@@ -474,6 +507,8 @@ class SB:
         message = ""
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=show.pause&indexerid='+show_id+'&tvdbid='+show_id+'&pause='+paused)
+            if not response:
+                return None
             result = json.loads(response)
             message = result.get('message')
             success = result.get('result')
@@ -486,6 +521,8 @@ class SB:
         message = ""
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep))
+            if not response:
+                return None
             result = json.loads(response)
             message = result.get('message')
             success = result.get('result')
@@ -511,6 +548,8 @@ class SB:
         results = [] 
         try:
             response = GetUrlData(url=settings.__url__+"?cmd=backlog")
+            if not response:
+                return None
             result = json.loads(response)
             for show in result['data']:
                 show_name = show['show_name']
@@ -529,6 +568,8 @@ class SB:
         log_list = []
         try:
             response = GetUrlData(url=settings.__url__ + '?cmd=logs&min_level=' + str(min_level))
+            if not response:
+                return None
             result = json.loads(response)
             log_list = result.get('data')
         except Exception, e:

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.sickrage"
 	name="SickRage"
-	version="2.0.2"
+	version="2.0.3"
 	provider-name="Hiltronix">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
@@ -18,15 +18,10 @@
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 		<source>https://github.com/Hiltronix/plugin.video.sickrage</source>
 		<email>hiltronix@gmail.com</email>
-		<news>- Bug fixes.[CR]
-- Improved list sorting.[CR]
-- Switched to new TVdb scraper and meta data caching system.[CR]
-- User experience greatly improved after TVdb data is cached locally.[CR]
-- More meta data info is displayed.[CR]
-- Manually update cached data directly from TVdb from context menu.[CR]
-- Actors and their images are now displayed, when using Kodi 17.x or higher.[CR]
-- Added banner image support.[CR]
-- Total space used for cache now displayed in "Clear Cache".[CR]</news>
+		<news>
+		    - Minor changes.[CR]
+		    - Improved error handling.[CR]
+        </news>
 		<assets>
 			<icon>icon.png</icon>
 			<fanart>fanart.jpg</fanart>

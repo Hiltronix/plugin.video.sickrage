@@ -18,6 +18,8 @@ Sickbeard = sickbeard.SB()
 # Get the tvdbid and show names.
 def GetShowInfo(filter):
     shows = Sickbeard.GetShows()
+    if not shows:
+        exit()
     list = []
     for show in sorted(shows, key=lambda k: k['show_name'], reverse=False):
         name = show['show_name']

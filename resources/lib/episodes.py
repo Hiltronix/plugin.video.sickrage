@@ -19,6 +19,8 @@ Sickbeard = sickbeard.SB()
 def GetSeasonEpisodes(tvdbid, season):
     list = []
     season_episodes = Sickbeard.GetSeasonEpisodeList(tvdbid, season)
+    if not season_episodes:
+        exit()
     temp = season_episodes.keys()
     temp = sorted(temp)
     for each in temp:

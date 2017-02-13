@@ -19,6 +19,8 @@ Sickbeard = sickbeard.SB()
 # Get a list of episodes in the SickRage backlog list.
 def GetBacklogItems():
     backlog = Sickbeard.GetBacklog()
+    if not backlog:
+        exit()
     list = []
     status_msg = '[COLOR gray]Unknown[/COLOR]'
     for episode in backlog:

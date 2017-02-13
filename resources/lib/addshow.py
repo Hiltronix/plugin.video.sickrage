@@ -12,11 +12,7 @@ Sickbeard = sickbeard.SB()
 
 
 def showSearchDialog(show_name):
-    # Get search text from user.
-    if show_name:
-        text = show_name
-        return text
-    keyboard = xbmc.Keyboard('', 'Find a show on the TVDB', False)
+    keyboard = xbmc.Keyboard(show_name, 'Search for show on TheTVDB', False)
     keyboard.doModal()
     if (keyboard.isConfirmed()):
         text = keyboard.getText()
@@ -35,6 +31,8 @@ def AddShow(show_name):
     xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
         search_results = Sickbeard.SearchShowName(urllib.quote_plus(text))
+        if not search_results:
+            exit()
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     if search_results == []:

@@ -13,6 +13,8 @@ Sickbeard = sickbeard.SB()
 # Get season number list.
 def GetSeasons(tvdbid, show_name):
     list = Sickbeard.GetSeasonNumberList(tvdbid)
+    if not list:
+        exit()
     
     for season_number in list:
       if season_number == 0:
