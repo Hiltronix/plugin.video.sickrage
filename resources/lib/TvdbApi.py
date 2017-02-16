@@ -432,7 +432,7 @@ class theTVDB:
     # "img_type" can be: poster, fanart, season, seasonwide, series.
     # "series" are actually banner images.
     # Returns the list of smaller images if "thumbnail" is True.
-    # Returns None if not found or error.
+    # Returns empty list if not found or error.
         try:
             self.RefreshToken(log)
 
@@ -450,15 +450,15 @@ class theTVDB:
                     else:
                         data.append(TvdbImageLoc + result.get('fileName'))
                 if not data:
-                    return None
+                    return []
                 return data
             else:
-                return None
+                return []
         except Exception, e:
             print e
             if log:
                 log.debug('*** Exception ***', exc_info=1)
-            return None
+            return []
 
 
 def SaveImageFile(url, path, img_name, log=None):
@@ -489,6 +489,9 @@ def GetMetaDataDict(series_id, season, episode, vid_path_file, log=None):
 
         data = {}
 
+        # Dictionary (file) version of this data format.
+        data['Version'] = 2
+
         meta = tvdb.GetSeries(series_id=series_id)
         if meta and meta.get('data'):
             data['Show'] = meta.get('data', '')
@@ -504,6 +507,12 @@ def GetMetaDataDict(series_id, season, episode, vid_path_file, log=None):
         data['Details']['seasonNumber'] = season
         data['Details']['episodeNumber'] = episode
         #print json.dumps(data['Details'], sort_keys=False, indent=4)
+
+        # Get links to show images:
+        data['Images'] = {}
+        data['Images']['poster'] = tvdb.GetImageLinks(series_id=series_id, img_type='poster', thumbnail=False)
+        data['Images']['fanart'] = tvdb.GetImageLinks(series_id=series_id, img_type='fanart', thumbnail=False)
+        data['Images']['banner'] = tvdb.GetImageLinks(series_id=series_id, img_type='series', thumbnail=False)
 
         meta = tvdb.GetSeriesActors(series_id=series_id)
         if meta and meta.get('data'):
@@ -1054,60 +1063,5 @@ def CacheActorImages(actors, cache_dir, force=False, log=None):
                 print 'ERROR: SaveImageFile: {0}'.format(e)
         actor['thumbnail'] = local_file
     return actors
-
-
-if __name__ == '__main__':
-    tvdb = theTVDB()
-
-    #data = tvdb.GetSeries(series_id='71663')
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetEpisodesSummary(series_id='83356')
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetEpisodes(series_id='71663', page=1)
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetAllEpisodes(series_id='274897')
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetEpisodeDetails(episode_id='5709097')
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #t = time.time()
-    #data = tvdb.GetAllEpisodesWithDetails(series_id='71663')
-    #print json.dumps(data, sort_keys=True, indent=4)
-    #print 'Time: ', time.time() - t
-
-    #data = tvdb.GetSeriesActors(series_id='83356')
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetSpecificEpisodeDetails(series_id='71663', season=28, episode=8)
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    #data = tvdb.GetImageLinks(series_id='71663', img_type='series', thumbnail=False)
-    #print json.dumps(data, sort_keys=False, indent=4)
-
-    #CreateSageMetaData('76177', 42, 8, 'D:\\Temp\\The Simpsons-S28E08-DadBehavior.ts', log=None)
-
-    #CreateTvShowNfo('311790', 'D:\\Temp\\aaa', log=None)
-
-    #CreateEpisodeNfo('71663', 28, 8, 'D:\\Temp\\The Simpsons-S28E08-DadBehavior.ts', log=None)
-
-    #data = GetMetaDataDict('71663', 28, 8, 'D:\\Temp\\The Simpsons-S28E08-DadBehavior.ts', log=None)
-    #print json.dumps(data, sort_keys=True, indent=4)
-
-    data = GetMetaDataDict('311819', 1, 1, '', log=None)
-    #data = tvdb.GetSpecificEpisodeDetails(series_id='311819', season=1, episode=1)
-    print json.dumps(data, sort_keys=True, indent=4)
-
-    data = GetMetaDataDict('311819', 1, 1, '', log=None)
-    #data = tvdb.GetSpecificEpisodeDetails(series_id='311819', season=1, episode=1)
-    print json.dumps(data, sort_keys=True, indent=4)
-
-    #actors = data.get('Actors', '')
-
-    #actors = CacheActorImages(actors, 'D:\\Temp\\Image_Cache')
-    #print json.dumps(actors, sort_keys=True, indent=4)
 
 

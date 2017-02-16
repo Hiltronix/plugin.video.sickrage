@@ -13,15 +13,15 @@ Sickbeard = sickbeard.SB()
 # Show log file level selection dialog.
 def levelSelection():
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Log Detail Level", ["Info", "Warning", "Error", "Debug", "Show Version"])
+    ret = dialog.select("Log Detail Level", ["Info", "Warning", "Error", "Debug"])
     return ret  
 
   
 # View log file.
 def viewLog(level):
     level_list = ["info", "warning", "error", "debug"]
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
         log_list = Sickbeard.GetLog(level_list[level])
         if not log_list:
             exit()
@@ -36,10 +36,6 @@ def viewLog(level):
 
 def main():
     level = levelSelection()
-    if level == 4:
-        api, version = Sickbeard.GetVersion()
-        common.messageWindow('SickRage / SickBeard Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
-        exit()
     if (level != -1):
         viewLog(level)
         xbmc.executebuiltin("Container.Refresh")

@@ -5,6 +5,7 @@ import xbmcaddon
 import os
 import sys
 import urllib
+import resources.lib.cache as cache
 import resources.lib.common as common
 import resources.lib.settings as settings
 import resources.lib.upcoming as upcoming
@@ -27,27 +28,23 @@ Sickbeard = sickbeard.SB()
 
 # Add the main directory folders.
 def mainMenu():
-    total_items = 5
-    addDirectory('Upcoming - 1 Week', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png', total_items)
-    addDirectory('Upcoming - Extended', 22, True, my_addon.getAddonInfo('path')+'/upcoming.png', my_addon.getAddonInfo('path')+'/resources/images/upcoming_thn.png', total_items)
-    addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', my_addon.getAddonInfo('path')+'/resources/images/history_thn.png', total_items)
+    total_items = 6
+    addDirectory('Upcoming - 1 Week', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', total_items)
+    addDirectory('Upcoming - Extended', 22, True, my_addon.getAddonInfo('path')+'/upcomingplus.png', total_items)
+    addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', total_items)
     if (settings.__servertype__ == "SickRage"):
         total_items += 1
-        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', my_addon.getAddonInfo('path')+'/resources/images/backlog_thn.png', total_items)
-    addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', my_addon.getAddonInfo('path')+'/resources/images/manage_thn.png', total_items)
-    addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', my_addon.getAddonInfo('path')+'/resources/images/add_thn.png', total_items)
-    if (settings.__show_log__ == "true"):
-        total_items += 1
-        addDirectory('View Log File', 11, False, my_addon.getAddonInfo('path')+'/log.png', my_addon.getAddonInfo('path')+'/resources/images/log_thn.png', total_items)
-    if (settings.__show_clearcache__ == "true"):
-        total_items += 1
-        addDirectory('Clear Cached Data', 12, False, my_addon.getAddonInfo('path')+'/settings.png', my_addon.getAddonInfo('path')+'/resources/images/settings_thn.png', total_items)
+        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', total_items)
+    addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
+    addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', total_items)
+    addDirectory('Settings', 11, False, my_addon.getAddonInfo('path')+'/settings.png', total_items)
 
 
 # Add directory item.
-def addDirectory(menu_item_name, menu_number, folder, icon, thumbnail, total_items):
+def addDirectory(menu_item_name, menu_number, folder, icon, total_items):
     return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
-    list_item = xbmcgui.ListItem(menu_item_name, iconImage=thumbnail, thumbnailImage=icon)
+    list_item = xbmcgui.ListItem(menu_item_name)
+    list_item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'fanart': '', 'banner': '', 'clearart': '', 'clearlogo': '', 'landscape': ''})
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=total_items)
 
 
@@ -133,6 +130,18 @@ try:
 except:
     pass
 
+try:
+    season = urllib.unquote_plus(params["season"])
+    print season
+except:
+    pass
+
+try:
+    episode = urllib.unquote_plus(params["episode"])
+    print episode
+except:
+    pass
+
 # Open directories based on selection.
 if menu_number == None:
     mainMenu()
@@ -170,9 +179,9 @@ elif menu_number == 8:
             addshow.AddShow(show_name)
         elif tvdb_id:
             # Convert tvdb_id to show_name so we can do a normal show lookup and user select confirmation.
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            show_info = []
             try:
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                show_info = []
                 show_info,total = Sickbeard.GetShowDetails(tvdb_id)
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
@@ -189,26 +198,50 @@ elif menu_number == 10:
     else:
         settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Install from Repo > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
                 
-# View log file.
+# Settings menu.
 elif menu_number == 11:
-    log.main()
-
-# Clear the image cache.
-elif menu_number == 12:
-    size = common.GetDirSizeFormatted(xbmc.translatePath('special://temp/sb/cache/'))
-    if common.selectNoYes('Clear cached images and meta data?  [{0}]'.format(size), 'No', 'Yes') == 1:
-        xbmc.executebuiltin("ActivateWindow(busydialog)")
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select("Settings", ["Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version"])
+    if ret == 0:    # Change log.
         try:
-            Sickbeard.ClearImageCache()
-            Sickbeard.ClearMetaDataCache()
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            filename = os.path.join(my_addon.getAddonInfo('path'), 'changelog.txt')
+            if os.path.isfile(filename):
+                with open(filename, 'r') as f:
+                    data = f.read()
+            else:
+                data = 'Change log not available.'
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
-        common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+        w = common.TextViewer_Dialog('DialogTextViewer.xml', common.ADDON_PATH, header='Change Log', text=data)
+        w.doModal()
+    if ret == 1:    # Open app settings.
+        xbmc.executebuiltin('XBMC.Addon.OpenSettings("plugin.video.sickrage")')
+    if ret == 2:    # View log files.
+        log.main()
+    if ret == 3:    # Clear Cache.
+        try:
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            size = common.GetDirSizeFormatted(cache.cache_dir)
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
+        if common.selectNoYes('Clear cached images and meta data?  [{0}]'.format(size), 'No', 'Yes') == 1:
+            try:
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                cache.ClearImages()
+                cache.ClearMetaData()
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+            common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    if ret == 4:    # SickRage/SickBeard Version.
+        api, version = Sickbeard.GetVersion()
+        common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
+
 
 # Update a show's images.
 elif menu_number == 13:
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
         # Update Poster image.
         Sickbeard.GetShowPoster(tvdb_id, update=True)
         # Update Fanart image.
@@ -217,6 +250,7 @@ elif menu_number == 13:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     common.CreateNotification(header='Updated Cached Images for', message=show_name, icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
     xbmc.executebuiltin('Container.Refresh')
+
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
 

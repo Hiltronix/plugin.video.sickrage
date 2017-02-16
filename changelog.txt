@@ -1,3 +1,14 @@
+[B]2017-02-16 v.2.0.4[/B]
+- NOTE: Cached meta data may have to be re-downloaded and saved the first run, due to meta data version change requirements.
+    - Re-caching meta data takes a few seconds per show.
+- [B]Starting with this version, this app now only runs on Kodi 17 and higher[/B], due to using new API function calls.
+- "Add New Show" feature now displays search results as video dialogs to preview before selecting, instead of having to guess from just a list of names.
+- Added "Settings" menu item.
+- Menu changes.
+- Added images and artwork to seasons.
+- Cleaned up code.
+- Updated to "script.module.requests" version 2.12.4 to stay current.
+
 [B]2017-02-13 v.2.0.3[/B]
 - Minor changes.
 - Improved error handling.

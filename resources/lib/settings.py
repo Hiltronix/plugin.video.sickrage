@@ -126,8 +126,6 @@ __history_max__ = __addon__.getSetting('HistoryMax')
 if (int(__history_max__) > 99):
     __addon__.setSetting('HistoryMax', '99')
     __history_max__ = 99
-__show_log__ = __addon__.getSetting('ShowLog')
-__show_clearcache__ = __addon__.getSetting('ShowClearCache')
 # Hiltronix API Key for The Movie Database:
 __tmdb_api_key__ = '4881a357a1d48e90871991c3cacc7a08'
 

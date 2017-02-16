@@ -4,10 +4,11 @@ import xbmcplugin
 import os
 import sys
 import json
-import sickbeard
 import urllib
+import cache
 import common
 import settings
+import sickbeard
 import TvdbApi
 
 
@@ -103,19 +104,19 @@ def GetUpcomingEpisodes(ext_upcoming=False):
 def menu(ext_upcoming=False):
     list = GetUpcomingEpisodes(ext_upcoming)
     total_items = len(list)
+
     for tvdbid, name, show_name, paused, season, episode, airdate in list:
-        episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
-        
+
         context_items = []
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
         context_items.append(('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
         context_items.append(('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
-        context_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py'+episode_status_args+')'))
+        context_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setstatus.py, {0}, {1}, {2})'.format(tvdbid, season, episode)))
         context_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'))
         context_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'))
         context_items.append((paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'))
         context_items.append(('Force Server Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
-        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forceupdate.py, {0}, {1}, {2})'.format(tvdbid, season, episode)))
+        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/cache.py, {0}, {1}, {2})'.format(tvdbid, season, episode)))
         context_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
         context_items.append(('Go Back', 'XBMC.Action(back)'))
         #if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
@@ -141,10 +142,9 @@ def addDirectory(show_name, name, tvdbid, season, episode, airdate, thumbnail_pa
     meta = {}
     try:
         # Load and parse meta data.
-        ep_cache_dir = xbmc.translatePath('special://temp/sb/cache/episodes/')
-        if not os.path.exists(ep_cache_dir):
-            os.makedirs(ep_cache_dir)
-        json_file = os.path.join(ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+        if not os.path.exists(cache.ep_cache_dir):
+            os.makedirs(cache.ep_cache_dir)
+        json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
         if os.path.isfile(json_file):
             # Load cached tvdb episode json file.
             try:
@@ -187,12 +187,12 @@ def addDirectory(show_name, name, tvdbid, season, episode, airdate, thumbnail_pa
         meta['status'] = TvdbApi.getFromDict(data, ['Show', 'status'], '')
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
-        actors = data.get('Actors', '')
-        actor_cache_dir = xbmc.translatePath('special://temp/sb/cache/actors/')
-        actors = TvdbApi.CacheActorImages(actors, actor_cache_dir)
+        actors = data.get('Actors', [])
+        actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
         for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
             actors.append(dict({'name': value, 'role': 'Guest Star'}))
-        list_item.setCast(actors)
+        if actors:
+            list_item.setCast(actors)
     except:
         meta['tvdb_id'] = str(tvdbid)
         meta['tvshowtitle'] = show_name

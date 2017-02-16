@@ -26,7 +26,5 @@
 	</category>
 	<category label="App Settings">
 		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
-		<setting id="ShowLog" type="bool" label="Show Log File Option in Main Menu" default="false" />
-		<setting id="ShowClearCache" type="bool" label="Show Clear Image Cache Option in Main Menu" default="false" />
 	</category>
 </settings>

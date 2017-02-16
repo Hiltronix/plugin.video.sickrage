@@ -5,6 +5,7 @@ import os
 import sys
 import json
 import urllib
+import cache
 import common
 import settings
 import sickbeard
@@ -66,7 +67,7 @@ def menu(filter='All'):
         context_items.append((paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'))
         context_items.append(('Force Server Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
         #context_items.append(('Update Show Images', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=13&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
-        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forceupdate.py, {0}, {1}, {2})'.format(tvdbid, 1, 1)))
+        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/cache.py, {0}, {1}, {2})'.format(tvdbid, 1, 1)))
         context_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
         context_items.append(('Go Back', 'XBMC.Action(back)'))
         #if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
@@ -94,10 +95,9 @@ def addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_p
     episode = 1
     try:
         # Load and parse meta data.
-        ep_cache_dir = xbmc.translatePath('special://temp/sb/cache/episodes/')
-        if not os.path.exists(ep_cache_dir):
-            os.makedirs(ep_cache_dir)
-        json_file = os.path.join(ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+        if not os.path.exists(cache.ep_cache_dir):
+            os.makedirs(cache.ep_cache_dir)
+        json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
         if os.path.isfile(json_file):
             # Load cached tvdb episode json file.
             try:
@@ -135,12 +135,12 @@ def addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_p
         meta['status'] = TvdbApi.getFromDict(data, ['Show', 'status'], '')
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
-        actors = data.get('Actors', '')
-        actor_cache_dir = xbmc.translatePath('special://temp/sb/cache/actors/')
-        actors = TvdbApi.CacheActorImages(actors, actor_cache_dir)
+        actors = data.get('Actors', [])
+        actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
         for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
             actors.append(dict({'name': value, 'role': 'Guest Star'}))
-        list_item.setCast(actors)
+        if actors:
+            list_item.setCast(actors)
     except:
         meta['tvdb_id'] = str(tvdbid)
         meta['tvshowtitle'] = show_name

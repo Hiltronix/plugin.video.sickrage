@@ -5,6 +5,7 @@ import os
 import sys
 import json
 import requests
+import cache
 import common
 import settings
 
@@ -233,7 +234,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.poster.jpg')
+        file_path = cache.image_cache_dir + show_id + '.poster.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
@@ -265,7 +266,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.fanart.jpg')
+        file_path = cache.image_cache_dir + show_id + '.fanart.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
@@ -297,7 +298,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = xbmc.translatePath('special://temp/sb/cache/images/'+show_id+'.banner.jpg')
+        file_path = cache.image_cache_dir + show_id + '.banner.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
@@ -320,51 +321,6 @@ class SB:
                 settings.errorWindow(sys._getframe().f_code.co_name, str(e))
         return file_path
 
-
-    # Clear image file cache.
-    def ClearImageCache(self):
-        path = xbmc.translatePath('special://temp/sb/cache/images/')
-        if os.path.exists(path):
-            for file in os.listdir(path):
-                if file.lower().endswith(".jpg"):
-                    os.unlink(os.path.join(path, file))
-            for file in os.listdir(path):
-                if file.lower().endswith(".png"):
-                    os.unlink(os.path.join(path, file))
-        path = xbmc.translatePath('special://temp/sb/cache/actors/')
-        if os.path.exists(path):
-            for file in os.listdir(path):
-                if file.lower().endswith(".jpg"):
-                    os.unlink(os.path.join(path, file))
-            for file in os.listdir(path):
-                if file.lower().endswith(".png"):
-                    os.unlink(os.path.join(path, file))
-
-
-    # Clear episode meta data cache.
-    def ClearMetaDataCache(self):
-        path = xbmc.translatePath('special://temp/sb/cache/episodes/')
-        if os.path.exists(path):
-            for file in os.listdir(path):
-                if file.lower().endswith(".json"):
-                    os.unlink(os.path.join(path, file))
-
-
-    # Gets the show banner from SickRage.
-    #def GetShowBanner(self, show_id):
-    #    if settings.__ssl_bool__ == "true":
-    #        return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
-    #    else:
-    #        return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.banner.jpg'
-    
-
-    # Check if there is a cached thumbnail to use, if not use SickRage poster.
-    #def GetShowPoster(self, show_id):
-    #    if settings.__ssl_bool__ == "true":
-    #        return 'https://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
-    #    else:
-    #        return 'http://'+settings.__ip__+':'+settings.__port__+'/cache/images/'+str(show_id)+'.poster.jpg'
-    
 
     # Get list of upcoming episodes
     def GetFutureShows(self):

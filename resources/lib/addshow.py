@@ -1,10 +1,17 @@
-import sys
-import urllib
+# New version of addshow.py that always the viewing of shows before selecting.
+
 import xbmc
 import xbmcgui
+import xbmcplugin
+import os
+import sys
+import json
+import urllib
+import cache
 import common
 import settings
 import sickbeard
+import TvdbApi
 
 
 # Initialize Sickbeard Class
@@ -21,41 +28,154 @@ def showSearchDialog(show_name):
     return text  
 
   
+# Search results selection window
+def ShowSelectMenu(shows):
+    formatted_shows = []
+    for show in shows:
+        try:
+            show_name = u"" + show['name']
+        except TypeError:
+            continue
+        try:
+            first_aired = u"" + show['first_aired']
+        except TypeError:
+            first_aired = "Unknown"
+        formatted_shows.append('[COLOR gold]' + show_name[:50] + '[/COLOR]    (' + first_aired + ')')
+    dialog = xbmcgui.Dialog()
+    ret = dialog.select("Search Results", formatted_shows)
+    return ret
+
+
 # Add show main function. Shows the initial search window. 
 def AddShow(show_name):
+    #menu([{'name': 'Tiger Mom', 'tvdbid': '296279', 'first_aired': '2015-05-03'}])
+    #return
+
     text = showSearchDialog(show_name)
     if (text == ''):
-        return
+        exit()
     
     # Search for the show using SB search API.
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
-    try:
-        search_results = Sickbeard.SearchShowName(urllib.quote_plus(text))
-        if not search_results:
+    OK = True
+    while OK:
+        try:
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            search_results = Sickbeard.SearchShowName(urllib.quote_plus(text))
+            if not search_results:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+                common.CreateNotification(header="Show Search", message="No results for that query.", icon=xbmcgui.NOTIFICATION_INFO, time=4000, sound=True)
+                exit()
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
+
+        # Create dir list of possible shows to view and select from.
+        selected_show = ShowSelectMenu(search_results)
+        if (selected_show == -1):
             exit()
+
+        tvdbid = str(search_results[selected_show]['tvdbid'])
+        show_name = search_results[selected_show]['name']
+        first_aired = search_results[selected_show]['first_aired']
+
+        DisplayShow(tvdbid, show_name, first_aired)
+
+        if common.selectNoYes('Add this show? [ {0} ]'.format(show_name[:25] + ' (' + first_aired + ')'), 'No', 'Yes') == 1:
+            #ShowMessage('Selected Title', search_results[selected_show]['name'])
+            AddShowDetails(tvdbid, show_name)
+            exit()
+        
+
+def DisplayShow(tvdbid, show_name, first_aired):
+# Show individual show info dialog.
+    try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
+
+        cache.CacheFromTvdb(tvdbid, 1, 1, force=False)
+    
+        image_cache_dir = cache.image_cache_dir
+        thumbnail_path = image_cache_dir + tvdbid + '.poster.jpg'
+        fanart_path = image_cache_dir + tvdbid + '.fanart.jpg'
+        banner_path = image_cache_dir + tvdbid + '.banner.jpg'
+    
+        list_item = xbmcgui.ListItem(show_name, thumbnailImage=thumbnail_path)
+        list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
+        list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
+        meta = {}
+        season = 1
+        episode = 1
+        try:
+            # Load and parse meta data.
+            if not os.path.exists(cache.ep_cache_dir):
+                os.makedirs(cache.ep_cache_dir)
+            json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+            if os.path.isfile(json_file):
+                # Load cached tvdb episode json file.
+                try:
+                    with open(json_file, 'r') as f:
+                        data = json.load(f)
+                except Exception, e:
+                    print e
+            else:
+                data = TvdbApi.GetMetaDataDict(tvdbid, int(season), int(episode), '', log=None)
+                # Save cached tvdb episode json file.
+                try:
+                    with open(json_file, 'w') as f:
+                        json.dump(data, f, sort_keys=True, indent=4)
+                except Exception, e:
+                    print e
+            meta['tvshowtitle'] = TvdbApi.getFromDict(data, ['Show', 'seriesName'], show_name)
+            meta['sorttitle'] = meta['tvshowtitle'] 
+            meta['title'] = show_name # This is what is displayed at the top of the video dialog window.
+            meta['originaltitle'] = TvdbApi.getFromDict(data, ['Details', 'episodeName'], show_name)
+            meta['tvdb_id'] = str(tvdbid)
+            meta['imdbnumber'] = TvdbApi.getFromDict(data, ['Show', 'imdbId'], '')
+            meta['overlay'] = 6
+            meta['plot'] = TvdbApi.getFromDict(data, ['Show', 'overview'], '')
+            list_item.setRating('tvdb', TvdbApi.getFromDict(data, ['Show', 'siteRating'], 0), TvdbApi.getFromDict(data, ['Show', 'siteRatingCount'], 0), True)
+            meta['premiered'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], first_aired)
+            meta['aired'] = meta['premiered']
+            meta['dateadded'] = meta['premiered']
+            # Date for sorting must be in Kodi format dd.mm.yyyy
+            meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
+            meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
+            meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
+            meta['studio'] = TvdbApi.getFromDict(data, ['Show', 'network'], '')
+            meta['mpaa'] = TvdbApi.getFromDict(data, ['Show', 'rating'], '')
+            meta['year'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], '')[:4]
+            meta['status'] = TvdbApi.getFromDict(data, ['Show', 'status'], '')
+            actors = data.get('Actors', [])
+            actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
+            for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
+                actors.append(dict({'name': value, 'role': 'Guest Star'}))
+            if actors:
+                list_item.setCast(actors)
+        except:
+            meta['tvdb_id'] = str(tvdbid)
+            meta['tvshowtitle'] = show_name
+            meta['title'] = show_name
+        list_item.setInfo(type="Video", infoLabels=meta)
+
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
-    if search_results == []:
-        common.CreateNotification(header="Show Search", message="No results for that query.", icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=True)
-        return
+
+    dialog = xbmcgui.Dialog()
+    ret = dialog.info(list_item)
+
+
+def AddShowDetails(tvdbid, show_name):
     
-    # Select one of the possible shows from the list.
-    selected_show = ShowSelectMessage(search_results)
-    if (selected_show == -1):
-        return
-        
-    print 'Selected Add Show: ' + search_results[selected_show]['name'] + ' ' + str(search_results[selected_show]['tvdbid'])
+    print 'Selected Add Show: ' + show_name + ' ' + tvdbid
 
     # Check if show already exists in the show list.
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
         shows = Sickbeard.GetShows()
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     for show in shows:
-        if search_results[selected_show]['name'] == show['show_name']:
+        if show_name == show['show_name']:
             header = 'Duplicate Show'
-            msg = "'" + search_results[selected_show]['name'] + "' already exists in your show list."
+            msg = "'" + show_name + "' already exists in your show list."
             ShowMessage(header, msg)
             print header + ': ' + msg
             return
@@ -68,8 +188,8 @@ def AddShow(show_name):
     print 'Add Show Root Dir: ' + root_dir
 
     # sb.getdefaults for status of show eps.  Need to make each option selectable so you can change initial status, folders, quality.
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
         default_status, default_folders, default_quality = Sickbeard.GetDefaults()
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
@@ -106,39 +226,20 @@ def AddShow(show_name):
   
     print 'Add Show Set Quality: ' + str(quality)
 
-    tvdbid = search_results[selected_show]['tvdbid']
-    xbmc.executebuiltin("ActivateWindow(busydialog)")
     try:
+        xbmc.executebuiltin("ActivateWindow(busydialog)")
         ret = Sickbeard.AddNewShow(tvdbid, root_dir, prev_aired_status, future_status, flatten_folders, quality)
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     header = 'Add Show'
-    if ret == "success":
-        msg = "Successfully added "+search_results[selected_show]['name']
+    if ret == 'success':
+        msg = 'Successfully added {0}'.format(show_name)
         ShowMessage(header, msg)
         print header + ': ' + msg
     else:
         ShowMessage(header, msg)
-        msg = "Failed to add "+search_results[selected_show]['name']
+        msg = 'Failed to add {0}'.format(show_name)
         print header + ': ' + msg
-
-
-# Search results selection window
-def ShowSelectMessage(shows):
-    formatted_shows = []
-    for show in shows:
-        try:
-            show_name = ""+show['name']
-        except TypeError:
-            continue
-        try:
-            first_aired = ""+show['first_aired']
-        except TypeError:
-            first_aired = "Unknown"
-        formatted_shows.append(show_name+"  -  ("+first_aired+")")
-    dialog = xbmcgui.Dialog()
-    ret = dialog.select("Search Results", formatted_shows)
-    return ret
 
 
 # Basic show message window
@@ -222,8 +323,7 @@ def SetQualityMessage(quality):
         return 'hdtv|rawhdtv|fullhdtv|hdwebdl|fullhdwebdl|hdbluray|fullhdbluray'
 
 
-if (sys.argv[1] == 'new'):
-    # Execute the add show process
+if __name__ == '__main__':
     AddShow("")
-    # Refresh the directory listing after adding a show
     xbmc.executebuiltin("Container.Refresh")
+

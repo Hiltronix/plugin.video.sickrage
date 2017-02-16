@@ -22,7 +22,7 @@ def deleteShow(tvdbid, removefiles):
 rtn = common.selectNoYes('Are you sure you want to delete ' + show_name + '?', 'No', 'Yes')
 if rtn != True:
     exit()
-rtn = common.selectNoYes('Delete ALL files as well?  IRREVERSIBLE!', 'Delete show entry, NOT the files.', 'Delete the show and ALL the files.')
+rtn = common.selectNoYes('Delete ALL files as well?  IRREVERSIBLE!', 'Delete show entry, NOT the files.', 'Delete the show entry and ALL the files.')
 if rtn == -1:
     exit()
 removefiles = rtn
