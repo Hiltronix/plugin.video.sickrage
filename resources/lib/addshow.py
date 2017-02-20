@@ -47,9 +47,7 @@ def ShowSelectMenu(shows):
 
 
 # Add show main function. Shows the initial search window. 
-def AddShow(show_name):
-    #menu([{'name': 'Tiger Mom', 'tvdbid': '296279', 'first_aired': '2015-05-03'}])
-    #return
+def AddShow(show_name=''):
 
     text = showSearchDialog(show_name)
     if (text == ''):
@@ -164,7 +162,7 @@ def DisplayShow(tvdbid, show_name, first_aired):
 
 def AddShowDetails(tvdbid, show_name):
     
-    print 'Selected Add Show: ' + show_name + ' ' + tvdbid
+    print 'Selected Add Show: ' + show_name + ': ' + tvdbid
 
     # Check if show already exists in the show list.
     try:
@@ -173,7 +171,7 @@ def AddShowDetails(tvdbid, show_name):
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     for show in shows:
-        if show_name == show['show_name']:
+        if tvdbid == show['tvdbid']:
             header = 'Duplicate Show'
             msg = "'" + show_name + "' already exists in your show list."
             ShowMessage(header, msg)
@@ -233,7 +231,7 @@ def AddShowDetails(tvdbid, show_name):
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     header = 'Add Show'
     if ret == 'success':
-        msg = 'Successfully added {0}'.format(show_name)
+        msg = 'Successfully added {0}.'.format(show_name)
         ShowMessage(header, msg)
         print header + ': ' + msg
     else:

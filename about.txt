@@ -1,0 +1,11 @@
+This app is intended as a tool to follow your favourite TV shows, review episodes, and interact with likewise services.
+
+My future goals for this app is to allow it to optionally run independant of SickRage/SickBeard as a personalised TV show favourites info hub.  Bringing your favourite TV shows meta data together in one place, making it available offline, and being able to access it at the 10 foot interface level.  
+
+That simply means, it will do what it does now, with added features that interest me as a TV show fan.  And optionally maintain some of the same features without being dependant on SickRage/SickBeard.
+
+If you find this app useful, please visit my page on GitHub, and consider a donation, I do this work on my own time.
+
+https://github.com/Hiltronix/plugin.video.sickrage
+
+Thank you! :)

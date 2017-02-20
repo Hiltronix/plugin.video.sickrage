@@ -1,7 +1,7 @@
 import xbmc
 import xbmcgui
-import xbmcplugin
 import xbmcaddon
+import xbmcplugin
 import os
 import sys
 import urllib
@@ -18,9 +18,12 @@ import resources.lib.episodes as episodes
 import resources.lib.backlog as backlog
 import resources.lib.log as log
 import resources.lib.sickbeard as sickbeard
+import resources.lib.TvdbApi as TvdbApi
 
 
-my_addon = xbmcaddon.Addon('plugin.video.sickrage')
+pluginID = 'plugin.video.sickrage'
+my_addon = xbmcaddon.Addon(pluginID)
+addon_path = my_addon.getAddonInfo('path')
 
 # Initialize Sickbeard Class
 Sickbeard = sickbeard.SB()
@@ -29,15 +32,16 @@ Sickbeard = sickbeard.SB()
 # Add the main directory folders.
 def mainMenu():
     total_items = 6
-    addDirectory('Upcoming - 1 Week', 2, True, my_addon.getAddonInfo('path')+'/upcoming.png', total_items)
-    addDirectory('Upcoming - Extended', 22, True, my_addon.getAddonInfo('path')+'/upcomingplus.png', total_items)
-    addDirectory('History', 3, True, my_addon.getAddonInfo('path')+'/history.png', total_items)
+    addDirectory('Upcoming - 1 Week', 2, True, addon_path + '/upcoming.png', total_items)
+    addDirectory('Upcoming - Extended', 22, True, addon_path + '/upcomingplus.png', total_items)
+    addDirectory('History', 3, True, addon_path + '/history.png', total_items)
     if (settings.__servertype__ == "SickRage"):
         total_items += 1
-        addDirectory('Backlog', 9, True, my_addon.getAddonInfo('path')+'/backlog.png', total_items)
-    addDirectory('Show List', 1, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
-    addDirectory('Add New Show', 7, False, my_addon.getAddonInfo('path')+'/add.png', total_items)
-    addDirectory('Settings', 11, False, my_addon.getAddonInfo('path')+'/settings.png', total_items)
+        addDirectory('Backlog', 9, True, addon_path + '/backlog.png', total_items)
+    addDirectory('Show List', 1, True, addon_path + '/manage.png', total_items)
+    addDirectory('Add New Show', 7, False, addon_path + '/add.png', total_items)
+    addDirectory('Settings', 11, False, addon_path + '/settings.png', total_items)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 # Add directory item.
@@ -73,10 +77,14 @@ def getParameters():
 # Initialize URL parameters.
 url = None
 name = None
+number = None
 menu_number = None
 action = None
 show_name = None
+show_id = None
 tvdb_id = None
+season = 0
+episode = 0
 params = getParameters()
 
 # Parse internal URL.
@@ -131,6 +139,12 @@ except:
     pass
 
 try:
+    tvdb_id = urllib.unquote_plus(params["show_id"])    # Used by ExtendedInfo.
+    print tvdb_id
+except:
+    pass
+
+try:
     season = urllib.unquote_plus(params["season"])
     print season
 except:
@@ -146,10 +160,10 @@ except:
 if menu_number == None:
     mainMenu()
        
-elif menu_number == 1:
+elif menu_number == 1:  # Show list type [All, Continuing, Ended, Paused].
     show_filter.menu()
         
-elif menu_number == 14:
+elif menu_number == 14: # Shows list.
     shows.menu(filter=name)
         
 elif menu_number == 2:  # Upcoming 1 Week.
@@ -158,54 +172,45 @@ elif menu_number == 2:  # Upcoming 1 Week.
 elif menu_number == 22:   # Upcoming Extended.
     upcoming.menu(True)
         
-elif menu_number == 3:
+elif menu_number == 3:  # History list.
     history.menu()
 
-elif menu_number == 4:
+elif menu_number == 4:  # Seasons.
     seasons.menu(tvdb_id, show_name)
 
-elif menu_number == 5:
+elif menu_number == 5:  # Episodes.
     episodes.menu(tvdb_id, show_name, number)
 
-elif menu_number == 6:
+elif menu_number == 6:  # Open the video dialog window.
     xbmc.executebuiltin('XBMC.Action(Info)')
-
-elif menu_number == 7:
+    
+elif menu_number == 7:  # Add a new show.
     addshow.AddShow(show_name)
 
-elif menu_number == 8:
-    if (action == 'addshow'):
-        if show_name:
-            addshow.AddShow(show_name)
-        elif tvdb_id:
-            # Convert tvdb_id to show_name so we can do a normal show lookup and user select confirmation.
+elif menu_number == 8:  # Action values.
+    if action == 'addshow':  # Add a new show based on show name.  Used by the Manage section of ExtendedInfo.
+        if tvdb_id:
+            # Use tvdb_id to get show_name to pass as argument for user confirmation.
             try:
                 xbmc.executebuiltin("ActivateWindow(busydialog)")
-                show_info = []
-                show_info,total = Sickbeard.GetShowDetails(tvdb_id)
+                show_name = TvdbApi.GetNameFromTvdb(tvdb_id)
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
-            show_name = show_info['show_name']
-            addshow.AddShow(show_name)
+            addshow.AddShowDetails(tvdb_id, show_name)
+        else:
+            common.messageWindow('Missing Parameter', 'Add new show request received,[CR]but the TVdb ID was not included.')
 
-elif menu_number == 9:
+elif menu_number == 9:  # Backlog list.
     backlog.menu()
-        
-# ExtendedInfo Script optional TV Show lookup feature.
-elif menu_number == 10:
-    if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
-        xbmc.executebuiltin('XBMC.RunScript(script.extendedinfo,info=extendedtvinfo,tvdb_id=%s)' %(tvdb_id))
-    else:
-        settings.messageWindow('Feature Not Available', 'The optional add-on for this feature has not been installed.\nTo Install Goto: System > Add-ons> Install from Repo > Kodi Add-on Repo > Program Add-ons > ExtendedInfo Script')
-                
+
 # Settings menu.
 elif menu_number == 11:
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Settings", ["Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version"])
+    ret = dialog.select("Settings", ["Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version", "About"])
     if ret == 0:    # Change log.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = os.path.join(my_addon.getAddonInfo('path'), 'changelog.txt')
+            filename = os.path.join(addon_path, 'changelog.txt')
             if os.path.isfile(filename):
                 with open(filename, 'r') as f:
                     data = f.read()
@@ -213,10 +218,10 @@ elif menu_number == 11:
                 data = 'Change log not available.'
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
-        w = common.TextViewer_Dialog('DialogTextViewer.xml', common.ADDON_PATH, header='Change Log', text=data)
+        w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='Change Log', text=data)
         w.doModal()
     if ret == 1:    # Open app settings.
-        xbmc.executebuiltin('XBMC.Addon.OpenSettings("plugin.video.sickrage")')
+        xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(pluginID))
     if ret == 2:    # View log files.
         log.main()
     if ret == 3:    # Clear Cache.
@@ -236,6 +241,19 @@ elif menu_number == 11:
     if ret == 4:    # SickRage/SickBeard Version.
         api, version = Sickbeard.GetVersion()
         common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
+    if ret == 5:    # About.
+        try:
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            filename = os.path.join(addon_path, 'about.txt')
+            if os.path.isfile(filename):
+                with open(filename, 'r') as f:
+                    data = f.read()
+            else:
+                data = 'About file not available.'
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
+        w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='About', text=data)
+        w.doModal()
 
 
 # Update a show's images.
@@ -251,6 +269,19 @@ elif menu_number == 13:
     common.CreateNotification(header='Updated Cached Images for', message=show_name, icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
     xbmc.executebuiltin('Container.Refresh')
 
-
-xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
+# Open the TV show folder (to select a video to watch.)
+elif menu_number == 15:
+    try:
+        data = common.JsonRpc('libTvShows', 'VideoLibrary.GetTVShows', {"properties": ["imdbnumber", "title", "year"], "sort": {"order": "ascending", "method": "title"}})
+        shows = common.getFromDict(data,['result', 'tvshows'], [])
+        tvshowid = None
+        for show in shows:
+            if show.get('imdbnumber') == str(tvdb_id):
+                tvshowid = show.get('tvshowid')
+                break
+        if tvshowid:
+            xbmc.executebuiltin('ActivateWindow(videos,videodb://tvshows/titles/{0}/, True)'.format(tvshowid))
+    except Exception, e:
+        common.messageWindow('Open Show Folder Error', str(e))
+        print e
+    

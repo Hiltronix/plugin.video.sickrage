@@ -5,10 +5,12 @@ import sickbeard
 
 Sickbeard = sickbeard.SB()
 
+
 # Show error pop up then exit plugin
 def messageWindow(message):
     dialog = xbmcgui.Dialog()
     dialog.ok("Show Status", message)
+
 
 paused = sys.argv[1]
 tvdbid = sys.argv[2]
@@ -21,3 +23,4 @@ else:
 message = Sickbeard.SetPausedState(pause, tvdbid)
 messageWindow(message)
 xbmc.executebuiltin("Container.Refresh")
+

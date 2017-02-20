@@ -81,57 +81,24 @@ class SB:
             for each in result['data']:
                 show = {}
                 # Minimum required fields listed first.
-                show['tvdbid'] = str(result['data'][each]['tvdbid'])
-                show['show_name'] = FixBadChar(result['data'][each]['show_name'])
-                show['paused'] = result['data'][each]['paused']
-                show['status'] = result['data'][each]['status']
-                try:
-                    show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
-                except Exception:
-                    show['next_ep_airdate'] = ''
-                try:
-                    show['anime'] = result['data'][each]['anime']
-                except Exception:
-                    show['anime'] = ''
-                try:
-                    show['indexerid'] = str(result['data'][each]['indexerid'])
-                except Exception:
-                    show['indexerid'] = ''
-                try:
-                    show['language'] = result['data'][each]['language']
-                except Exception:
-                    show['language'] = ''
-                try:
-                    show['network'] = result['data'][each]['network']
-                except Exception:
-                    show['network'] = ''
-                try:
-                    show['next_ep_airdate'] = result['data'][each]['next_ep_airdate']
-                except Exception:
-                    show['next_ep_airdate'] = ''
-                try:
-                    show['quality'] = result['data'][each]['quality']
-                except Exception:
-                    show['quality'] = ''
-                try:
-                    show['sports'] = result['data'][each]['sports']
-                except Exception:
-                    show['sports'] = ''
-                try:
-                    show['subtitles'] = result['data'][each]['subtitles']
-                except Exception:
-                    show['subtitles'] = ''
-                try:
-                    show['tvrage_id'] = str(result['data'][each]['tvrage_id'])
-                except Exception:
-                    show['tvrage_id'] = ''
-                try:
-                    show['tvrage_name'] = result['data'][each]['tvrage_name']
-                except Exception:
-                    show['tvrage_name'] = ''
+                show['tvdbid'] = str(getFromDict(result, ['data', each, 'tvdbid'], ''))
+                show['show_name'] = FixBadChar(getFromDict(result, ['data', each, 'show_name'], ''))
+                show['paused'] = getFromDict(result, ['data', each, 'paused'], '')
+                show['status'] = getFromDict(result, ['data', each, 'status'], '')
+                show['next_ep_airdate'] = getFromDict(result, ['data', each, 'next_ep_airdate'], '')
+                show['anime'] = getFromDict(result, ['data', each, 'anime'], '')
+                show['indexerid'] = str(getFromDict(result, ['data', each, 'indexerid'], ''))
+                show['language'] = getFromDict(result, ['data', each, 'language'], '')
+                show['network'] = getFromDict(result, ['data', each, 'network'], '')
+                show['next_ep_airdate'] = getFromDict(result, ['data', each, 'next_ep_airdate'], '')
+                show['quality'] = getFromDict(result, ['data', each, 'quality'], '')
+                show['sports'] = getFromDict(result, ['data', each, 'sports'], '')
+                show['subtitles'] = getFromDict(result, ['data', each, 'subtitles'], '')
+                show['tvrage_id'] = str(getFromDict(result, ['data', each, 'tvrage_id'], ''))
+                show['tvrage_name'] = getFromDict(result, ['data', each, 'tvrage_name'], '')
                 shows.append(show)
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return shows
     
 
@@ -146,7 +113,7 @@ class SB:
             for each in result['data']:
                 show_ids.append(each)
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return show_ids
     
 
@@ -159,12 +126,12 @@ class SB:
                 if not response:
                     return None
                 result = json.loads(response)
-                name = getFromDict(result, ['data', 'show_name'])
-                paused = getFromDict(result, ['data', 'paused'])
-                status = getFromDict(result, ['data', 'status'])
+                name = getFromDict(result, ['data', 'show_name'], '')
+                paused = getFromDict(result, ['data', 'paused'], '')
+                status = getFromDict(result, ['data', 'status'], '')
                 show_info[name] = [id, paused, status]
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return show_info
 
     
@@ -183,9 +150,9 @@ class SB:
             if not response:
                 return None
             result = json.loads(response)
-            total = result['data']['total']
+            total = getFromDict(result, ['data', 'total'], {})
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))                   
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))                   
         return details, total
     
 
@@ -200,7 +167,7 @@ class SB:
             season_number_list = result.get('data')
             season_number_list.sort()
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return season_number_list
     
 
@@ -222,7 +189,7 @@ class SB:
                         season_episodes[newkey] = season_episodes[key]
                         del season_episodes[key]
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))        
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))        
         return season_episodes
     
 
@@ -244,7 +211,7 @@ class SB:
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_poster.jpg'), mode='rb') as f:
                         image = f.read()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
                 return ''
             # Write image file to local cache.
             try:
@@ -254,7 +221,7 @@ class SB:
                 f.write(image)
                 f.close()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, str(e))
         return file_path
 
 
@@ -276,7 +243,7 @@ class SB:
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_fanart.jpg'), mode='rb') as f:
                         image = f.read()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
                 return ''
             # Write image file to local cache.
             try:
@@ -286,7 +253,7 @@ class SB:
                 f.write(image)
                 f.close()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, str(e))
         return file_path
 
 
@@ -308,7 +275,7 @@ class SB:
                     with open(xbmc.translatePath('special://home/addons/plugin.video.sickrage/resources/images/missing_banner.jpg'), mode='rb') as f:
                         image = f.read()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
                 return ''
             # Write image file to local cache.
             try:
@@ -318,7 +285,7 @@ class SB:
                 f.write(image)
                 f.close()
             except Exception, e:
-                settings.errorWindow(sys._getframe().f_code.co_name, str(e))
+                common.errorWindow(sys._getframe().f_code.co_name, str(e))
         return file_path
 
 
@@ -332,7 +299,7 @@ class SB:
             result = json.loads(response)
             future_list = result.get('data')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return future_list
     
 
@@ -347,7 +314,7 @@ class SB:
             result = json.loads(response)
             history = result.get('data')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return history
     
 
@@ -361,12 +328,12 @@ class SB:
             result = json.loads(response)
             if result['result'] != 'success':
                 return search_results
-            for each in result['data']['results']:
+            for each in getFromDict(result, ['data', 'results'], {}):
                 # Limit results to segments that contain an attribute 'tvdbid'.  SickRage webapi.py has a bug where it returns both tvdb and tvrage results together, even though they have separate search functions.
                 if (each.get('tvdbid') != None):
                     search_results.append(each)
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return search_results
     
 
@@ -385,7 +352,7 @@ class SB:
             else:
                 defaults = ['skipped', 1, ["sdtv", "sddvd", "hdtv", "rawhdtv", "fullhdtv", "hdwebdl", "fullhdwebdl", "hdbluray", "fullhdbluray", "unknown"]]
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return defaults
     
 
@@ -399,7 +366,7 @@ class SB:
             result = json.loads(response)
             result = result.get('data')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
     
 
@@ -414,7 +381,7 @@ class SB:
             if version == 'Unknown':
                 version = getFromDict(result, ['data', 'sr_version'], 'Unknown')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return api, version
     
 
@@ -428,7 +395,7 @@ class SB:
             result = json.loads(response)
             # No result is actually returned from this call.
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return result
     
 
@@ -442,7 +409,7 @@ class SB:
             result = json.loads(response)
             success = result.get('result', 'Unknown result!')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return success
     
 
@@ -454,9 +421,9 @@ class SB:
             result = json.loads(response)
             message = result.get('message')
             success = result.get('result')
-            settings.errorWindow("Force Update", message + " ["+success+"]")
+            common.errorWindow("Force Update", message + " ["+success+"]")
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
 
     
     def SetPausedState(self, paused, show_id):
@@ -469,7 +436,7 @@ class SB:
             message = result.get('message')
             success = result.get('result')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
     
 
@@ -482,9 +449,9 @@ class SB:
             result = json.loads(response)
             message = result.get('message')
             success = result.get('result')
-            settings.errorWindow(sys._getframe().f_code.co_name, message + " ["+success+"]")
+            common.errorWindow(sys._getframe().f_code.co_name, message + " ["+success+"]")
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
     
 
@@ -495,7 +462,7 @@ class SB:
             result = json.loads(response)
             message = result.get('message')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return message
       
 
@@ -515,7 +482,7 @@ class SB:
                     episode['status'] = status
                     results.append(episode)
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return results
 
 
@@ -529,6 +496,6 @@ class SB:
             result = json.loads(response)
             log_list = result.get('data')
         except Exception, e:
-            settings.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return log_list
       

@@ -1,14 +1,13 @@
 import xbmc
 import xbmcgui
 import xbmcaddon
+import xbmcplugin
 import os
 import sys
 import json
 import common
 import TvdbApi
 
-
-my_addon = xbmcaddon.Addon('plugin.video.sickrage')
 
 cache_dir = xbmc.translatePath('special://temp/sb/cache/')
 ep_cache_dir = xbmc.translatePath('special://temp/sb/cache/episodes/')

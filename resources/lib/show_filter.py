@@ -1,21 +1,24 @@
 import xbmc
 import xbmcgui
-import xbmcplugin
 import xbmcaddon
+import xbmcplugin
 import sys
 import urllib
 import shows
 
 
-my_addon = xbmcaddon.Addon('plugin.video.sickrage')
+pluginID = 'plugin.video.sickrage'
+my_addon = xbmcaddon.Addon(pluginID)
+addon_path = my_addon.getAddonInfo('path')
 
 
 def menu():
     total_items = 4
-    addDirectory('All', 14, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
-    addDirectory('Continuing', 14, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
-    addDirectory('Ended', 14, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
-    addDirectory('Paused', 14, True, my_addon.getAddonInfo('path')+'/manage.png', total_items)
+    addDirectory('All', 14, True, addon_path + '/manage.png', total_items)
+    addDirectory('Continuing', 14, True, addon_path + '/manage.png', total_items)
+    addDirectory('Ended', 14, True, addon_path + '/manage.png', total_items)
+    addDirectory('Paused', 14, True, addon_path + '/manage.png', total_items)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
       
 def addDirectory(menu_item_name, menu_number, folder, icon, total_items):

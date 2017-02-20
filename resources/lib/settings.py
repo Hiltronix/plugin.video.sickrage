@@ -5,7 +5,11 @@ import json
 import base64
 import urllib
 import urllib2
+import common
 import sickbeard
+
+
+pluginID = 'plugin.video.sickrage'
 
 
 def createURL(ip, port, use_ssl, web_root):
@@ -80,35 +84,22 @@ def GetApiKeyScraper(ip, port, use_ssl, username, password, web_root):
     return APIKey
 
 
-# Show error pop up then exit plugin.
-def messageWindow(header, message):
-    dialog = xbmcgui.Dialog()
-    dialog.ok(header, message)
-
-
-# Show error pop up then exit plugin.
-def errorWindow(header, message):
-    dialog = xbmcgui.Dialog()
-    dialog.ok(header, message)
-    sys.exit()
-
-
 # Display the correct error message based on error code.
 def displayError(error_code, err=""):
     if error_code == "1":
-        errorWindow("Error", "Must configure IP and port settings before use.")
+        common.errorWindow("Error", "Must configure IP and port settings before use.")
     elif error_code == "2":
-        errorWindow("Error", "Invalid username or password.")
+        common.errorWindow("Error", "Invalid username or password.")
     elif error_code == "3":
-        errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
+        common.errorWindow("Error", "Unable to connect to SickRage webserver.\nCheck the IP and port settings.")
     elif error_code == "4":
-        errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that the API key was generated on webserver, and if webserver is running.")
+        common.errorWindow("Error", "Unable to retrieve API key.\nEnter or paste API key manually into settings field.\nOr check username and password, that the API key was generated on webserver, and if webserver is running.")
     elif error_code == "5":
-        errorWindow("Exception Error", str(err))
+        common.errorWindow("Exception Error", str(err))
 
 
 # Set constants.
-__addon__ = xbmcaddon.Addon(id='plugin.video.sickrage')
+__addon__ = xbmcaddon.Addon(id=pluginID)
 __ip__ = __addon__.getSetting('SickRage IP')
 __port__ = __addon__.getSetting('SickRage Port')
 __ssl_bool__ = __addon__.getSetting('Use SSL')
@@ -126,8 +117,6 @@ __history_max__ = __addon__.getSetting('HistoryMax')
 if (int(__history_max__) > 99):
     __addon__.setSetting('HistoryMax', '99')
     __history_max__ = 99
-# Hiltronix API Key for The Movie Database:
-__tmdb_api_key__ = '4881a357a1d48e90871991c3cacc7a08'
 
 
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.

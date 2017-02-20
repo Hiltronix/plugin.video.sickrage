@@ -1,8 +1,11 @@
 import xbmc
 import xbmcgui
+import xbmcplugin
 import common
 import sickbeard
 
+
+pluginID = 'plugin.video.sickrage'
 
 tvdbid = sys.argv[1]
 show_name = sys.argv[2]
@@ -15,7 +18,6 @@ def deleteShow(tvdbid, removefiles):
     ret = Sickbeard.DeleteShow(tvdbid, removefiles)
     dialog = xbmcgui.Dialog()
     dialog.ok('Delete Show', ret)
-    xbmc.executescript('special://home/addons/plugin.video.sickrage/resources/lib/refresh.py')
     return ret
 
 

@@ -1,14 +1,23 @@
 import xbmc
 import xbmcgui
-import xbmcaddon
 import os
 import sys
 import math
+import json
 
 
-# This path info may not be used in this module, but is elsewhere.
-my_addon = xbmcaddon.Addon('plugin.video.sickrage')
-ADDON_PATH = my_addon.getAddonInfo('path')
+def getFromDict(dataDict, mapList, default_result=None):
+# Similar to dictionary '.get' but for nested dictionaies.
+# Example: getFromDict(dataDict, ["b", "v", "y"])
+# Returns 'None' if not found, unless a default result is provided.
+    try:
+        value = reduce(lambda d, k: d[k], mapList, dataDict)
+        if value:
+            return value
+        else:
+            return default_result
+    except Exception:
+        return default_result
 
 
 def GetDirSizeFormatted(start_path):
@@ -59,32 +68,32 @@ class TextViewer_Dialog(xbmcgui.WindowXMLDialog):
         pass
 
 
+def CreateNotification(header="", message="", icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=True):
 # Popup notification in bottom right corner.
 # Info: icon=xbmcgui.NOTIFICATION_INFO
 # Warning: icon=xbmcgui.NOTIFICATION_WARNING
 # Error: icon=xbmcgui.NOTIFICATION_ERROR
-def CreateNotification(header="", message="", icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=True):
     dialog = xbmcgui.Dialog()
     dialog.notification(heading=header, message=message, icon=icon, time=time, sound=sound)
 
 
-# Show message pop up.
 def messageWindow(header, message):
+# Show message pop up.
     dialog = xbmcgui.Dialog()
     dialog.ok(header, message)
 
 
-# Show error pop up then exit plugin.
 def errorWindow(header, message):
+# Show error pop up then exit plugin.
     dialog = xbmcgui.Dialog()
     dialog.ok(header, message)
     sys.exit()
     
 
+def selectNoYes(title, No, Yes):
 # Yes or No dialog style dialog.
 # Returns False for the first "No" value, and True for the second "Yes" value.
 # Returns -1 if cancelled.
-def selectNoYes(title, No, Yes):
     dialog = xbmcgui.Dialog()
     ret = dialog.select(title, [No, Yes])
     if (ret == -1):
@@ -93,4 +102,11 @@ def selectNoYes(title, No, Yes):
         return True
     else:
         return False
+
+
+def JsonRpc(id, method, params):
+    query = xbmc.executeJSONRPC('{"id":"%s", "jsonrpc": "2.0", "method": "%s", "params": %s}' %(id, method, json.dumps(params)))
+    query = unicode(query, 'utf-8', errors='ignore')
+    result = json.loads(query)
+    return result
 

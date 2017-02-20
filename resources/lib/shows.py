@@ -7,10 +7,11 @@ import json
 import urllib
 import cache
 import common
-import settings
 import sickbeard
 import TvdbApi
 
+
+pluginID = 'plugin.video.sickrage'
 
 # Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
@@ -46,7 +47,7 @@ def GetShowInfo(filter):
                 list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Ended') and (status == 'Ended'):
                 list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
-            if (filter == 'Paused') and (paused == 1):
+            if (filter == 'Paused') and (paused == 1) and (status == 'Continuing'):
                 list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
     return list
 
@@ -57,26 +58,29 @@ def menu(filter='All'):
     total_items = len(show_info)
 
     for show_name, name, tvdbid, paused, next_airdate in show_info:
+    
+        # This is intended for general show info, so we force the use of Season 1, Episode 1 for generic reasons.  We can assume that all shows have at least 1 episode.
+        season = 1
+        episode = 1
 
         context_items = []
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
-        context_items.append(('ExtendedInfo', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=10&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
-        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=4&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
-        context_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/addshow.py, new)'))
-        context_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/deleteshow.py, '+tvdbid+', '+show_name+')'))
-        context_items.append((paused+' Show', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/setpausestate.py, '+paused+', '+tvdbid+')'))
-        context_items.append(('Force Server Update', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/forcesearch.py, '+tvdbid+')'))
-        #context_items.append(('Update Show Images', 'XBMC.RunPlugin(plugin://plugin.video.sickrage?tvdb_id='+urllib.quote_plus(str(tvdbid))+'&mode=13&show_name='+urllib.quote_plus(show_name.encode( "utf-8" ))+')'))
-        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/cache.py, {0}, {1}, {2})'.format(tvdbid, 1, 1)))
-        context_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
+        context_items.append(('Open Show Folder', 'XBMC.RunPlugin(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(pluginID, 15, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
+        if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
+            context_items.append(('ExtendedInfo', 'XBMC.RunScript(script.extendedinfo, info=extendedtvinfo, tvdb_id={0})'.format(tvdbid)))
+        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(pluginID, 4, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
+        context_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/addshow.py)'.format(pluginID)))
+        context_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/deleteshow.py, {1}, {2})'.format(pluginID, tvdbid, show_name)))
+        context_items.append((paused + ' Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setpausestate.py, {1}, {2})'.format(pluginID, paused, tvdbid)))
+        context_items.append(('Force Server Update', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/forcesearch.py, {1})'.format(pluginID, tvdbid)))
+        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/cache.py, {1}, {2}, {3})'.format(pluginID, tvdbid, season, episode)))
+        context_items.append(('Refresh List', 'XBMC.Container.Refresh'))
         context_items.append(('Go Back', 'XBMC.Action(back)'))
-        #if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
-        #    context_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
         
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         fanart_path = Sickbeard.GetShowFanArt(tvdbid)
         banner_path = Sickbeard.GetShowBanner(tvdbid)
-        addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items)
+        addDirectory(show_name, name, tvdbid, season, episode, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items)
 
     xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_DATE)
     xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
@@ -85,14 +89,12 @@ def menu(filter='All'):
     common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=3000, sound=False)
 
 
-def addDirectory(show_name, name, tvdbid, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items):
+def addDirectory(show_name, name, tvdbid, season, episode, next_airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items):
     return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
     list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
     list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
     meta = {}
-    season = 1
-    episode = 1
     try:
         # Load and parse meta data.
         if not os.path.exists(cache.ep_cache_dir):

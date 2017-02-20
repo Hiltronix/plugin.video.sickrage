@@ -1,3 +1,11 @@
+[B]2017-02-18 v.2.0.5[/B]
+- The "Paused" show list no longer includes shows that have "Ended".
+- You can open the TV show folder to play videos from the context menu.
+    - This feature exits the Add-on, so you have to restart the addon to come back to where you were.
+- Bug fixes.
+- Cleaned up code.
+- The link from "ExtendedInfo > Manage > Add to Sickbear" has been updated, so you may have to wait for an ExtendedInfo version bump before this works again.
+
 [B]2017-02-16 v.2.0.4[/B]
 - NOTE: Cached meta data may have to be re-downloaded and saved the first run, due to meta data version change requirements.
     - Re-caching meta data takes a few seconds per show.

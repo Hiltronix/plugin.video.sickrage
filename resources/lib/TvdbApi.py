@@ -1065,3 +1065,25 @@ def CacheActorImages(actors, cache_dir, force=False, log=None):
     return actors
 
 
+def GetNameFromTvdb(tvdbid, log=None):
+# Get the TV show name for the TVdb ID.
+    try:
+        tvdb = theTVDB()
+
+        dict = tvdb.GetSeries(series_id=tvdbid)
+        show = dict.get('data', None)
+        #print json.dumps(show, sort_keys=False, indent=4)
+        if not show:
+            return 'Unknown'
+
+        name = show.get('seriesName', '')
+        aired = show.get('firstAired', '')
+        
+        return '{} ({})'.format(name, aired[:4])
+
+    except Exception, e:
+        print e
+        if log:
+            log.debug('*** Exception ***', exc_info=1)
+        return False
+

@@ -1,10 +1,13 @@
-import sys
-import urllib
 import xbmc
 import xbmcgui
+import xbmcaddon
 import xbmcplugin
+import sys
+import urllib
 import sickbeard
 
+
+pluginID = 'plugin.video.sickrage'
 
 # Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
@@ -30,10 +33,8 @@ def menu(tvdbid, show_name):
     total_items = len(list)
     
     context_items = []
-    context_items.append(('Refresh List', 'XBMC.RunScript(special://home/addons/plugin.video.sickrage/resources/lib/refresh.py)'))
+    context_items.append(('Refresh List', 'XBMC.Container.Refresh'))
     context_items.append(('Go Back', 'XBMC.Action(back)'))
-    if xbmc.getCondVisibility('System.HasAddon(context.videolookup.dialog)'):
-        context_items.append(('Video Lookup', 'XBMC.RunScript(context.videolookup.dialog)'))
 
     for season_number, season_text in list:
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
