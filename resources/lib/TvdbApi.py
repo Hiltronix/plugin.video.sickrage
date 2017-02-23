@@ -217,7 +217,7 @@ class theTVDB:
             filename = __file__
             filename = str.replace(filename, filename.rpartition('.')[2], 'json')
             with open(filename, 'w') as f:
-                json.dump(data, f)
+                json.dump(data, f, sort_keys=True, indent=4)
         except Exception, e:
             print e
             return False

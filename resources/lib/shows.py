@@ -30,25 +30,25 @@ def GetShowInfo(filter):
         next_airdate = show['next_ep_airdate']
         status = show['status']
         status_msg = '    [COLOR gray]Unknown[/COLOR]'
-        if paused == 0:
-            paused_msg = "Pause"
-            ispaused = ""
-        else:
+        if paused == 1:
             paused_msg = "Resume"
             ispaused = "    [COLOR cyan]Paused[/COLOR]"
+        else:
+            paused_msg = "Pause"
+            ispaused = ""
         if status == 'Ended':
             status_msg = '    [COLOR red]'+str(status)+'[/COLOR]'
         elif status:
             status_msg = '    [COLOR gray]'+str(status)+'[/COLOR]'
         if filter:
             if (filter == 'All'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
+                list.append([name, '[COLOR gold]' + name + '[/COLOR]' + status_msg + ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Continuing') and (status == 'Continuing'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
+                list.append([name, '[COLOR gold]' + name + '[/COLOR]' + status_msg + ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Ended') and (status == 'Ended'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
+                list.append([name, '[COLOR gold]' + name + '[/COLOR]' + status_msg + ispaused, str(tvdbid), paused_msg, next_airdate])
             if (filter == 'Paused') and (paused == 1) and (status == 'Continuing'):
-                list.append([name, '[COLOR gold]'+name+'[/COLOR]'+status_msg+ispaused, str(tvdbid), paused_msg, next_airdate])
+                list.append([name, '[COLOR gold]' + name + '[/COLOR]' + status_msg + ispaused, str(tvdbid), paused_msg, next_airdate])
     return list
 
 

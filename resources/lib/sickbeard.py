@@ -12,7 +12,7 @@ import settings
 
 # Replace troublesome characters, that effect sorting.
 def FixBadChar(text):
-    text = text.replace(u'\u2019', u"'")  # Replace curved apostrophe ’ with standard ' apostrophe.
+    text = text.replace(u'\u2019', u"'")  # Replace curved apostrophe â€™ with standard ' apostrophe.
     text = text.replace(u'\u2010', u"-")  # Replace wide dash with standard hyphen.
     text = text.replace(u'\u2011', u"-")  # Replace wide dash with standard hyphen.
     text = text.replace(u'\u2012', u"-")  # Replace wide dash with standard hyphen.
@@ -83,7 +83,7 @@ class SB:
                 # Minimum required fields listed first.
                 show['tvdbid'] = str(getFromDict(result, ['data', each, 'tvdbid'], ''))
                 show['show_name'] = FixBadChar(getFromDict(result, ['data', each, 'show_name'], ''))
-                show['paused'] = getFromDict(result, ['data', each, 'paused'], '')
+                show['paused'] = getFromDict(result, ['data', each, 'paused'], 0)
                 show['status'] = getFromDict(result, ['data', each, 'status'], '')
                 show['next_ep_airdate'] = getFromDict(result, ['data', each, 'next_ep_airdate'], '')
                 show['anime'] = getFromDict(result, ['data', each, 'anime'], '')

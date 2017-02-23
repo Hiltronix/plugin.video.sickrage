@@ -1,3 +1,6 @@
+[B]2017-02-22 v.2.0.6[/B]
+- Fix error where all lines in Show lists indicate "Paused" in error.
+
 [B]2017-02-18 v.2.0.5[/B]
 - The "Paused" show list no longer includes shows that have "Ended".
 - You can open the TV show folder to play videos from the context menu.
