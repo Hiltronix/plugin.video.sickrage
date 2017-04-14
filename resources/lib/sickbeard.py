@@ -358,7 +358,6 @@ class SB:
 
     # Return a list of the save paths set in SickRage.
     def GetRootDirs(self):
-        directory_result = []
         try:
             response = GetUrlData(url=settings.__url__+'?cmd=sb.getrootdirs')
             if not response:
@@ -498,4 +497,19 @@ class SB:
         except Exception, e:
             common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
         return log_list
+
       
+    # Run Post Processing.
+    def PostProcessing(self):
+        try:
+            response = GetUrlData(url=settings.__url__ + '?cmd=postprocess')
+            if not response:
+                return None
+            result = json.loads(response)
+            msg = result.get('message')
+            res = result.get('result')
+        except Exception, e:
+            common.errorWindow(sys._getframe().f_code.co_name, self.CONNECT_ERROR+str(e))
+        return msg, res
+      
+

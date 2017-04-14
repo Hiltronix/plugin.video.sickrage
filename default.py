@@ -206,8 +206,12 @@ elif menu_number == 9:  # Backlog list.
 # Settings menu.
 elif menu_number == 11:
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Settings", ["Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version", "About"])
-    if ret == 0:    # Change log.
+    ret = dialog.select("Settings", ["Run Post Processing", "Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version", "About"])
+    if ret == 0:    # Post Processing.
+        msg, res = Sickbeard.PostProcessing()
+        if res:
+            common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}[CR]Note: Success indicates process started, not successful file transfers.'.format(msg, res))
+    if ret == 1:    # Change log.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
             filename = os.path.join(addon_path, 'changelog.txt')
@@ -220,11 +224,11 @@ elif menu_number == 11:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='Change Log', text=data)
         w.doModal()
-    if ret == 1:    # Open app settings.
+    if ret == 2:    # Open app settings.
         xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(pluginID))
-    if ret == 2:    # View log files.
+    if ret == 3:    # View log files.
         log.main()
-    if ret == 3:    # Clear Cache.
+    if ret == 4:    # Clear Cache.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
             size = common.GetDirSizeFormatted(cache.cache_dir)
@@ -238,10 +242,10 @@ elif menu_number == 11:
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
             common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
-    if ret == 4:    # SickRage/SickBeard Version.
+    if ret == 5:    # SickRage/SickBeard Version.
         api, version = Sickbeard.GetVersion()
         common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
-    if ret == 5:    # About.
+    if ret == 6:    # About.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
             filename = os.path.join(addon_path, 'about.txt')
