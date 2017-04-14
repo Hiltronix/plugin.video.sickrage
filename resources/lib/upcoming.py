@@ -102,7 +102,7 @@ def GetUpcomingEpisodes(ext_upcoming=False):
     return list
 
 
-def menu(ext_upcoming=False):
+def menu(handle, ext_upcoming=False):
     list = GetUpcomingEpisodes(ext_upcoming)
     total_items = len(list)
 
@@ -126,16 +126,16 @@ def menu(ext_upcoming=False):
         thumbnail_path = Sickbeard.GetShowPoster(tvdbid)
         fanart_path = Sickbeard.GetShowFanArt(tvdbid)
         banner_path = Sickbeard.GetShowBanner(tvdbid)
-        addDirectory(show_name, name, tvdbid, season, episode, airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items)
+        addDirectory(handle, show_name, name, tvdbid, season, episode, airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items)
 
-    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_DATE)
-    xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
-    xbmcplugin.setContent(handle=int(sys.argv[1]), content='tvshows')
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    xbmcplugin.addSortMethod(handle=int(handle), sortMethod=xbmcplugin.SORT_METHOD_DATE)
+    xbmcplugin.addSortMethod(handle=int(handle), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE)
+    xbmcplugin.setContent(handle=int(handle), content='tvshows')
+    xbmcplugin.endOfDirectory(int(handle))
     common.CreateNotification(header='Show List', message=str(total_items)+' Shows in list', icon=xbmcgui.NOTIFICATION_INFO, time=3000, sound=False)
 
 
-def addDirectory(show_name, name, tvdbid, season, episode, airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items):
+def addDirectory(handle, show_name, name, tvdbid, season, episode, airdate, thumbnail_path, fanart_path, banner_path, total_items, context_items):
     return_url = sys.argv[0] + "?mode={0}&tvdb_id={1}&show_name={2}".format(6, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))
     list_item = xbmcgui.ListItem(name)
     list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
@@ -202,5 +202,5 @@ def addDirectory(show_name, name, tvdbid, season, episode, airdate, thumbnail_pa
         meta['episode'] = int(episode)
     list_item.setInfo(type="Video", infoLabels=meta)
     list_item.addContextMenuItems(context_items, replaceItems = True)
-    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=False, totalItems=total_items)  
+    xbmcplugin.addDirectoryItem(handle=int(handle), url=return_url, listitem=list_item, isFolder=False, totalItems=total_items)  
 

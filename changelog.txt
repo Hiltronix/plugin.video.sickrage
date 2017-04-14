@@ -1,3 +1,6 @@
+[B]2017-04-14 v.2.0.7[/B]
+- Bug fixes and some code changes.
+
 [B]2017-02-22 v.2.0.6[/B]
 - Fix error where all lines in Show lists indicate "Paused" in error.
 

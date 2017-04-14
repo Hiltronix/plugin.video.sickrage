@@ -161,25 +161,25 @@ if menu_number == None:
     mainMenu()
        
 elif menu_number == 1:  # Show list type [All, Continuing, Ended, Paused].
-    show_filter.menu()
+    show_filter.menu(sys.argv[1])
         
 elif menu_number == 14: # Shows list.
-    shows.menu(filter=name)
+    shows.menu(handle=sys.argv[1], filter=name)
         
 elif menu_number == 2:  # Upcoming 1 Week.
-    upcoming.menu(False)
+    upcoming.menu(sys.argv[1], False)
         
 elif menu_number == 22:   # Upcoming Extended.
-    upcoming.menu(True)
+    upcoming.menu(sys.argv[1], True)
         
 elif menu_number == 3:  # History list.
-    history.menu()
+    history.menu(sys.argv[1])
 
 elif menu_number == 4:  # Seasons.
-    seasons.menu(tvdb_id, show_name)
+    seasons.menu(sys.argv[1], tvdb_id, show_name)
 
 elif menu_number == 5:  # Episodes.
-    episodes.menu(tvdb_id, show_name, number)
+    episodes.menu(sys.argv[1], tvdb_id, show_name, number)
 
 elif menu_number == 6:  # Open the video dialog window.
     xbmc.executebuiltin('XBMC.Action(Info)')
