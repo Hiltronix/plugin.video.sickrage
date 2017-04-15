@@ -208,9 +208,13 @@ elif menu_number == 11:
     dialog = xbmcgui.Dialog()
     ret = dialog.select("Settings", ["Run Post Processing", "Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version", "About"])
     if ret == 0:    # Post Processing.
-        msg, res = Sickbeard.PostProcessing()
+        try:
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            msg, res = Sickbeard.PostProcessing()
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
         if res:
-            common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}[CR]Note: Success indicates process started, not successful file transfers.'.format(msg, res))
+            common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}'.format(msg, res))
     if ret == 1:    # Change log.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")

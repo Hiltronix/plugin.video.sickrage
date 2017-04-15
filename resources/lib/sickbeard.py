@@ -36,7 +36,7 @@ def getFromDict(dataDict, mapList, default_result=None):
         return default_result
 
 
-def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
+def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None, timeout=10):
     # Fetches data from "url" (http or https) and return it as a string, with timeout.
     # Supply any headers and proxies as dict.
     # A default User-Agent will be added if the headers dict doesn't contain one.
@@ -46,7 +46,7 @@ def GetUrlData(url=None, headers={}, proxies={}, verify=False, log=None):
         if not headers.get('User-Agent'):
             headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0'
 
-        response = requests.get(url, headers=headers, proxies=proxies, verify=verify, timeout=5.0)
+        response = requests.get(url, headers=headers, proxies=proxies, verify=verify, timeout=timeout)
         if response.status_code == 200:
             return response.content
         else:
@@ -442,7 +442,7 @@ class SB:
     def ForceDownload(self, tvdbid, season, ep):
         message = ""
         try:
-            response = GetUrlData(url=settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep))
+            response = GetUrlData(url=settings.__url__+'?cmd=episode.search&tvdbid='+str(tvdbid)+'&season='+str(season)+'&episode='+str(ep), timeout=120)
             if not response:
                 return None
             result = json.loads(response)
@@ -502,7 +502,7 @@ class SB:
     # Run Post Processing.
     def PostProcessing(self):
         try:
-            response = GetUrlData(url=settings.__url__ + '?cmd=postprocess')
+            response = GetUrlData(url=settings.__url__ + '?cmd=postprocess', timeout=120)
             if not response:
                 return None
             result = json.loads(response)

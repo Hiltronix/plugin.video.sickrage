@@ -1,3 +1,7 @@
+[B]2017-04-15 v.2.0.9[/B]
+- Changed some connection timeout values.
+- Added busy indicator to Post Processing option.
+
 [B]2017-04-14 v.2.0.8[/B]
 - Added force manual post processing option to the Settings menu.
 
