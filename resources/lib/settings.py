@@ -9,9 +9,6 @@ import common
 import sickbeard
 
 
-pluginID = 'plugin.video.sickrage'
-
-
 def createURL(ip, port, use_ssl, web_root):
     if str(ip) == "" or str(port) == "":
         displayError("1")
@@ -99,23 +96,26 @@ def displayError(error_code, err=""):
 
 
 # Set constants.
-__addon__ = xbmcaddon.Addon(id=pluginID)
-__ip__ = __addon__.getSetting('SickRage IP')
-__port__ = __addon__.getSetting('SickRage Port')
-__ssl_bool__ = __addon__.getSetting('Use SSL')
-__web_root__ = __addon__.getSetting('Web Root')
+pluginID = 'plugin.video.sickrage'
+my_addon = xbmcaddon.Addon(pluginID)
+addon_path = my_addon.getAddonInfo('path')
+
+__ip__ = my_addon.getSetting('SickRage IP')
+__port__ = my_addon.getSetting('SickRage Port')
+__ssl_bool__ = my_addon.getSetting('Use SSL')
+__web_root__ = my_addon.getSetting('Web Root')
 if not __web_root__.startswith('/'):
     __web_root__ = '/' + __web_root__
 if __web_root__.endswith('/'):
     __web_root__ = __web_root__[:-1]
-__addon__.setSetting('Web Root', __web_root__)
-__servertype__ = __addon__.getSetting('ServerType')
-__username__ = __addon__.getSetting('SickRage Username')
-__password__ = __addon__.getSetting('SickRage Password')
-__api_key__ =__addon__.getSetting('SickRage API Key')
-__history_max__ = __addon__.getSetting('HistoryMax')
+my_addon.setSetting('Web Root', __web_root__)
+__servertype__ = my_addon.getSetting('ServerType')
+__username__ = my_addon.getSetting('SickRage Username')
+__password__ = my_addon.getSetting('SickRage Password')
+__api_key__ = my_addon.getSetting('SickRage API Key')
+__history_max__ = my_addon.getSetting('HistoryMax')
 if (int(__history_max__) > 99):
-    __addon__.setSetting('HistoryMax', '99')
+    my_addon.setSetting('HistoryMax', '99')
     __history_max__ = 99
 
 
@@ -125,7 +125,7 @@ if (__api_key__ == ""):
         __api_key__ = GetApiKey(__ip__, __port__, __ssl_bool__, __username__, __password__, __web_root__)
     else:
         __api_key__ = GetApiKeyScraper(__ip__, __port__, __ssl_bool__, __username__, __password__, __web_root__)
-    __addon__.setSetting('SickRage API Key', __api_key__)
+    my_addon.setSetting('SickRage API Key', __api_key__)
     
 # Create the URL used to access webserver.
 if __web_root__ != "":

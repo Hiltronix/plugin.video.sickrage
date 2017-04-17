@@ -2,10 +2,9 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import common
+import settings
 import sickbeard
 
-
-pluginID = 'plugin.video.sickrage'
 
 tvdbid = sys.argv[1]
 show_name = sys.argv[2]

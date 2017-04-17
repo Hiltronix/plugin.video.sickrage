@@ -7,8 +7,6 @@ import urllib
 import sickbeard
 
 
-pluginID = 'plugin.video.sickrage'
-
 # Initialize Sickbeard Class.
 Sickbeard = sickbeard.SB()
 

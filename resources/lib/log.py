@@ -3,12 +3,9 @@ import xbmc
 import xbmcgui
 import xbmcaddon
 import common
+import settings
 import sickbeard
 
-
-pluginID = 'plugin.video.sickrage'
-my_addon = xbmcaddon.Addon(pluginID)
-addon_path = my_addon.getAddonInfo('path')
 
 # Initialize Sickbeard Class
 Sickbeard = sickbeard.SB()

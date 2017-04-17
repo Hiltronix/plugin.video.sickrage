@@ -1,3 +1,8 @@
+[B]2017-04-15 v.2.1.0[/B]
+- New context menu option: Search qBittorrent (if also installed.)
+    - Sends the selected items show name, season and episode as a keyword search to the qBittorrent addon.
+- Bug fixes.
+
 [B]2017-04-15 v.2.0.9[/B]
 - Changed some connection timeout values.
 - Added busy indicator to Post Processing option.

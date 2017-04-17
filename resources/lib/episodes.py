@@ -7,11 +7,10 @@ import json
 import urllib
 import cache
 import common
+import settings
 import sickbeard
 import TvdbApi
 
-
-pluginID = 'plugin.video.sickrage'
 
 # Initialize Sickbeard Class
 Sickbeard = sickbeard.SB()
@@ -42,13 +41,15 @@ def menu(handle, tvdbid, show_name, season):
 
         context_items = []
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
-        context_items.append(('Open Show Folder', 'XBMC.RunPlugin(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(pluginID, 15, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
+        context_items.append(('Open Show Folder', 'XBMC.RunPlugin(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 15, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
             context_items.append(('ExtendedInfo', 'XBMC.RunScript(script.extendedinfo, info=extendedtvinfo, tvdb_id={0})'.format(tvdbid)))
-        context_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setstatus.py{1})'.format(pluginID, episode_status_args)))
-        context_items.append(('Set Season Status', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setstatus.py{1})'.format(pluginID, season_status_args)))
-        context_items.append(('Download Episode', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/manualsearch.py{1})'.format(pluginID, episode_status_args)))
-        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/cache.py, {1}, {2}, {3})'.format(pluginID, tvdbid, season, ep_number)))
+        context_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setstatus.py{1})'.format(settings.pluginID, episode_status_args)))
+        context_items.append(('Set Season Status', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setstatus.py{1})'.format(settings.pluginID, season_status_args)))
+        if xbmc.getCondVisibility('System.HasAddon(plugin.program.qbittorrent)'):
+            context_items.append(('Search qBittorrent', 'XBMC.Container.Update(plugin://plugin.program.qbittorrent?mode=1&keywords={}+S{:02d}E{:02d})'.format(urllib.quote_plus(show_name.encode('utf-8')), int(season), int(ep_number))))
+        context_items.append(('Download Episode', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/manualsearch.py{1})'.format(settings.pluginID, episode_status_args)))
+        context_items.append(('Update Cache from TVdb', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/cache.py, {1}, {2}, {3})'.format(settings.pluginID, tvdbid, season, ep_number)))
         context_items.append(('Refresh List', 'XBMC.Container.Refresh'))
         context_items.append(('Go Back', 'XBMC.Action(back)'))
 

@@ -21,10 +21,6 @@ import resources.lib.sickbeard as sickbeard
 import resources.lib.TvdbApi as TvdbApi
 
 
-pluginID = 'plugin.video.sickrage'
-my_addon = xbmcaddon.Addon(pluginID)
-addon_path = my_addon.getAddonInfo('path')
-
 # Initialize Sickbeard Class
 Sickbeard = sickbeard.SB()
 
@@ -32,21 +28,21 @@ Sickbeard = sickbeard.SB()
 # Add the main directory folders.
 def mainMenu():
     total_items = 6
-    addDirectory('Upcoming - 1 Week', 2, True, addon_path + '/upcoming.png', total_items)
-    addDirectory('Upcoming - Extended', 22, True, addon_path + '/upcomingplus.png', total_items)
-    addDirectory('History', 3, True, addon_path + '/history.png', total_items)
+    addDirectory('Upcoming - 1 Week', 2, True, settings.addon_path + '/upcoming.png', total_items)
+    addDirectory('Upcoming - Extended', 22, True, settings.addon_path + '/upcomingplus.png', total_items)
+    addDirectory('History', 3, True, settings.addon_path + '/history.png', total_items)
     if (settings.__servertype__ == "SickRage"):
         total_items += 1
-        addDirectory('Backlog', 9, True, addon_path + '/backlog.png', total_items)
-    addDirectory('Show List', 1, True, addon_path + '/manage.png', total_items)
-    addDirectory('Add New Show', 7, False, addon_path + '/add.png', total_items)
-    addDirectory('Settings', 11, False, addon_path + '/settings.png', total_items)
+        addDirectory('Backlog', 9, True, settings.addon_path + '/backlog.png', total_items)
+    addDirectory('Show List', 1, True, settings.addon_path + '/manage.png', total_items)
+    addDirectory('Add New Show', 7, False, settings.addon_path + '/add.png', total_items)
+    addDirectory('Settings', 11, False, settings.addon_path + '/settings.png', total_items)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
 # Add directory item.
 def addDirectory(menu_item_name, menu_number, folder, icon, total_items):
-    return_url = sys.argv[0]+"?url="+urllib.quote_plus("")+"&mode="+str(menu_number)+"&name="+urllib.quote_plus(menu_item_name)
+    return_url = 'plugin://{}/?mode={}&name={}'.format(settings.pluginID, menu_number, urllib.quote_plus(menu_item_name))
     list_item = xbmcgui.ListItem(menu_item_name)
     list_item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'fanart': '', 'banner': '', 'clearart': '', 'clearlogo': '', 'landscape': ''})
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=return_url, listitem=list_item, isFolder=folder, totalItems=total_items)
@@ -201,7 +197,7 @@ elif menu_number == 8:  # Action values.
             common.messageWindow('Missing Parameter', 'Add new show request received,[CR]but the TVdb ID was not included.')
 
 elif menu_number == 9:  # Backlog list.
-    backlog.menu()
+    backlog.menu(sys.argv[1])
 
 # Settings menu.
 elif menu_number == 11:
@@ -218,7 +214,7 @@ elif menu_number == 11:
     if ret == 1:    # Change log.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = os.path.join(addon_path, 'changelog.txt')
+            filename = os.path.join(settings.addon_path, 'changelog.txt')
             if os.path.isfile(filename):
                 with open(filename, 'r') as f:
                     data = f.read()
@@ -226,10 +222,10 @@ elif menu_number == 11:
                 data = 'Change log not available.'
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
-        w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='Change Log', text=data)
+        w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='Change Log', text=data)
         w.doModal()
     if ret == 2:    # Open app settings.
-        xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(pluginID))
+        xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(settings.pluginID))
     if ret == 3:    # View log files.
         log.main()
     if ret == 4:    # Clear Cache.
@@ -252,7 +248,7 @@ elif menu_number == 11:
     if ret == 6:    # About.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = os.path.join(addon_path, 'about.txt')
+            filename = os.path.join(settings.addon_path, 'about.txt')
             if os.path.isfile(filename):
                 with open(filename, 'r') as f:
                     data = f.read()
@@ -260,7 +256,7 @@ elif menu_number == 11:
                 data = 'About file not available.'
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
-        w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='About', text=data)
+        w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='About', text=data)
         w.doModal()
 
 
