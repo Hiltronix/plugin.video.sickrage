@@ -178,15 +178,20 @@ def addDirectory(handle, show_name, name, tvdbid, season, episode, airdate, thum
         meta['dateadded'] = meta['premiered']
         # Date for sorting must be in Kodi format dd.mm.yyyy
         meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
-        meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
+        meta['duration'] = int(TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)) * 60    # Must be in seconds as an integer.
         meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
         meta['writer'] = ', '.join(TvdbApi.getFromDict(data, ['Details', 'writers'], ''))
         meta['director'] = ', '.join(TvdbApi.getFromDict(data, ['Details', 'directors'], ''))
         meta['studio'] = TvdbApi.getFromDict(data, ['Show', 'network'], '')
         meta['mpaa'] = TvdbApi.getFromDict(data, ['Show', 'rating'], '')
         meta['episode_id'] = TvdbApi.getFromDict(data, ['Details', 'id'], '')
-        meta['year'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], '')[:4]
+        meta['year'] = TvdbApi.getFromDict(data, ['Details', 'firstAired'], '')[:4]
         meta['status'] = TvdbApi.getFromDict(data, ['Show', 'status'], '')
+        airsDayOfWeek = TvdbApi.getFromDict(data, ['Show', 'airsDayOfWeek'], '')
+        airsTime = TvdbApi.getFromDict(data, ['Show', 'airsTime'], '')
+        if airsDayOfWeek or airsTime:
+            meta['status'] += ' ({}{}{})'.format(airsDayOfWeek[0:3], ' ' if airsDayOfWeek and airsTime else '',airsTime)
+        meta['mediatype'] = 'episode'   # string - "video", "movie", "tvshow", "season", "episode" or "musicvideo" 
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
         actors = data.get('Actors', [])

@@ -1,3 +1,8 @@
+[B]2017-04-15 v.2.1.1[/B]
+- Remove addon from the "Program add-ons" (executable) group.  Running the addon from this group stops video dialogs from opening, and meta data from being displayed in directory side bars.  This was done by a user Pull Request for convenience, it now just causes confusion on why things aren't working correctly.
+- Added airs day of week, and airs time, to TV show video dialog status.
+- Fixed some TV show meta data values.
+
 [B]2017-04-15 v.2.1.0[/B]
 - New context menu option: Search qBittorrent (if also installed.)
     - Sends the selected items show name, season and episode as a keyword search to the qBittorrent addon.
