@@ -202,7 +202,8 @@ elif menu_number == 9:  # Backlog list.
 # Settings menu.
 elif menu_number == 11:
     dialog = xbmcgui.Dialog()
-    ret = dialog.select("Settings", ["Run Post Processing", "Change Log", "App Settings", "View Server Log File", "Clear Cache", "Show Server Version", "About"])
+    ret = dialog.select("Settings", ["Run Post Processing", "Change Log", "App Settings", "View Server Log File", "Add App to Favouties", "Clear Cache", "Show Server Version", "About"])
+
     if ret == 0:    # Post Processing.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
@@ -211,6 +212,7 @@ elif menu_number == 11:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         if res:
             common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}'.format(msg, res))
+
     if ret == 1:    # Change log.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
@@ -224,11 +226,38 @@ elif menu_number == 11:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='Change Log', text=data)
         w.doModal()
+
     if ret == 2:    # Open app settings.
         xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(settings.pluginID))
+
     if ret == 3:    # View log files.
         log.main()
-    if ret == 4:    # Clear Cache.
+
+    if ret == 4:    # Add to favourites.
+        try:
+            xml_open = '<favourites>\n'
+            xml_fav = '    <favourite name="{0}" thumb="special://home/addons/{1}/icon.png">ActivateWindow(10025,&quot;plugin://{1}/&quot;,return)</favourite>\n'.format(settings.pluginName, settings.pluginID)
+            xml_close = '</favourites>\n'
+            xbmc.executebuiltin("ActivateWindow(busydialog)")
+            filename = xbmc.translatePath('special://home/userdata/favourites.xml')
+            if os.path.isfile(filename):
+                with open(filename, 'r') as f:
+                    data = f.read()
+                # Check is fav already exists.  If not, add it to end of file.
+                find_str = 'name="{}"'.format(settings.pluginName)
+                if find_str not in data:
+                    data = data.replace(xml_close, xml_fav + xml_close)
+            else:
+                data = xml_open + xml_fav + xml_close
+            # Save favourites file.
+            f = open(filename, 'w')
+            f.write(data)
+            f.close()
+            common.messageWindow('Add to Favourites', 'Done.')
+        finally:
+            xbmc.executebuiltin("Dialog.Close(busydialog)")
+
+    if ret == 5:    # Clear Cache.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
             size = common.GetDirSizeFormatted(cache.cache_dir)
@@ -242,10 +271,12 @@ elif menu_number == 11:
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
             common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
-    if ret == 5:    # SickRage/SickBeard Version.
+
+    if ret == 6:    # SickRage/SickBeard Version.
         api, version = Sickbeard.GetVersion()
         common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
-    if ret == 6:    # About.
+
+    if ret == 7:    # About.
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
             filename = os.path.join(settings.addon_path, 'about.txt')
@@ -254,6 +285,7 @@ elif menu_number == 11:
                     data = f.read()
             else:
                 data = 'About file not available.'
+            data = '[COLOR gold]{} v.{}[CR]by {}[/COLOR][CR][COLOR cyan]{}[CR]{}[/COLOR][CR][CR]'.format(settings.pluginName, settings.pluginVersion, settings.pluginAuthor, settings.pluginSummary, settings.pluginDesc) + data
         finally:
             xbmc.executebuiltin("Dialog.Close(busydialog)")
         w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='About', text=data)

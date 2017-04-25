@@ -100,6 +100,12 @@ pluginID = 'plugin.video.sickrage'
 my_addon = xbmcaddon.Addon(pluginID)
 addon_path = my_addon.getAddonInfo('path')
 
+pluginName = my_addon.getAddonInfo('name')
+pluginVersion = my_addon.getAddonInfo('version')
+pluginAuthor = my_addon.getAddonInfo('author')
+pluginSummary = my_addon.getAddonInfo('summary')
+pluginDesc = my_addon.getAddonInfo('description')
+
 __ip__ = my_addon.getSetting('SickRage IP')
 __port__ = my_addon.getSetting('SickRage Port')
 __ssl_bool__ = my_addon.getSetting('Use SSL')
