@@ -1,3 +1,6 @@
+[B]2017-04-26 v.2.1.3[/B]
+- Updated About info.
+
 [B]2017-04-24 v.2.1.2[/B]
 - Updated About info.
 - Added Settings option to add addon to favourites.

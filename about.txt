@@ -1,11 +1,30 @@
+[COLOR gold]Overview[/COLOR]
 This app is intended as a tool to follow your favourite TV shows, review episodes, and interact with likewise services.
 
-My future goals for this app is to allow it to optionally run independant of SickRage/SickBeard as a personalised TV show favourites info hub.  Bringing your favourite TV shows meta data together in one place, making it available offline, and being able to access it at the 10 foot interface level.  
-
+[COLOR gold]Future Project Goals[/COLOR]
+My future goals for this addon/app is to allow it to optionally run independant of SickRage/SickBeard as a personalised TV show favourites info hub.  Bringing your favourite TV shows meta data together in one place, making it available offline, and being able to access it at the 10 foot interface level.  
 That simply means, it will do what it does now, with added features that interest me as a TV show fan.  And optionally maintain some of the same features without being dependant on SickRage/SickBeard.
 
-If you find this app useful, please visit my page on GitHub, and consider a donation, I do this work on my own time.
+[COLOR gold]Add-on Donations[/COLOR]
+If you find this add-on useful, please visit my page on GitHub, and consider a donation, I do this work on my own time.
+[COLOR cyan]https://github.com/Hiltronix/plugin.video.sickrage[/COLOR]
 
-https://github.com/Hiltronix/plugin.video.sickrage
+[COLOR gold]SickRage/SickBeard Projects[/COLOR]
+SickRage is a fork of the SickBeard project.  SickRage has been forked as well.
+Search online for your favourite SickRage/SickBeard fork.  Some versions are more stable than others, features vary greatly.  Some cater more to torrents, others more to news groups.
 
-Thank you! :)
+[COLOR gold]API Parameters[/COLOR]
+[COLOR cyan]Add Show by TVDB ID:[/COLOR]
+plugin://plugin.video.sickrage?action=addshow&tvdb_id=<tvdb_ID>
+
+[COLOR cyan]Add Show by Show Name at Keyboard Entry:
+- This is useful if you want to allow the user the option to edit the text first before searching.[/COLOR]
+plugin://plugin.video.sickrage?action=addshow&show_name=<url_encoded_text_for_the_show_name>
+
+[COLOR cyan]Add Show by Show Name and Skip Keyboard:[/COLOR]
+plugin://plugin.video.sickrage?title=<url_encoded_text_for_the_exact_show_name_in_list>
+
+[COLOR gold]Credits[/COLOR]
+This is an extension and continued effort of original work done by Zach Moore, pre 2015.
+See Change Log for timeline and details.
+
