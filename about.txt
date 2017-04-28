@@ -28,3 +28,8 @@ plugin://plugin.video.sickrage?title=<url_encoded_text_for_the_exact_show_name_i
 This is an extension and continued effort of original work done by Zach Moore, pre 2015.
 See Change Log for timeline and details.
 
+[COLOR gold]Privacy[/COLOR]
+When version numbers change, the add-on name and version number are sent via a secure connection (SSL) to a private database, only accessible by the author, intended solely to determine install base.
+No personal or identifiable info is transmitted, only version number and add-on name.
+If server is unreachable, add-on will continue to function as normal.
+Full disclosure, as the author is a privacy advocate.

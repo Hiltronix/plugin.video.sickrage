@@ -1,3 +1,10 @@
+[B]2017-04-28 v.2.1.4[/B]
+- Added anonymous version bump logging.
+    - When version numbers change, the add-on name and version number are sent via a secure connection (SSL) to a private database, only accessible by the author, intended solely to determine install base.
+    - No personal or identifiable info is transmitted, only version number and add-on name.
+    - If server is unreachable, add-on will continue to function as normal.
+    - Full disclosure, as the author is a privacy advocate.
+
 [B]2017-04-26 v.2.1.3[/B]
 - Updated About info.
 
