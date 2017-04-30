@@ -31,7 +31,7 @@ def viewLog(level):
     log_str = '\n'.join(log_list)
     if (len(log_str) == 0):
         log_str = 'No Data.'
-    w = common.TextViewer_Dialog('DialogTextViewer.xml', addon_path, header='Log File', text=log_str)
+    w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='Log File', text=log_str)
     w.doModal()
 
 

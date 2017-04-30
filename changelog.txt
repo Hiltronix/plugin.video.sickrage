@@ -1,3 +1,6 @@
+[B]2017-04-30 v.2.1.5[/B]
+- Fixed bug: "View Server Log File" was generating error message.
+
 [B]2017-04-28 v.2.1.4[/B]
 - Added anonymous version bump logging.
     - When version numbers change, the add-on name and version number are sent via a secure connection (SSL) to a private database, only accessible by the author, intended solely to determine install base.
