@@ -1,6 +1,8 @@
+import xbmc
 import xbmcgui
 import xbmcaddon
 import sys
+import time
 import json
 import base64
 import urllib
@@ -134,7 +136,17 @@ __history_max__ = my_addon.getSetting('HistoryMax')
 if (int(__history_max__) > 99):
     my_addon.setSetting('HistoryMax', '99')
     __history_max__ = 99
+    
 
+# If TVdb lastUpdated Unix Epoch date is blank, then set it to 24 hours ago.
+if my_addon.getSetting('TVdbLastUpdated') == "":
+    my_addon.setSetting('TVdbLastUpdated', str(int(time.time()) - 86400))
+    
+# If TVdbUpdateAllEpisodes is blank, then set it to False.
+if my_addon.getSetting('TVdbUpdateAllEpisodesEnabled') == "":
+    my_addon.setSetting('TVdbUpdateAllEpisodesEnabled', 'false')
+    my_addon.setSetting('TVdbUpdateAllEpisodesRunning', 'false')
+    my_addon.setSetting('TVdbUpdateAllEpisodesProgress', '0')
 
 # If settings API field is blank, then try to scrape webserver settings page and retrieve it.
 if (__api_key__ == ""):
@@ -159,4 +171,11 @@ if current_version == '':
 if current_version != pluginVersion:
     VersionLogger(pluginVersion, pluginID)
     my_addon.setSetting('current_version', pluginVersion)
+
+# Cache dir locations:
+cache_dir = xbmc.translatePath('special://temp/sb/cache/')
+ep_cache_dir = xbmc.translatePath('special://temp/sb/cache/episodes/')
+image_cache_dir = xbmc.translatePath('special://temp/sb/cache/images/')
+actor_cache_dir = xbmc.translatePath('special://temp/sb/cache/actors/')
+
 

@@ -201,96 +201,122 @@ elif menu_number == 9:  # Backlog list.
 
 # Settings menu.
 elif menu_number == 11:
-    dialog = xbmcgui.Dialog()
-    ret = dialog.select("Settings", ["Run Post Processing", "Change Log", "App Settings", "View Server Log File", "Add App to Favouties", "Clear Cache", "Show Server Version", "About"])
-
-    if ret == 0:    # Post Processing.
-        try:
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            msg, res = Sickbeard.PostProcessing()
-        finally:
-            xbmc.executebuiltin("Dialog.Close(busydialog)")
-        if res:
-            common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}'.format(msg, res))
-
-    if ret == 1:    # Change log.
-        try:
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = os.path.join(settings.addon_path, 'changelog.txt')
-            if os.path.isfile(filename):
-                with open(filename, 'r') as f:
-                    data = f.read()
-            else:
-                data = 'Change log not available.'
-        finally:
-            xbmc.executebuiltin("Dialog.Close(busydialog)")
-        w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='Change Log', text=data)
-        w.doModal()
-
-    if ret == 2:    # Open app settings.
-        xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(settings.pluginID))
-
-    if ret == 3:    # View log files.
-        log.main()
-
-    if ret == 4:    # Add to favourites.
-        try:
-            xml_open = '<favourites>\n'
-            xml_fav = '    <favourite name="{0}" thumb="special://home/addons/{1}/icon.png">ActivateWindow(10025,&quot;plugin://{1}/&quot;,return)</favourite>\n'.format(settings.pluginName, settings.pluginID)
-            xml_close = '</favourites>\n'
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = xbmc.translatePath('special://home/userdata/favourites.xml')
-            if os.path.isfile(filename):
-                with open(filename, 'r') as f:
-                    data = f.read()
-                # Check is fav already exists.  If not, add it to end of file.
-                find_str = 'name="{}"'.format(settings.pluginName)
-                if find_str not in data:
-                    data = data.replace(xml_close, xml_fav + xml_close)
-            else:
-                data = xml_open + xml_fav + xml_close
-            # Save favourites file.
-            f = open(filename, 'w')
-            f.write(data)
-            f.close()
-            common.messageWindow('Add to Favourites', 'Done.')
-        finally:
-            xbmc.executebuiltin("Dialog.Close(busydialog)")
-
-    if ret == 5:    # Clear Cache.
-        try:
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            size = common.GetDirSizeFormatted(cache.cache_dir)
-        finally:
-            xbmc.executebuiltin("Dialog.Close(busydialog)")
-        if common.selectNoYes('Clear cached images and meta data?  [{0}]'.format(size), 'No', 'Yes') == 1:
+    ret = 0
+    while ret >= 0:
+        dialog = xbmcgui.Dialog()
+        ret = dialog.select("Settings", ["Add-on Settings", "Run Post Processing", "Add Add-on to Favouties", "Check if All Episodes are Cached", "Clear Cache", "Show Server Version", "View Server Log File", "Change Log", "About"])
+    
+        if ret == 0:    # App Settings (Kodi settings.)
+            xbmc.executebuiltin('XBMC.Addon.OpenSettings({0})'.format(settings.pluginID))
+            ret = -1    # Exit Settings menu so Kodi App Settings can be on top.
+    
+        if ret == 1:    # Run Post Processing.
             try:
                 xbmc.executebuiltin("ActivateWindow(busydialog)")
-                cache.ClearImages()
-                cache.ClearMetaData()
+                msg, res = Sickbeard.PostProcessing()
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
-            common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
-
-    if ret == 6:    # SickRage/SickBeard Version.
-        api, version = Sickbeard.GetVersion()
-        common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
-
-    if ret == 7:    # About.
-        try:
-            xbmc.executebuiltin("ActivateWindow(busydialog)")
-            filename = os.path.join(settings.addon_path, 'about.txt')
-            if os.path.isfile(filename):
-                with open(filename, 'r') as f:
-                    data = f.read()
-            else:
-                data = 'About file not available.'
-            data = '[COLOR gold]{} v.{}[CR]by {}[/COLOR][CR][COLOR cyan]{}[CR]{}[/COLOR][CR][CR]'.format(settings.pluginName, settings.pluginVersion, settings.pluginAuthor, settings.pluginSummary, settings.pluginDesc) + data
-        finally:
-            xbmc.executebuiltin("Dialog.Close(busydialog)")
-        w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='About', text=data)
-        w.doModal()
-
+            if res:
+                common.messageWindow('Post Processing', 'Msg: {}[CR]Result: {}'.format(msg, res))
+    
+        if ret == 2:    # Add App to Favourites.
+            try:
+                xml_open = '<favourites>\n'
+                xml_fav = '    <favourite name="{0}" thumb="special://home/addons/{1}/icon.png">ActivateWindow(10025,&quot;plugin://{1}/&quot;,return)</favourite>\n'.format(settings.pluginName, settings.pluginID)
+                xml_close = '</favourites>\n'
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                filename = xbmc.translatePath('special://home/userdata/favourites.xml')
+                if os.path.isfile(filename):
+                    with open(filename, 'r') as f:
+                        data = f.read()
+                    # Check is fav already exists.  If not, add it to end of file.
+                    find_str = 'name="{}"'.format(settings.pluginName)
+                    if find_str not in data:
+                        data = data.replace(xml_close, xml_fav + xml_close)
+                else:
+                    data = xml_open + xml_fav + xml_close
+                # Save favourites file.
+                f = open(filename, 'w')
+                f.write(data)
+                f.close()
+                common.messageWindow('Add to Favourites', 'Done.')
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+    
+        if ret == 3:    # Check Cache for All Episodes.
+            try:
+                if settings.my_addon.getSetting('TVdbUpdateAllEpisodesEnabled') == 'true':
+                    if settings.my_addon.getSetting('TVdbUpdateAllEpisodesRunning') == 'false':
+                        state = '[COLOR cyan]Scheduled[/COLOR]'
+                    else:
+                        state = '[COLOR gold]Active[/COLOR]'
+                    if common.DialogYesNo('Check Cache For All Episodes', text='Operation: {}[CR]Progress: [COLOR gold]{}%[/COLOR][CR][CR][COLOR grey](Re-open this dialog to see updated progress.)[/COLOR]'.format(state, settings.my_addon.getSetting('TVdbUpdateAllEpisodesProgress')), noLabel='Close', yesLabel='Cancel Operation'):
+                        # Set flags to turn service operation off.
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesEnabled', 'false')
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesRunning', 'false')
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesProgress', '0')
+                else:
+                    if common.DialogYesNo('Check Cache For All Episodes  [Not Running]', u'{0} This background operation may take some time to complete.[CR]{0} If Kodi is shutdown before completion, you will have to manually select this setting again.[CR]{0} You can check progress by revisiting this selection.'.format(u'[COLOR cyan]\u2022[/COLOR]'), noLabel='Close', yesLabel='Start'):
+                        # Set flags to turn service operation on at next interval.
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesEnabled', 'true')
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesRunning', 'false')
+                        settings.my_addon.setSetting('TVdbUpdateAllEpisodesProgress', '0')
+            finally:
+                pass
+                
+    
+        if ret == 4:    # Clear Cache.
+            try:
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                size = common.GetDirSizeFormatted(settings.cache_dir)
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+            if common.DialogYesNo('Clear Cached Images and Meta Data?', u'Cache storage is using: [COLOR gold]{0}[/COLOR]'.format(size), noLabel='Close', yesLabel='Clear Cache'):
+            #if common.selectNoYes('Clear cached images and meta data?  [{0}]'.format(size), 'No', 'Yes') == 1:
+                try:
+                    xbmc.executebuiltin("ActivateWindow(busydialog)")
+                    cache.ClearImages()
+                    cache.ClearMetaData()
+                finally:
+                    xbmc.executebuiltin("Dialog.Close(busydialog)")
+                common.CreateNotification(header='Image Cache', message='Cleared', icon=xbmcgui.NOTIFICATION_INFO, time=5000, sound=False)
+    
+        if ret == 5:    # SickRage/SickBeard Version.
+            api, version = Sickbeard.GetVersion()
+            common.messageWindow('Server Version', 'API Version: {0}[CR]Version: {1}'.format(api, version))
+    
+        if ret == 6:    # View log files.
+            log.main()
+    
+        if ret == 7:    # Change log.
+            try:
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                filename = os.path.join(settings.addon_path, 'changelog.txt')
+                if os.path.isfile(filename):
+                    with open(filename, 'r') as f:
+                        data = f.read()
+                else:
+                    data = 'Change log not available.'
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+            w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='Change Log', text=data)
+            w.doModal()
+    
+        if ret == 8:    # About.
+            try:
+                xbmc.executebuiltin("ActivateWindow(busydialog)")
+                filename = os.path.join(settings.addon_path, 'about.txt')
+                if os.path.isfile(filename):
+                    with open(filename, 'r') as f:
+                        data = f.read()
+                else:
+                    data = 'About file not available.'
+                data = '[COLOR gold]{} v.{}[CR]by {}[/COLOR][CR][COLOR cyan]{}[CR]{}[/COLOR][CR][CR]'.format(settings.pluginName, settings.pluginVersion, settings.pluginAuthor, settings.pluginSummary, settings.pluginDesc) + data
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialog)")
+            w = common.TextViewer_Dialog('DialogTextViewer.xml', settings.addon_path, header='About', text=data)
+            w.doModal()
+    
 
 # Update a show's images.
 elif menu_number == 13:

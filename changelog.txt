@@ -1,3 +1,18 @@
+[B]2017-05-29 v.3.0.0[/B]
+[COLOR cyan]New:[/COLOR] Clicking an episode in Episodes or History lists will start playing the show if it exists, otherwise it displays the video info dialog as before.
+[COLOR cyan]New:[/COLOR] Added a service to auto update the TVdb meta data in the background while Kodi is running.  This allows for faster display of the show lists and show dialogs.
+[COLOR cyan]New:[/COLOR] Background updating of local TVdb meta data cache for all "Upcoming" show episodes.
+[COLOR cyan]New:[/COLOR] Background updating of local TVdb meta data cache for any new or missing episodes for all shows.
+[COLOR cyan]New:[/COLOR] Background updating of local TVdb meta data cache for any local shows/episodes that have been changed on the TVdb service.
+[COLOR cyan]New:[/COLOR] Background updating enabled by default.  Can be disabled, and change the timer interval, in Settings > Add-on Settings > Service.
+[COLOR cyan]New:[/COLOR] Background updating default timer interval is 15 minutes, selectable from 5 to 1440 minutes (24 hours.)
+[COLOR cyan]*** NOTE:[/COLOR] Internet data usage will be incurred on a regular basis to keep missing show data up to date while Kodi is running.
+[COLOR cyan]New:[/COLOR] Added option to Settings menu to cache all missing episodes for all shows to the local TVdb meta data cache.  This is also done on every Kodi start.
+[COLOR cyan]Change:[/COLOR] Re-arranged Settings menu list.
+[COLOR cyan]Change:[/COLOR] Moved "Episodes List" to the top of the context menus.
+[COLOR cyan]Change:[/COLOR] Small changes, dialog changes.
+[COLOR cyan]Fixed:[/COLOR] Bug fixes.
+
 [B]2017-04-30 v.2.1.5[/B]
 - Fixed bug: "View Server Log File" was generating error message.
 

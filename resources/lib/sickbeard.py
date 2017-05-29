@@ -5,7 +5,6 @@ import os
 import sys
 import json
 import requests
-import cache
 import common
 import settings
 
@@ -201,7 +200,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = cache.image_cache_dir + show_id + '.poster.jpg'
+        file_path = settings.image_cache_dir + show_id + '.poster.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
@@ -233,7 +232,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = cache.image_cache_dir + show_id + '.fanart.jpg'
+        file_path = settings.image_cache_dir + show_id + '.fanart.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:
@@ -265,7 +264,7 @@ class SB:
         image = None
         if show_id == '0':
             return ''
-        file_path = cache.image_cache_dir + show_id + '.banner.jpg'
+        file_path = settings.image_cache_dir + show_id + '.banner.jpg'
         if not os.path.exists(file_path) or update:
             # Download image from SB server.
             try:

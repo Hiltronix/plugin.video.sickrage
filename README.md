@@ -1,8 +1,7 @@
 # plugin.video.sickrage  
-#### SickRage/SickBeard Interface Add-on for Kodi/XBMC  
+#### SickRage/SickBeard Interface Add-on for Kodi
 
-This is an add-on/plugin for the Kodi/XBMC Home Theatre software.  
-It allows the user to view and control SickRage or SickBeard from within Kodi/XBMC, add new shows and view show/episode details.
+View and control SickRage or SickBeard from within Kodi.
 
 -----
 
@@ -17,29 +16,29 @@ https://hiltronix.com/xbmc/
 
 -----
 
-## Plug-in API  
+## API Parameters 
 
-#### Add New Show by ID for theTVDB.com:  
+#### Add Show by TVDB ID:
 
-    RunPlugin(plugin://plugin.video.sickrage?action=addshow&tvdb_id=TVDB_ID)
+    plugin://plugin.video.sickrage?action=addshow&tvdb_id=<tvdb_ID>
 
-#### Add New Show by TV show title:  
+#### Add Show by Show Name at Keyboard Entry:
 
-    RunPlugin(plugin://plugin.video.sickrage?action=addshow&show_name=SHOW_NAME)
+    - This is useful if you want to allow the user the option to edit the text first before searching.[/COLOR]
+    plugin://plugin.video.sickrage?action=addshow&show_name=<url_encoded_text_for_the_show_name>
+
+#### Add Show by Show Name and Skip Keyboard:
+
+    plugin://plugin.video.sickrage?title=<url_encoded_text_for_the_exact_show_name_in_list>
+
 
 -----
 
 ## Known Issues  
 
-#### TV Show Cast Members:  
-- TV show information shows cast member names from theTVdb.com but no cast member images.  
-- TV episode information shows neither cast member names or images.  
-- This is a current limitation of the metahandler library I'm using from TV show/episode lookups.  The author Eldorado may add these features in an upcoming release.  
-
 #### SickBeard Limitations & Issues:  
-- Sickbeard does not (and devs won't add) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.  
+- Sickbeard does not (and devs won't add, last I checked) a function call to retrieve the API key, so hackish screen scraping is required to auto-retrieve the API Key.  
   This may break, so manual entry of API Key may be required.  
-- The SickBeard API returns images in thumbnail size (small/low-res) unless a startup parameter is used of '--noresize' without the quotes.  
 - The SickBeard API does not allow for retrieving the backlog list at this time.  
 
 -----
@@ -75,7 +74,7 @@ https://github.com/SiCKRAGETV/SickRage
 
 ## Note  
 
-This add-on/plugin for Kodi/XBMC is an updated version of the Sickbeard plugin originally created by Zach Moore.  It expands on his original work starting at his version 1.0.10.  
+This add-on/plugin for Kodi/XBMC is an updated version of the Sickbeard plugin originally created by Zach Moore.  It expands on his original work starting at his version 1.0.10. before 2015.
 http://forum.kodi.tv/showthread.php?tid=124808   
 
 -----

@@ -105,7 +105,7 @@ def DisplayShow(tvdbid, show_name, first_aired):
             # Load and parse meta data.
             if not os.path.exists(cache.ep_cache_dir):
                 os.makedirs(cache.ep_cache_dir)
-            json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+            json_file = os.path.join(cache.ep_cache_dir, '{}-{}-{}.json'.format(tvdbid, int(season), int(episode)))
             if os.path.isfile(json_file):
                 # Load cached tvdb episode json file.
                 try:

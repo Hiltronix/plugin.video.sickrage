@@ -20,7 +20,7 @@ Sickbeard = sickbeard.SB()
 def GetShowInfo(filter):
     shows = Sickbeard.GetShows()
     if not shows:
-        exit()
+        return []
     list = []
     for show in sorted(shows, key=lambda k: k['show_name'], reverse=False):
         name = show['show_name']
@@ -63,11 +63,11 @@ def menu(handle, filter='All'):
         episode = 1
 
         context_items = []
+        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 4, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
         context_items.append(('Open Show Folder', 'XBMC.RunPlugin(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 15, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
             context_items.append(('ExtendedInfo', 'XBMC.RunScript(script.extendedinfo, info=extendedtvinfo, tvdb_id={0})'.format(tvdbid)))
-        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 4, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         context_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/addshow.py)'.format(settings.pluginID)))
         context_items.append(('Delete Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/deleteshow.py, {1}, {2})'.format(settings.pluginID, tvdbid, show_name)))
         context_items.append((paused + ' Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setpausestate.py, {1}, {2})'.format(settings.pluginID, paused, tvdbid)))
@@ -96,9 +96,9 @@ def addDirectory(handle, show_name, name, tvdbid, season, episode, next_airdate,
     meta = {}
     try:
         # Load and parse meta data.
-        if not os.path.exists(cache.ep_cache_dir):
-            os.makedirs(cache.ep_cache_dir)
-        json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+        if not os.path.exists(settings.ep_cache_dir):
+            os.makedirs(settings.ep_cache_dir)
+        json_file = os.path.join(settings.ep_cache_dir, '{}-{}-{}.json'.format(tvdbid, int(season), int(episode)))
         if os.path.isfile(json_file):
             # Load cached tvdb episode json file.
             try:
@@ -142,7 +142,7 @@ def addDirectory(handle, show_name, name, tvdbid, season, episode, next_airdate,
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
         actors = data.get('Actors', [])
-        actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
+        actors = TvdbApi.CacheActorImages(actors, settings.actor_cache_dir)
         for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
             actors.append(dict({'name': value, 'role': 'Guest Star'}))
         if actors:

@@ -5,7 +5,7 @@ import os
 import sys
 import json
 import urllib
-import cache
+import rpc
 import common
 import settings
 import sickbeard
@@ -16,12 +16,12 @@ import TvdbApi
 Sickbeard = sickbeard.SB()
 
 
-# Get episodes for the selected show and season.
 def GetSeasonEpisodes(tvdbid, season):
+# Get episodes for the selected show and season.
     list = []
     season_episodes = Sickbeard.GetSeasonEpisodeList(tvdbid, season)
     if not season_episodes:
-        exit()
+        return []
     temp = season_episodes.keys()
     temp = sorted(temp)
     for each in temp:
@@ -29,8 +29,8 @@ def GetSeasonEpisodes(tvdbid, season):
     return list
 
 
-# Add directory items for each episode.
 def menu(handle, tvdbid, show_name, season):
+# Add directory items for each episode.
     list = GetSeasonEpisodes(tvdbid, season)
     total_items = len(list)
     season_numbers = []
@@ -66,7 +66,14 @@ def menu(handle, tvdbid, show_name, season):
 
 
 def addDirectory(handle, show_name, season, episode, name, status, airdate, tvdbid, thumbnail_path, fanart_path, banner_path, total_items, context_items):
-    return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+    path = rpc.GetEpisodePath(tvdbid, season, episode)
+    if path:
+        # If path to video is found, play video on click.
+        return_url = path
+    else:
+        # If path to video is NOT found, then display episode video dialog meta data.
+        return_url = sys.argv[0]+"?tvdb_id="+urllib.quote_plus(str(tvdbid))+"&mode=6&show_name="+urllib.quote_plus(show_name.encode( "utf-8" ))
+        
     if (airdate != ''):
         aired = '(Aired ' + airdate + ')   '
     else:
@@ -78,9 +85,9 @@ def addDirectory(handle, show_name, season, episode, name, status, airdate, tvdb
     meta = {}
     try:
         # Load and parse meta data.
-        if not os.path.exists(cache.ep_cache_dir):
-            os.makedirs(cache.ep_cache_dir)
-        json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+        if not os.path.exists(settings.ep_cache_dir):
+            os.makedirs(settings.ep_cache_dir)
+        json_file = os.path.join(settings.ep_cache_dir, '{}-{}-{}.json'.format(tvdbid, int(season), int(episode)))
         if os.path.isfile(json_file):
             # Load cached tvdb episode json file.
             try:
@@ -129,7 +136,7 @@ def addDirectory(handle, show_name, season, episode, name, status, airdate, tvdb
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
         actors = data.get('Actors', [])
-        actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
+        actors = TvdbApi.CacheActorImages(actors, settings.actor_cache_dir)
         for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
             actors.append(dict({'name': value, 'role': 'Guest Star'}))
         if actors:

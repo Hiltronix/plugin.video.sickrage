@@ -1,8 +1,8 @@
 [COLOR gold]Overview[/COLOR]
-This app is intended as a tool to follow your favourite TV shows, review episodes, and interact with likewise services.
+This add-on is intended as a tool to follow your favourite TV shows, review episodes, and interact with likewise services.
 
 [COLOR gold]Future Project Goals[/COLOR]
-My future goals for this addon/app is to allow it to optionally run independant of SickRage/SickBeard as a personalised TV show favourites info hub.  Bringing your favourite TV shows meta data together in one place, making it available offline, and being able to access it at the 10 foot interface level.  
+My future goals for this add-on is to allow it to optionally run independant of SickRage/SickBeard as a personalised TV show favourites info hub.  Bringing your favourite TV shows meta data together in one place, making it available offline, and being able to access it from the 10 foot interface.  
 That simply means, it will do what it does now, with added features that interest me as a TV show fan.  And optionally maintain some of the same features without being dependant on SickRage/SickBeard.
 
 [COLOR gold]Add-on Donations[/COLOR]
@@ -11,13 +11,13 @@ If you find this add-on useful, please visit my page on GitHub, and consider a d
 
 [COLOR gold]SickRage/SickBeard Projects[/COLOR]
 SickRage is a fork of the SickBeard project.  SickRage has been forked as well.
-Search online for your favourite SickRage/SickBeard fork.  Some versions are more stable than others, features vary greatly.  Some cater more to torrents, others more to news groups.
+Search online for your favourite SickRage/SickBeard fork.  Some versions are more stable than others, and features vary.  Some cater more to torrents, others more to news groups.
 
 [COLOR gold]API Parameters[/COLOR]
 [COLOR cyan]Add Show by TVDB ID:[/COLOR]
 plugin://plugin.video.sickrage?action=addshow&tvdb_id=<tvdb_ID>
 
-[COLOR cyan]Add Show by Show Name at Keyboard Entry:
+[COLOR cyan]Add Show by Show Name at Keyboard Entry:[/COLOR]
 - This is useful if you want to allow the user the option to edit the text first before searching.[/COLOR]
 plugin://plugin.video.sickrage?action=addshow&show_name=<url_encoded_text_for_the_show_name>
 
@@ -29,7 +29,7 @@ This is an extension and continued effort of original work done by Zach Moore, p
 See Change Log for timeline and details.
 
 [COLOR gold]Privacy[/COLOR]
-When version numbers change, the add-on name and version number are sent via a secure connection (SSL) to a private database, only accessible by the author, intended solely to determine install base.
-No personal or identifiable info is transmitted, only version number and add-on name.
+When the add-on version numbers change, the add-on name and version number are sent via a secure connection (SSL) to a private database, only accessible by the author, intended solely to determine install base.
+No personal or identifiable info is transmitted, only version number and add-on name.  Your IP address is visible, as it is when visiting any website, like theTVdb.com.
 If server is unreachable, add-on will continue to function as normal.
 Full disclosure, as the author is a privacy advocate.

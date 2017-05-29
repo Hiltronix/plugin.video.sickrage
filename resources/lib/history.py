@@ -3,9 +3,9 @@ import xbmcgui
 import xbmcplugin
 import os
 import sys
+import rpc
 import json
 import urllib
-import cache
 import common
 import settings
 import sickbeard
@@ -20,7 +20,7 @@ Sickbeard = sickbeard.SB()
 def GetHistoryItems():
     history = Sickbeard.GetHistory(settings.__history_max__)
     if not history:
-        exit()
+        return []
     list = []
     status_msg = '[COLOR gray]Unknown[/COLOR]'
     for show in history:
@@ -41,11 +41,11 @@ def menu(handle):
         episode_status_args = ", "+tvdbid+", "+str(season)+", "+str(episode)
 
         context_items = []
+        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 4, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         context_items.append(('Show Info', 'XBMC.Action(Info)'))
         context_items.append(('Open Show Folder', 'XBMC.RunPlugin(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 15, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)'):
             context_items.append(('ExtendedInfo', 'XBMC.RunScript(script.extendedinfo, info=extendedtvinfo, tvdb_id={0})'.format(tvdbid)))
-        context_items.append(('Episode List', 'XBMC.Container.Update(plugin://{0}?mode={1}&tvdb_id={2}&show_name={3})'.format(settings.pluginID, 4, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))))
         context_items.append(('Set Episode Status', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/setstatus.py, {1}, {2}, {3})'.format(settings.pluginID, tvdbid, season, episode)))
         context_items.append(('Add New Show', 'XBMC.RunScript(special://home/addons/{0}/resources/lib/addshow.py)'.format(settings.pluginID)))
         if xbmc.getCondVisibility('System.HasAddon(plugin.program.qbittorrent)'):
@@ -70,16 +70,23 @@ def menu(handle):
 
 # Add history items to directory
 def addDirectory(handle, show_name, name, tvdbid, season, episode, thumbnail_path, fanart_path, banner_path, total_items, context_items):
-    return_url = 'plugin://{}/?mode={}&tvdb_id={}&show_name={}'.format(settings.pluginID, 6, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))
+    path = rpc.GetEpisodePath(tvdbid, season, episode)
+    if path:
+        # If path to video is found, play video on click.
+        return_url = path
+    else:
+        # If path to video is NOT found, then display episode video dialog meta data.
+        return_url = 'plugin://{}/?mode={}&tvdb_id={}&show_name={}'.format(settings.pluginID, 6, tvdbid, urllib.quote_plus(show_name.encode("utf-8")))
+
     list_item = xbmcgui.ListItem(name, thumbnailImage=thumbnail_path)
     list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
     list_item.setProperty('LibraryHasMovie', '0')  # Removes the "Play" button from the video info screen, and replaces it with "Browse".
     meta = {}
     try:
         # Load and parse meta data.
-        if not os.path.exists(cache.ep_cache_dir):
-            os.makedirs(cache.ep_cache_dir)
-        json_file = os.path.join(cache.ep_cache_dir, tvdbid + '-' + str(season) + '-' + str(episode) + '.json')
+        if not os.path.exists(settings.ep_cache_dir):
+            os.makedirs(settings.ep_cache_dir)
+        json_file = os.path.join(settings.ep_cache_dir, '{}-{}-{}.json'.format(tvdbid, int(season), int(episode)))
         if os.path.isfile(json_file):
             # Load cached tvdb episode json file.
             try:
@@ -128,7 +135,7 @@ def addDirectory(handle, show_name, name, tvdbid, season, episode, thumbnail_pat
         #meta['cast'] = []
         #actors = [{'name': 'Tom Cruise', 'role': 'Himself', 'thumbnail': ''}, {'name': 'Actor 2', 'role': 'role 2'}]
         actors = data.get('Actors', [])
-        actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
+        actors = TvdbApi.CacheActorImages(actors, settings.actor_cache_dir)
         for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
             actors.append(dict({'name': value, 'role': 'Guest Star'}))
         if actors:

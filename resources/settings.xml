@@ -24,7 +24,17 @@
 		<setting type="sep" />
 		<setting label="Note: The API key MUST be generated on webserver." type="lsep"/>
 	</category>
-	<category label="App Settings">
+	<category label="Client Settings">
 		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
+	</category>
+	<category label="Service">
+		<setting label="[COLOR gold]Background Operations[/COLOR]" type="lsep"/>
+		<setting label="Update local TVdb meta data cache in the background." type="lsep"/>
+		<setting label="Updates 'Upcoming' shows, recent changes, and missing episodes." type="lsep"/>
+		<setting type="sep" />
+		<setting id="ServiceEnabled" type="bool" label="Enabled" default="true" />
+		<setting id="ServiceInterval" type="slider" label="Interval (minutes)" default="15" range="5,5,1140" option="int" />
+		<setting type="sep" />
+		<setting label="Note: Restart Kodi for these changes to take effect." type="lsep"/>
 	</category>
 </settings>

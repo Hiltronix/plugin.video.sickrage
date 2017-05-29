@@ -90,15 +90,26 @@ def errorWindow(header, message):
     sys.exit()
     
 
-def selectNoYes(title, No, Yes):
-# Yes or No dialog style dialog.
+def selectNoYes(title, noLabel='No', yesLabel='Yes'):
+# List style Yes or No dialog style dialog.
 # Returns False for the first "No" value, and True for the second "Yes" value.
 # Returns -1 if cancelled.
     dialog = xbmcgui.Dialog()
-    ret = dialog.select(title, [No, Yes])
+    ret = dialog.select(title, [noLabel, yesLabel])
     if (ret == -1):
         return ret
     if ret == 1:
+        return True
+    else:
+        return False
+
+
+def DialogYesNo(title, text='', noLabel='No', yesLabel='Yes'):
+# Button style Yes or No dialog.
+# 'text' can be up to 3 lines, use '[CR]' for new line.
+# Returns True if "Yes", else False.
+    dialog = xbmcgui.Dialog()
+    if dialog.yesno(heading=title, line1=text, nolabel=noLabel, yeslabel=yesLabel):
         return True
     else:
         return False

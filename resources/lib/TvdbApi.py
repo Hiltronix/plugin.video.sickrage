@@ -461,6 +461,30 @@ class theTVDB:
             return []
 
 
+    def GetUpdatedShows(self, fromTime, toTime, log=None):
+    # Returns a list of what TV shows (Series ID's) that have been updated between two date.
+    # Dates are in UTC Unix Epoch values.
+    # If dates exceed 1 week of data, data is truncated at 1 week.
+    # Example: [{"id": 291288,"lastUpdated": 1495034062},{"id": 264458,"lastUpdated": 1495034160}]
+            try:
+                self.RefreshToken(log)
+
+                headers = {'Content-Type': 'application/json',
+                           'Authorization': 'Bearer %s' %self.jwt_token}
+
+                response = requests.get(TvdbApi2_url + '/updated/query?fromTime={}&toTime={}'.format(int(fromTime), int(toTime)), headers=headers, proxies=proxies)
+                if response.status_code == 200:
+                    result = json.loads(response.content)
+                    return result.get('data', None)
+                else:
+                    return None
+            except Exception, e:
+                print e
+                if log:
+                    log.debug('*** Exception ***', exc_info=1)
+                return None
+
+
 def SaveImageFile(url, path, img_name, log=None):
     try:
         if not os.path.exists(path):
@@ -1086,4 +1110,5 @@ def GetNameFromTvdb(tvdbid, log=None):
         if log:
             log.debug('*** Exception ***', exc_info=1)
         return False
+
 
