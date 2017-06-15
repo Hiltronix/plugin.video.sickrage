@@ -224,6 +224,29 @@ class theTVDB:
         return True
 
 
+    def SearchByName(self, name=None, log=None):
+    # Returns a json result with possible shows by the given name.
+    # Returns None if not found or error.
+    # Dict results include: aliases[], banner, firstAired, id, network, overview, seriesName, status
+        try:
+            self.RefreshToken(log)
+
+            headers = {'Content-Type': 'application/json',
+                       'Authorization': 'Bearer %s' %self.jwt_token}
+
+            response = requests.get(TvdbApi2_url + '/search/series?name={}'.format(name), headers=headers, proxies=proxies)
+            if response.status_code == 200:
+                result = json.loads(response.content)
+                return result
+            else:
+                return None
+        except Exception, e:
+            print e
+            if log:
+                log.debug('*** Exception ***', exc_info=1)
+            return None
+
+
     def GetSeries(self, series_id=None, log=None):
     # Returns a json result with the series records containing all information known about a particular series id.
     # Returns None if not found or error.

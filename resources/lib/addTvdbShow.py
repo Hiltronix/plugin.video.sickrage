@@ -16,6 +16,7 @@ import TvdbApi
 
 # Initialize classes.
 Sickbeard = sickbeard.SB()
+tvdb = TvdbApi.theTVDB()
 
 
 def showSearchDialog(show_name):
@@ -31,34 +32,37 @@ def showSearchDialog(show_name):
 # Search results selection window
 def ShowSelectMenu(shows):
     formatted_shows = []
-    for show in shows:
+    for show in shows['data']:
+
         try:
-            show_name = u"" + show['name']
+            show_name = u"" + show.get('seriesName', '')
         except TypeError:
             continue
         try:
-            first_aired = u"" + show['first_aired']
+            first_aired = u"" + show.get('firstAired', '')
         except TypeError:
-            first_aired = "Unknown"
+            first_aired = ''
+        if not first_aired:
+            first_aired = 'Date Unknown'
         formatted_shows.append('[COLOR gold]' + show_name[:50] + '[/COLOR]    (' + first_aired + ')')
     dialog = xbmcgui.Dialog()
     ret = dialog.select("Search Results", formatted_shows)
     return ret
 
 
-# Add show main function. Shows the initial search window. 
 def AddShow(show_name=''):
+# Add a show via TVdb direct search, not using SickRage API which is buggy.
 
     text = showSearchDialog(show_name)
     if (text == ''):
         exit()
     
-    # Search for the show using SB search API.
+    search_results = tvdb.SearchByName(urllib.quote_plus(text))
+
     OK = True
     while OK:
         try:
             xbmc.executebuiltin("ActivateWindow(busydialog)")
-            search_results = Sickbeard.SearchShowName(urllib.quote_plus(text))
             if not search_results:
                 xbmc.executebuiltin("Dialog.Close(busydialog)")
                 common.CreateNotification(header="Show Search", message="No results for that query.", icon=xbmcgui.NOTIFICATION_INFO, time=4000, sound=True)
@@ -71,28 +75,30 @@ def AddShow(show_name=''):
         if (selected_show == -1):
             exit()
 
-        tvdbid = str(search_results[selected_show]['tvdbid'])
-        show_name = search_results[selected_show]['name']
-        first_aired = search_results[selected_show]['first_aired']
+        banner = TvdbApi.getFromDict(search_results, ['data', selected_show, 'banner'], None)
+        first_aired = TvdbApi.getFromDict(search_results, ['data', selected_show, 'firstAired'], 'Date Unknown')
+        tvdbid = TvdbApi.getFromDict(search_results, ['data', selected_show, 'id'], None)
+        network = TvdbApi.getFromDict(search_results, ['data', selected_show, 'network'], '')
+        overview = TvdbApi.getFromDict(search_results, ['data', selected_show, 'overview'], '')
+        show_name = TvdbApi.getFromDict(search_results, ['data', selected_show, 'seriesName'], '')
+        status = TvdbApi.getFromDict(search_results, ['data', selected_show, 'status'], '')
+        
+        DisplayShow(tvdbid, show_name, first_aired, banner, network, overview, status)
 
-        DisplayShow(tvdbid, show_name, first_aired)
-
-        if common.selectNoYes('Add this show? [ {0} ]'.format(show_name[:25] + ' (' + first_aired + ')'), 'No', 'Yes') == 1:
+        if common.selectNoYes('Add this show? [ {} ({}) ]'.format(show_name[:25], first_aired), 'No', 'Yes') == 1:
             #ShowMessage('Selected Title', search_results[selected_show]['name'])
             AddShowDetails(tvdbid, show_name)
             exit()
         
 
-def DisplayShow(tvdbid, show_name, first_aired):
+def DisplayShow(tvdbid, show_name, first_aired, banner, network, overview, status):
 # Show individual show info dialog.
     try:
         xbmc.executebuiltin("ActivateWindow(busydialog)")
 
-        cache.CacheFromTvdb(tvdbid, 1, 1, forceText=False, forceShowImages=False, forceActorImages=False, silent=False)
-    
-        thumbnail_path = settings.image_cache_dir + tvdbid + '.poster.jpg'
-        fanart_path = settings.image_cache_dir + tvdbid + '.fanart.jpg'
-        banner_path = settings.image_cache_dir + tvdbid + '.banner.jpg'
+        thumbnail_path = '{}posters/{}-1.jpg'.format(TvdbApi.TvdbImageLoc, tvdbid)
+        fanart_path = '{}fanart/original/{}-1.jpg'.format(TvdbApi.TvdbImageLoc, tvdbid)
+        banner_path = '{}{}'.format(TvdbApi.TvdbImageLoc, banner)
     
         list_item = xbmcgui.ListItem(show_name, thumbnailImage=thumbnail_path)
         list_item.setArt({'icon': thumbnail_path, 'thumb': thumbnail_path, 'poster': thumbnail_path, 'fanart': fanart_path, 'banner': banner_path, 'clearart': '', 'clearlogo': '', 'landscape': ''})
@@ -101,51 +107,22 @@ def DisplayShow(tvdbid, show_name, first_aired):
         season = 1
         episode = 1
         try:
-            # Load and parse meta data.
-            if not os.path.exists(cache.ep_cache_dir):
-                os.makedirs(cache.ep_cache_dir)
-            json_file = os.path.join(cache.ep_cache_dir, '{}-{}-{}.json'.format(tvdbid, int(season), int(episode)))
-            if os.path.isfile(json_file):
-                # Load cached tvdb episode json file.
-                try:
-                    with open(json_file, 'r') as f:
-                        data = json.load(f)
-                except Exception, e:
-                    print e
-            else:
-                data = TvdbApi.GetMetaDataDict(tvdbid, int(season), int(episode), '', log=None)
-                # Save cached tvdb episode json file.
-                try:
-                    with open(json_file, 'w') as f:
-                        json.dump(data, f, sort_keys=True, indent=4)
-                except Exception, e:
-                    print e
-            meta['tvshowtitle'] = TvdbApi.getFromDict(data, ['Show', 'seriesName'], show_name)
+            meta['tvshowtitle'] = show_name
             meta['sorttitle'] = meta['tvshowtitle'] 
             meta['title'] = show_name # This is what is displayed at the top of the video dialog window.
-            meta['originaltitle'] = TvdbApi.getFromDict(data, ['Details', 'episodeName'], show_name)
+            meta['originaltitle'] = show_name
             meta['tvdb_id'] = str(tvdbid)
-            meta['imdbnumber'] = TvdbApi.getFromDict(data, ['Show', 'imdbId'], '')
+            meta['imdbnumber'] = ''
             meta['overlay'] = 6
-            meta['plot'] = TvdbApi.getFromDict(data, ['Show', 'overview'], '')
-            list_item.setRating('tvdb', TvdbApi.getFromDict(data, ['Show', 'siteRating'], 0), TvdbApi.getFromDict(data, ['Show', 'siteRatingCount'], 0), True)
-            meta['premiered'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], first_aired)
+            meta['plot'] = overview
+            meta['premiered'] = first_aired
             meta['aired'] = meta['premiered']
             meta['dateadded'] = meta['premiered']
             # Date for sorting must be in Kodi format dd.mm.yyyy
             meta['date'] = meta['premiered'][8:10] + '.' + meta['premiered'][5:7] + '.' + meta['premiered'][0:4]
-            meta['duration'] = TvdbApi.getFromDict(data, ['Show', 'runtime'], 0)    # Minutes.
-            meta['genre'] = ' / '.join(TvdbApi.getFromDict(data, ['Show', 'genre'], ''))
-            meta['studio'] = TvdbApi.getFromDict(data, ['Show', 'network'], '')
-            meta['mpaa'] = TvdbApi.getFromDict(data, ['Show', 'rating'], '')
-            meta['year'] = TvdbApi.getFromDict(data, ['Show', 'firstAired'], '')[:4]
-            meta['status'] = TvdbApi.getFromDict(data, ['Show', 'status'], '')
-            actors = data.get('Actors', [])
-            actors = TvdbApi.CacheActorImages(actors, cache.actor_cache_dir)
-            for value in TvdbApi.getFromDict(data, ['Details', 'guestStars'], ''):
-                actors.append(dict({'name': value, 'role': 'Guest Star'}))
-            if actors:
-                list_item.setCast(actors)
+            meta['studio'] = network
+            meta['year'] = first_aired[:4]
+            meta['status'] = status
         except:
             meta['tvdb_id'] = str(tvdbid)
             meta['tvshowtitle'] = show_name
@@ -161,7 +138,7 @@ def DisplayShow(tvdbid, show_name, first_aired):
 
 def AddShowDetails(tvdbid, show_name):
     
-    print 'Selected Add Show: ' + show_name + ': ' + tvdbid
+    print 'Selected Add Show: {}: {}'.format(show_name, tvdbid)
 
     # Check if show already exists in the show list.
     try:
@@ -321,6 +298,6 @@ def SetQualityMessage(quality):
 
 
 if __name__ == '__main__':
-    AddShow("")
+    AddShowTvdb("")
     xbmc.executebuiltin("Container.Refresh")
 

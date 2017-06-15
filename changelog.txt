@@ -1,3 +1,7 @@
+[B]2017-06-15 v.3.0.1[/B]
+[COLOR cyan]Change:[/COLOR] Add New Show now queries theTVdb directly searching for possible show names.  Not using SickRage or SickBeard API.
+[COLOR cyan]Fixed:[/COLOR] Error when adding a new show after show selection.
+
 [B]2017-05-29 v.3.0.0[/B]
 [COLOR cyan]New:[/COLOR] Clicking an episode in Episodes or History lists will start playing the show if it exists, otherwise it displays the video info dialog as before.
 [COLOR cyan]New:[/COLOR] Added a service to auto update the TVdb meta data in the background while Kodi is running.  This allows for faster display of the show lists and show dialogs.

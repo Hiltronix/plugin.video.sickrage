@@ -13,7 +13,7 @@ import resources.lib.history as history
 import resources.lib.seasons as seasons
 import resources.lib.show_filter as show_filter
 import resources.lib.shows as shows
-import resources.lib.addshow as addshow
+import resources.lib.addTvdbShow as addshow
 import resources.lib.episodes as episodes
 import resources.lib.backlog as backlog
 import resources.lib.log as log
