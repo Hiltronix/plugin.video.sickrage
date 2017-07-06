@@ -38,7 +38,11 @@ def GetWeekDay(weekday):
 
 # Get upcoming episodes.
 def GetUpcomingEpisodes(ext_upcoming=False):
-    coming_soon = Sickbeard.GetFutureShows()
+    if settings.my_addon.getSetting('include_paused') == 'false':
+        include_paused = 0
+    else:
+        include_paused = 1
+    coming_soon = Sickbeard.GetFutureShows(include_paused)
     if not coming_soon:
         return []
     list = []

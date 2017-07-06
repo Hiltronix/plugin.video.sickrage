@@ -178,4 +178,3 @@ ep_cache_dir = xbmc.translatePath('special://temp/sb/cache/episodes/')
 image_cache_dir = xbmc.translatePath('special://temp/sb/cache/images/')
 actor_cache_dir = xbmc.translatePath('special://temp/sb/cache/actors/')
 
-

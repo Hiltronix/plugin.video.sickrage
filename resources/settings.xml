@@ -26,6 +26,7 @@
 	</category>
 	<category label="Client Settings">
 		<setting id="HistoryMax" type="slider" label="History List Length" default="16" range="4,1,50" option="int" />
+		<setting id="include_paused" type="bool" label="Show Paused Shows in Upcoming" default="false" />
 	</category>
 	<category label="Service">
 		<setting label="[COLOR gold]Background Operations[/COLOR]" type="lsep"/>

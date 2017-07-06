@@ -1,3 +1,6 @@
+[B]2017-07-06 v.3.0.2[/B]
+[COLOR cyan]New:[/COLOR] You can now include "paused" shows in the Upcoming shows list.  Toggle switch is in Settings > Add-on Settings > Client Settings.
+
 [B]2017-06-15 v.3.0.1[/B]
 [COLOR cyan]Change:[/COLOR] Add New Show now queries theTVdb directly searching for possible show names.  Not using SickRage or SickBeard API.
 [COLOR cyan]Fixed:[/COLOR] Error when adding a new show after show selection.

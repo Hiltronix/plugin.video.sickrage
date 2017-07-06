@@ -289,10 +289,11 @@ class SB:
 
 
     # Get list of upcoming episodes
-    def GetFutureShows(self):
+    # "paused" must be 0 for False, or 1 for True, to include/exclude paused shows in the list.
+    def GetFutureShows(self, paused):
         future_list = []
         try:
-            response = GetUrlData(url=settings.__url__+'?cmd=future&sort=date&type=today|soon|later')
+            response = GetUrlData(url=settings.__url__+'?cmd=future&sort=date&type=today|soon|later&paused={}'.format(paused))
             if not response:
                 return None
             result = json.loads(response)
