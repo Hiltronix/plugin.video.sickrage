@@ -147,7 +147,7 @@ def AddShowDetails(tvdbid, show_name):
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialog)")
     for show in shows:
-        if tvdbid == show['tvdbid']:
+        if str(tvdbid) == str(show.get('tvdbid')):
             header = 'Duplicate Show'
             msg = "'" + show_name + "' already exists in your show list."
             ShowMessage(header, msg)
@@ -211,8 +211,8 @@ def AddShowDetails(tvdbid, show_name):
         ShowMessage(header, msg)
         print header + ': ' + msg
     else:
-        ShowMessage(header, msg)
         msg = 'Failed to add {0}'.format(show_name)
+        ShowMessage(header, msg)
         print header + ': ' + msg
 
 

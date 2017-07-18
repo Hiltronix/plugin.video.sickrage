@@ -1,3 +1,7 @@
+[B]2017-07-18 v.3.0.3[/B]
+[COLOR cyan]Fixed:[/COLOR] Bug fix in add show when unsuccessful.
+[COLOR cyan]Fixed:[/COLOR] Add New Show duplicate show check was failing after last update.
+
 [B]2017-07-06 v.3.0.2[/B]
 [COLOR cyan]New:[/COLOR] You can now include "paused" shows in the Upcoming shows list.  Toggle switch is in Settings > Add-on Settings > Client Settings.
 
