@@ -5,6 +5,18 @@ View and control SickRage or SickBeard from within Kodi.
 
 -----
 
+#### PLEASE NOTE
+
+## I no longer use SickRage, so I am no longer maintaining this add-on.
+
+I have created my own project to replace the functionality I was getting from both SickRage and gPodder.  So I no longer use this add-on.  That being the case, I have no plans to expand on it or keep it up to date.
+
+If you are still using SickRage, and enjoyed this add-on, you are welcome to fork this project and update it as you need.  If you do so, I'd appreciate being referenced in your release notes.
+
+Happy coding!
+
+-----
+
 ## Kodi/XBMC Repo  
 The repository for this add-on can be found here:  
 
